@@ -181,6 +181,8 @@ theorem Subtype.mem {α : Type*} {s : Set α} (p : s) : (p : α) ∈ s :=
 theorem Eq.subset {α} {s t : Set α} : s = t → s ⊆ t :=
   fun h₁ _ h₂ => by rw [← h₁]; exact h₂
 
+/-! ### Lemmas about `mem` and `setOf` -/
+
 namespace Set
 
 variable {α : Type u} {β : Type v} {a b : α} {s s₁ s₂ t t₁ t₂ u : Set α}
@@ -199,7 +201,7 @@ theorem setOf_injective : Function.Injective (@setOf α) := injective_id
 
 theorem setOf_inj {p q : α → Prop} : { x | p x } = { x | q x } ↔ p = q := Iff.rfl
 
-/-! ### Lemmas about `mem` and `setOf` -/
+theorem setOf_bijective : Bijective (setOf : (α → Prop) → Set α) := bijective_id
 
 theorem subset_setOf {p : α → Prop} {s : Set α} : s ⊆ setOf p ↔ ∀ x, x ∈ s → p x :=
   Iff.rfl
@@ -216,8 +218,6 @@ theorem setOf_and {p q : α → Prop} : { a | p a ∧ q a } = { a | p a } ∩ { 
 
 theorem setOf_or {p q : α → Prop} : { a | p a ∨ q a } = { a | p a } ∪ { a | q a } :=
   rfl
-
-theorem setOf_bijective : Bijective (setOf : (α → Prop) → Set α) := bijective_id
 
 /-! ### Subset and strict subset relations -/
 
