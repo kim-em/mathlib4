@@ -84,16 +84,15 @@ theorem mem_def {a : α} {s : Set α} : a ∈ s ↔ s a :=
 
 theorem mem_setOf {a : α} {p : α → Prop} : a ∈ { x | p x } ↔ p a := Iff.rfl
 
+/-- If `h : a ∈ {x | p x}` then `h.out : p x`. These are definitionally equal, but this can
+nevertheless be useful for various reasons, e.g. to apply further projection notation or in an
+argument to `simp`. -/
+alias ⟨_root_.Membership.mem.out, _⟩ := mem_setOf
+
 /-- This lemma is intended for use with `rw` where a membership predicate is needed,
 hence the explicit argument and the equality in the reverse direction from normal.
 See also `Set.mem_setOf_eq` for the reverse direction applied to an argument. -/
 theorem eq_mem_setOf (p : α → Prop) : p = (· ∈ {a | p a}) := rfl
-
-/-- If `h : a ∈ {x | p x}` then `h.out : p x`. These are definitionally equal, but this can
-nevertheless be useful for various reasons, e.g. to apply further projection notation or in an
-argument to `simp`. -/
-theorem _root_.Membership.mem.out {p : α → Prop} {a : α} (h : a ∈ { x | p x }) : p a :=
-  h
 
 @[simp] theorem setOf_mem_eq {s : Set α} : { x | x ∈ s } = s := rfl
 
