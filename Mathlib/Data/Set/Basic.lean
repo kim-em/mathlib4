@@ -199,34 +199,7 @@ theorem setOf_injective : Function.Injective (@setOf α) := injective_id
 
 theorem setOf_inj {p q : α → Prop} : { x | p x } = { x | q x } ↔ p = q := Iff.rfl
 
-/-! ### Lemmas about `mem` and `setOf` -/
-
-theorem mem_setOf {a : α} {p : α → Prop} : a ∈ { x | p x } ↔ p a :=
-  Iff.rfl
-
-/-- This lemma is intended for use with `rw` where a membership predicate is needed,
-hence the explicit argument and the equality in the reverse direction from normal.
-See also `Set.mem_setOf_eq` for the reverse direction applied to an argument. -/
-theorem eq_mem_setOf (p : α → Prop) : p = (· ∈ {a | p a}) := rfl
-
-/-- If `h : a ∈ {x | p x}` then `h.out : p x`. These are definitionally equal, but this can
-nevertheless be useful for various reasons, e.g. to apply further projection notation or in an
-argument to `simp`. -/
-theorem _root_.Membership.mem.out {p : α → Prop} {a : α} (h : a ∈ { x | p x }) : p a :=
-  h
-
-theorem setOf_bijective : Bijective (setOf : (α → Prop) → Set α) :=
-  bijective_id
-
-@[simp]
-theorem setOf_subset_setOf {p q : α → Prop} : { a | p a } ⊆ { a | q a } ↔ ∀ a, p a → q a :=
-  Iff.rfl
-
-theorem setOf_and {p q : α → Prop} : { a | p a ∧ q a } = { a | p a } ∩ { a | q a } :=
-  rfl
-
-theorem setOf_or {p q : α → Prop} : { a | p a ∨ q a } = { a | p a } ∪ { a | q a } :=
-  rfl
+theorem setOf_bijective : Bijective (setOf : (α → Prop) → Set α) := bijective_id
 
 /-! ### Subset and strict subset relations -/
 

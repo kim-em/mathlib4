@@ -75,8 +75,24 @@ namespace Set
 
 variable {α : Type u} {β : Type v} {γ : Type w}
 
+/-! ### Lemmas about `mem` and `setOf` -/
+
+theorem mem_setOf {a : α} {p : α → Prop} : a ∈ { x | p x } ↔ p a :=
+  Iff.rfl
+
+/-- This lemma is intended for use with `rw` where a membership predicate is needed,
+hence the explicit argument and the equality in the reverse direction from normal.
+See also `Set.mem_setOf_eq` for the reverse direction applied to an argument. -/
+theorem eq_mem_setOf (p : α → Prop) : p = (· ∈ {a | p a}) := rfl
+
+/-- If `h : a ∈ {x | p x}` then `h.out : p x`. These are definitionally equal, but this can
+nevertheless be useful for various reasons, e.g. to apply further projection notation or in an
+argument to `simp`. -/
+theorem _root_.Membership.mem.out {p : α → Prop} {a : α} (h : a ∈ { x | p x }) : p a :=
+  h
+
 -- TODO(Jeremy): write a tactic to unfold specific instances of generic notation?
-theorem subset_def {s t : Set α}: (s ⊆ t) = ∀ x, x ∈ s → x ∈ t := rfl
+theorem subset_def {s t : Set α} : (s ⊆ t) = ∀ x, x ∈ s → x ∈ t := rfl
 
 @[simp, mfld_simps] theorem mem_univ (x : α) : x ∈ @univ α := trivial
 
@@ -105,6 +121,18 @@ theorem subset_setOf {p : α → Prop} {s : Set α} : s ⊆ setOf p ↔ ∀ x, x
 
 theorem setOf_subset {p : α → Prop} {s : Set α} : setOf p ⊆ s ↔ ∀ x, p x → x ∈ s :=
   Iff.rfl
+
+@[simp]
+theorem setOf_subset_setOf {p q : α → Prop} : { a | p a } ⊆ { a | q a } ↔ ∀ a, p a → q a :=
+  Iff.rfl
+
+theorem setOf_and {p q : α → Prop} : { a | p a ∧ q a } = { a | p a } ∩ { a | q a } :=
+  rfl
+
+theorem setOf_or {p q : α → Prop} : { a | p a ∨ q a } = { a | p a } ∪ { a | q a } :=
+  rfl
+
+/-! ### Operations -/
 
 instance : HasCompl (Set α) := ⟨fun s ↦ {x | x ∉ s}⟩
 
