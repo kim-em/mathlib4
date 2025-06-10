@@ -82,8 +82,10 @@ theorem subset_def {s t : Set α}: (s ⊆ t) = ∀ x, x ∈ s → x ∈ t := rfl
 
 @[simp, mfld_simps] theorem mem_setOf_eq {x : α} {p : α → Prop} : (x ∈ {y | p y}) = p x := rfl
 
-theorem nmem_setOf_iff {a : α} {p : α → Prop} : a ∉ { x | p x } ↔ ¬p a :=
+theorem notMem_setOf_iff {a : α} {p : α → Prop} : a ∉ { x | p x } ↔ ¬p a :=
   Iff.rfl
+
+@[deprecated (since := "2025-05-24")] alias nmem_setOf_iff := notMem_setOf_iff
 
 @[simp]
 theorem setOf_mem_eq {s : Set α} : { x | x ∈ s } = s :=
