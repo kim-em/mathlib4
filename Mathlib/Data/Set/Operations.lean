@@ -77,6 +77,9 @@ variable {α : Type u} {β : Type v} {γ : Type w}
 
 /-! ### Lemmas about `mem` and `setOf` -/
 
+theorem mem_def {a : α} {s : Set α} : a ∈ s ↔ s a :=
+  Iff.rfl
+
 @[simp, mfld_simps] theorem mem_setOf_eq {x : α} {p : α → Prop} : (x ∈ {y | p y}) = p x := rfl
 
 theorem mem_setOf {a : α} {p : α → Prop} : a ∈ { x | p x } ↔ p a := Iff.rfl
@@ -103,9 +106,6 @@ theorem setOf_set {s : Set α} : setOf s = s :=
   rfl
 
 theorem setOf_app_iff {p : α → Prop} {x : α} : { x | p x } x ↔ p x :=
-  Iff.rfl
-
-theorem mem_def {a : α} {s : Set α} : a ∈ s ↔ s a :=
   Iff.rfl
 
 @[simp, mfld_simps] theorem mem_univ (x : α) : x ∈ @univ α := trivial
