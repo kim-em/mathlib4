@@ -201,7 +201,8 @@ theorem setOf_injective : Function.Injective (@setOf α) := injective_id
 
 theorem setOf_inj {p q : α → Prop} : { x | p x } = { x | q x } ↔ p = q := Iff.rfl
 
-theorem setOf_bijective : Bijective (setOf : (α → Prop) → Set α) := bijective_id
+theorem setOf_bijective : Bijective (setOf : (α → Prop) → Set α) :=
+  bijective_id
 
 theorem subset_setOf {p : α → Prop} {s : Set α} : s ⊆ setOf p ↔ ∀ x, x ∈ s → p x :=
   Iff.rfl
