@@ -77,8 +77,9 @@ variable {α : Type u} {β : Type v} {γ : Type w}
 
 /-! ### Lemmas about `mem` and `setOf` -/
 
-theorem mem_setOf {a : α} {p : α → Prop} : a ∈ { x | p x } ↔ p a :=
-  Iff.rfl
+@[simp, mfld_simps] theorem mem_setOf_eq {x : α} {p : α → Prop} : (x ∈ {y | p y}) = p x := rfl
+
+theorem mem_setOf {a : α} {p : α → Prop} : a ∈ { x | p x } ↔ p a := Iff.rfl
 
 /-- This lemma is intended for use with `rw` where a membership predicate is needed,
 hence the explicit argument and the equality in the reverse direction from normal.
@@ -91,21 +92,12 @@ argument to `simp`. -/
 theorem _root_.Membership.mem.out {p : α → Prop} {a : α} (h : a ∈ { x | p x }) : p a :=
   h
 
--- TODO(Jeremy): write a tactic to unfold specific instances of generic notation?
-theorem subset_def {s t : Set α} : (s ⊆ t) = ∀ x, x ∈ s → x ∈ t := rfl
-
-@[simp, mfld_simps] theorem mem_univ (x : α) : x ∈ @univ α := trivial
-
-@[simp, mfld_simps] theorem mem_setOf_eq {x : α} {p : α → Prop} : (x ∈ {y | p y}) = p x := rfl
+@[simp] theorem setOf_mem_eq {s : Set α} : { x | x ∈ s } = s := rfl
 
 theorem notMem_setOf_iff {a : α} {p : α → Prop} : a ∉ { x | p x } ↔ ¬p a :=
   Iff.rfl
 
 @[deprecated (since := "2025-05-24")] alias nmem_setOf_iff := notMem_setOf_iff
-
-@[simp]
-theorem setOf_mem_eq {s : Set α} : { x | x ∈ s } = s :=
-  rfl
 
 theorem setOf_set {s : Set α} : setOf s = s :=
   rfl
@@ -116,21 +108,7 @@ theorem setOf_app_iff {p : α → Prop} {x : α} : { x | p x } x ↔ p x :=
 theorem mem_def {a : α} {s : Set α} : a ∈ s ↔ s a :=
   Iff.rfl
 
-theorem subset_setOf {p : α → Prop} {s : Set α} : s ⊆ setOf p ↔ ∀ x, x ∈ s → p x :=
-  Iff.rfl
-
-theorem setOf_subset {p : α → Prop} {s : Set α} : setOf p ⊆ s ↔ ∀ x, p x → x ∈ s :=
-  Iff.rfl
-
-@[simp]
-theorem setOf_subset_setOf {p q : α → Prop} : { a | p a } ⊆ { a | q a } ↔ ∀ a, p a → q a :=
-  Iff.rfl
-
-theorem setOf_and {p q : α → Prop} : { a | p a ∧ q a } = { a | p a } ∩ { a | q a } :=
-  rfl
-
-theorem setOf_or {p q : α → Prop} : { a | p a ∨ q a } = { a | p a } ∪ { a | q a } :=
-  rfl
+@[simp, mfld_simps] theorem mem_univ (x : α) : x ∈ @univ α := trivial
 
 /-! ### Operations -/
 

@@ -199,6 +199,22 @@ theorem setOf_injective : Function.Injective (@setOf α) := injective_id
 
 theorem setOf_inj {p q : α → Prop} : { x | p x } = { x | q x } ↔ p = q := Iff.rfl
 
+theorem subset_setOf {p : α → Prop} {s : Set α} : s ⊆ setOf p ↔ ∀ x, x ∈ s → p x :=
+  Iff.rfl
+
+theorem setOf_subset {p : α → Prop} {s : Set α} : setOf p ⊆ s ↔ ∀ x, p x → x ∈ s :=
+  Iff.rfl
+
+@[simp]
+theorem setOf_subset_setOf {p q : α → Prop} : { a | p a } ⊆ { a | q a } ↔ ∀ a, p a → q a :=
+  Iff.rfl
+
+theorem setOf_and {p q : α → Prop} : { a | p a ∧ q a } = { a | p a } ∩ { a | q a } :=
+  rfl
+
+theorem setOf_or {p q : α → Prop} : { a | p a ∨ q a } = { a | p a } ∪ { a | q a } :=
+  rfl
+
 theorem setOf_bijective : Bijective (setOf : (α → Prop) → Set α) := bijective_id
 
 /-! ### Subset and strict subset relations -/
@@ -236,6 +252,10 @@ instance : IsAsymm (Set α) (· ⊂ ·) :=
 
 instance : IsNonstrictStrictOrder (Set α) (· ⊆ ·) (· ⊂ ·) :=
   ⟨fun _ _ => Iff.rfl⟩
+
+-- TODO(Jeremy): write a tactic to unfold specific instances of generic notation?
+theorem subset_def {s t : Set α} : (s ⊆ t) = ∀ x, x ∈ s → x ∈ t :=
+  rfl
 
 theorem ssubset_def : (s ⊂ t) = (s ⊆ t ∧ ¬t ⊆ s) :=
   rfl
