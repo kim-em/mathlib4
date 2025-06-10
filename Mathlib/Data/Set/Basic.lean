@@ -257,7 +257,7 @@ instance : IsNonstrictStrictOrder (Set α) (· ⊆ ·) (· ⊂ ·) :=
   ⟨fun _ _ => Iff.rfl⟩
 
 -- TODO(Jeremy): write a tactic to unfold specific instances of generic notation?
-theorem subset_def {s t : Set α} : (s ⊆ t) = ∀ x, x ∈ s → x ∈ t :=
+theorem subset_def : (s ⊆ t) = ∀ x, x ∈ s → x ∈ t :=
   rfl
 
 theorem ssubset_def : (s ⊂ t) = (s ⊆ t ∧ ¬t ⊆ s) :=
