@@ -8,6 +8,7 @@ Authors: Kim Morrison
 import Aesop
 import Qq
 import Plausible
+import Hammer
 
 -- Tools for analysing imports, like `#find_home`, `#minimize_imports`, ...
 import ImportGraph.Imports
