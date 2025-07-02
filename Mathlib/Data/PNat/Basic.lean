@@ -370,4 +370,32 @@ theorem pos_of_div_pos {n : ℕ+} {a : ℕ} (h : a ∣ n) : 0 < a := by
   rw [hzero] at h
   exact PNat.ne_zero n (eq_zero_of_zero_dvd h)
 
+section grind
+
+/-- These instances allows `grind`s cutsat solver to embed `ℕ+` into `ℤ`. -/
+instance : Lean.Grind.ToInt ℕ+ (.ci 1) where
+  toInt := (↑)
+  toInt_inj x y h := mod_cast h
+  toInt_mem x := by simpa using mod_cast one_le x
+
+@[local simp] theorem toInt (x : ℕ+) : Lean.Grind.ToInt.toInt x = (x : ℤ) := rfl
+
+instance : Lean.Grind.ToInt.Add ℕ+ (.ci 1) where
+  toInt_add x y := by
+    have : 1 ≤ (x : ℕ) := x.2
+    have : 1 ≤ (y : ℕ) := y.2
+    simp
+    omega
+
+example (x y : ℕ+) : x + y + x = x + x + y := by grind
+
+instance : Lean.Grind.ToInt.Mul ℕ+ (.ci 1) where
+  toInt_mul x y := by
+    have : 1 ≤ (x : ℕ) := x.2
+    have : 1 ≤ (y : ℕ) := y.2
+    simp
+    sorry
+
+end grind
+
 end PNat
