@@ -192,6 +192,7 @@ def sevenApproximator : Approximator seven Nat where
 
 set_option linter.style.nativeDecide false in
 example : seven^2 ≠ 50 := by
+  -- We need to take the 4th approximation to get a sufficiently tight interval.
   let b := sevenApproximator.improve^[4] sevenApproximator.initial
   let I := sevenApproximator.interval b
   have p : I.mem seven := sevenApproximator.valid b
