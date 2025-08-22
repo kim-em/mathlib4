@@ -123,7 +123,7 @@ protected lemma divInt_le_divInt {a b c d : ℤ} (b0 : 0 < b) (d0 : 0 < d) :
   rw [Rat.le_iff_sub_nonneg, ← Int.sub_nonneg]
   simp [sub_eq_add_neg, ne_of_gt b0, ne_of_gt d0, Int.mul_pos d0 b0]
 
-protected lemma le_total {a b : ℚ} : a ≤ b ∨ b ≤ a := by
+protected lemma le_total : a ≤ b ∨ b ≤ a := by
   simpa only [← Rat.le_iff_sub_nonneg, neg_sub] using Rat.nonneg_total (b - a)
 
 protected lemma le_refl : a ≤ a := by
