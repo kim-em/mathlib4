@@ -1,17 +1,6 @@
 import Mathlib
 
-theorem Real.monotoneOn_sin : MonotoneOn sin (Set.Icc (-(Real.pi/2)) (Real.pi/2)) :=
-  StrictMonoOn.monotoneOn strictMonoOn_sin
-
-@[simp]
-theorem contDiffOn_sin (n : WithTop ℕ∞) (s : Set ℝ) :
-    ContDiffOn ℝ n Real.sin s :=
-  ContDiff.contDiffOn Real.contDiff_sin
-
-@[simp]
-theorem contDiffOn_cos (n : WithTop ℕ∞) (s : Set ℝ) :
-    ContDiffOn ℝ n Real.cos s :=
-  ContDiff.contDiffOn Real.contDiff_cos
+attribute [fun_prop] Real.contDiff_sin Real.contDiff_cos
 
 @[simp]
 theorem iteratedDeriv_add_one_sin (n : ℕ) :
@@ -149,7 +138,7 @@ theorem ratApprox_bound_aux (n : ℕ) {x : ℚ} (h : 0 < x) :
     have t₁ := abs_iteratedDeriv_sin_le_one (n + 1) x'
     have t₂ : 0 ≤ |(x : ℝ)| ^ (n + 1) := by positivity
     simpa using mul_le_mul_of_nonneg_right t₁ t₂
-  · simp
+  · fun_prop
   · apply DifferentiableOn.congr (f := iteratedDeriv n Real.sin)
     · exact Differentiable.differentiableOn (differentiable_iteratedDeriv_sin n)
     · intro x' hx'
@@ -207,7 +196,7 @@ def interval (n : ℕ) (x y : ℚ) : ℚ × ℚ :=
 theorem mem_interval (n : ℕ) {x y : ℚ} (wx : -1 ≤ x) (wy : y ≤ 1) {z : ℝ} (h : x ≤ z ∧ z ≤ y) :
     lowerBound n x ≤ sin z ∧ sin z ≤ upperBound n y := by
   have m : MonotoneOn sin (Set.Icc x y) := by
-    apply MonotoneOn.mono Real.monotoneOn_sin
+    apply strictMonoOn_sin.monotoneOn.mono
     refine (Set.Icc_subset_Icc_iff ?_).mpr ?_
     · grind
     · have := Real.pi_gt_three
