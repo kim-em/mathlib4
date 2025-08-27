@@ -58,13 +58,41 @@ theorem iteratedDeriv_odd_cos (n : ℕ) :
 
 @[simp]
 theorem contDiffOn_sin (n : WithTop ℕ∞) (s : Set ℝ) :
-    ContDiffOn ℝ n Real.sin s := sorry
+    ContDiffOn ℝ n Real.sin s :=
+  ContDiff.contDiffOn Real.contDiff_sin
+
+@[simp]
+theorem contDiffOn_cos (n : WithTop ℕ∞) (s : Set ℝ) :
+    ContDiffOn ℝ n Real.cos s :=
+  ContDiff.contDiffOn Real.contDiff_cos
 
 theorem abs_iteratedDeriv_sin_le_one (n : ℕ) (x : ℝ) :
-    |iteratedDeriv n Real.sin x| ≤ 1 := sorry
+    |iteratedDeriv n Real.sin x| ≤ 1 :=
+  match n with
+  | 0 => by simpa using Real.abs_sin_le_one x
+  | 1 => by simpa using Real.abs_cos_le_one x
+  | n + 2 => by simpa using abs_iteratedDeriv_sin_le_one n x
+
+theorem abs_iteratedDeriv_cos_le_one (n : ℕ) (x : ℝ) :
+    |iteratedDeriv n Real.cos x| ≤ 1 :=
+  match n with
+  | 0 => by simpa using Real.abs_cos_le_one x
+  | 1 => by simpa using Real.abs_sin_le_one x
+  | n + 2 => by simpa using abs_iteratedDeriv_cos_le_one n x
 
 theorem differentiable_iteratedDeriv_sin (n : ℕ) :
-    Differentiable ℝ (iteratedDeriv n Real.sin) := sorry
+    Differentiable ℝ (iteratedDeriv n Real.sin) :=
+  match n with
+  | 0 => by simp
+  | 1 => by simp
+  | n + 2 => by simp [differentiable_iteratedDeriv_sin]
+
+theorem differentiable_iteratedDeriv_cos (n : ℕ) :
+    Differentiable ℝ (iteratedDeriv n Real.cos) :=
+  match n with
+  | 0 => by simp
+  | 1 => by simp
+  | n + 2 => by simp [differentiable_iteratedDeriv_cos]
 
 namespace Real.sin
 
