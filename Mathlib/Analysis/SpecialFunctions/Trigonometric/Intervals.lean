@@ -26,67 +26,84 @@ theorem iteratedDeriv_even_sin (n : ℕ) :
     iteratedDeriv (2 * n) Real.sin = (-1) ^ n * Real.sin := sorry
 
 @[simp]
+theorem iteratedDeriv_add_two_sin (n : ℕ) :
+    iteratedDeriv (n + 2) Real.sin = - iteratedDeriv n Real.sin := sorry
+
+@[simp]
 theorem contDiffOn_sin (n : WithTop ℕ∞) (s : Set ℝ) :
     ContDiffOn ℝ n Real.sin s := sorry
+
+theorem abs_iteratedDeriv_sin_le_one (n : ℕ) (x : ℝ) :
+    |iteratedDeriv n Real.sin x| ≤ 1 := sorry
+
+theorem differentiable_iteratedDeriv_sin (n : ℕ) :
+    Differentiable ℝ (iteratedDeriv n Real.sin) := sorry
 
 namespace Real.sin
 
 open Nat
 
-/-- The `2 * n`-th Taylor polynomial of `sin` at `0`, as a function `ℚ → ℚ`. -/
+def iteratedDerivAtZero : ℕ → ℚ
+| 0 => 0
+| 1 => 1
+| n + 2 => - iteratedDerivAtZero n
+
+/-- The `n`-th Taylor polynomial of `sin` at `0`, as a function `ℚ → ℚ`. -/
 def ratApprox (n : ℕ) (x : ℚ) : ℚ :=
-  ∑ i ∈ Finset.range n, ((-1) ^ i * x ^ (2 * i + 1)) / (2 * i + 1)!
+  ∑ i ∈ Finset.range (n + 1), (iteratedDerivAtZero i * x ^ i) / i !
 
 def ratApprox.errorBound (n : ℕ) (x : ℚ) : ℚ :=
-  |x| ^ (2 * n + 1) / (2 * n + 1)!
+  |x| ^ (n + 1) / (n + 1)!
 
 attribute [simp] PolynomialModule.eval_smul
 
+theorem iteratedDerivAtZero_eq (n : ℕ) :
+    iteratedDerivAtZero n = iteratedDeriv n sin 0 :=
+  match n with
+  | 0 => by simp [iteratedDerivAtZero]
+  | 1 => by simp [iteratedDerivAtZero]
+  | n + 2 => by simp [iteratedDerivAtZero, iteratedDerivAtZero_eq]
+
 theorem ratApprox_eq {x : ℚ} {n : ℕ} (h : 0 < x) :
-    (ratApprox n x : ℝ) = taylorWithinEval sin (2 * n) (Set.Icc 0 ↑x) 0 ↑x := by
-  have : 0 < (x : ℝ) := by rify at h; exact h
+    (ratApprox n x : ℝ) = taylorWithinEval sin n (Set.Icc 0 ↑x) 0 ↑x := by
   have : (0 : ℝ) ∈ Set.Icc 0 (x : ℝ) := by simp; grind
-  rw [taylorWithinEval, taylorWithin]
-  simp_all [taylorCoeffWithin]
-  unfold ratApprox
+  simp_all [taylorWithinEval, taylorWithin, taylorCoeffWithin, ratApprox, iteratedDerivAtZero_eq]
+  grind
 
 theorem ratApprox_bound_aux (n : ℕ) {x : ℚ} (h : 0 < x) :
     |sin x - ratApprox n x| ≤ ratApprox.errorBound n x := by
   have h' : 0 < (x : ℝ) := by rify at h; exact h
-  have w := taylor_mean_remainder_lagrange (f := sin) (n := 2 * n) h' ?_ ?_
+  have w := taylor_mean_remainder_lagrange (f := sin) (n := n) h' ?_ ?_
   · obtain ⟨x', m, w⟩ := w
     rw [ratApprox_eq h, w]
     simp [abs_div, ratApprox.errorBound]
     gcongr
     rw [iteratedDerivWithin_sin_Icc _ h' (by grind)]
-    simp
-    have t₁ : |cos x'| ≤ 1 := abs_cos_le_one x'
-    have t₂ : 0 ≤ |(x : ℝ)| ^ (2 * n + 1) := by positivity
+    have t₁ := abs_iteratedDeriv_sin_le_one (n + 1) x'
+    have t₂ : 0 ≤ |(x : ℝ)| ^ (n + 1) := by positivity
     simpa using mul_le_mul_of_nonneg_right t₁ t₂
   · simp
-  · apply DifferentiableOn.congr (f := iteratedDeriv (2 * n) Real.sin)
-    · simp
-      exact
-        Differentiable.differentiableOn (Differentiable.mul
-          (Differentiable.pow (Differentiable.neg differentiable_one) n)
-          differentiable_sin)
+  · apply DifferentiableOn.congr (f := iteratedDeriv n Real.sin)
+    · exact Differentiable.differentiableOn (differentiable_iteratedDeriv_sin n)
     · intro x' hx'
       simp_all
-      rw [iteratedDerivWithin_sin_Icc]
-      · simp
-      · grind
-      · grind
+      rw [iteratedDerivWithin_sin_Icc] <;> grind
 
 @[local simp]
 theorem ratApprox_zero {n : ℕ} :
     ratApprox n 0 = 0 := by
-  simp [ratApprox]
+  simp [ratApprox, Finset.sum_range_succ', iteratedDerivAtZero]
+
+theorem iteratedDerivAtZero_mul_neg_one_pow {n : ℕ} :
+    iteratedDerivAtZero n * (-1) ^ n = - iteratedDerivAtZero n :=
+  match n with
+  | 0 => by simp [iteratedDerivAtZero]
+  | 1 => by simp [iteratedDerivAtZero]
+  | n + 2 => by simp [iteratedDerivAtZero, pow_add, iteratedDerivAtZero_mul_neg_one_pow]
 
 theorem ratApprox_neg {n : ℕ} {x : ℚ} :
     ratApprox n (-x) = -ratApprox n x := by
-  simp [ratApprox]
-  simp only [neg_pow x]
-  sorry -- easy, shuffling signs around
+  simp [ratApprox, neg_pow x, ← mul_assoc, iteratedDerivAtZero_mul_neg_one_pow, neg_div]
 
 theorem errorBound_nonneg {n : ℕ} {x : ℚ} :
     0 ≤ ratApprox.errorBound n x := by
@@ -118,7 +135,7 @@ def interval (n : ℕ) (x y : ℚ) : ℚ × ℚ :=
 
 /-- info: ((-25 : Rat)/48, (25 : Rat)/48) -/
 #guard_msgs in
-#eval interval 1 (-1/2) (1/2)
+#eval interval 2 (-1/2) (1/2)
 
 theorem mem_interval (n : ℕ) {x y : ℚ} (wx : -1 ≤ x) (wy : y ≤ 1) {z : ℝ} (h : x ≤ z ∧ z ≤ y) :
     lowerBound n x ≤ sin z ∧ sin z ≤ upperBound n y := by
