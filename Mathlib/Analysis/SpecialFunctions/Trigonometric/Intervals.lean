@@ -48,6 +48,7 @@ theorem ratApprox_eq {x : ℚ} {n : ℕ} (h : 0 < x) :
   have : (0 : ℝ) ∈ Set.Icc 0 (x : ℝ) := by simp; grind
   rw [taylorWithinEval, taylorWithin]
   simp_all [taylorCoeffWithin]
+  unfold ratApprox
 
 theorem ratApprox_bound_aux (n : ℕ) {x : ℚ} (h : 0 < x) :
     |sin x - ratApprox n x| ≤ ratApprox.errorBound n x := by
