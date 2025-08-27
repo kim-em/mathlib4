@@ -18,16 +18,43 @@ theorem iteratedDerivWithin_sin_Icc (n : ℕ) {a b : ℝ} (h : a < b) {x : ℝ} 
   iteratedDerivWithin_Icc h hx Real.contDiff_sin
 
 @[simp]
-theorem iteratedDeriv_odd_sin (n : ℕ) :
-    iteratedDeriv (2 * n + 1) Real.sin = (-1) ^ n * Real.cos := sorry
+theorem iteratedDeriv_add_one_sin (n : ℕ) :
+    iteratedDeriv (n + 1) Real.sin = iteratedDeriv n Real.cos := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [iteratedDeriv_succ, ih, iteratedDeriv_succ]
+
+@[simp]
+theorem iteratedDeriv_add_one_cos (n : ℕ) :
+    iteratedDeriv (n + 1) Real.cos = - iteratedDeriv n Real.sin := by
+  induction n with
+  | zero => ext; simp
+  | succ n ih =>
+    rw [iteratedDeriv_succ, ih, iteratedDeriv_succ, deriv.neg']
+    ext x
+    simp
 
 @[simp]
 theorem iteratedDeriv_even_sin (n : ℕ) :
-    iteratedDeriv (2 * n) Real.sin = (-1) ^ n * Real.sin := sorry
+    iteratedDeriv (2 * n) Real.sin = (-1) ^ n * Real.sin := by
+  induction n with
+  | zero => simp
+  | succ n ih => simp_all [mul_add, pow_succ]
 
 @[simp]
-theorem iteratedDeriv_add_two_sin (n : ℕ) :
-    iteratedDeriv (n + 2) Real.sin = - iteratedDeriv n Real.sin := sorry
+theorem iteratedDeriv_even_cos (n : ℕ) :
+    iteratedDeriv (2 * n) Real.cos = (-1) ^ n * Real.cos := by
+  induction n with
+  | zero => simp
+  | succ n ih => simp_all [mul_add, pow_succ]
+
+theorem iteratedDeriv_odd_sin (n : ℕ) :
+    iteratedDeriv (2 * n + 1) Real.sin = (-1) ^ n * Real.cos := by simp
+
+@[simp]
+theorem iteratedDeriv_odd_cos (n : ℕ) :
+    iteratedDeriv (2 * n + 1) Real.cos = (-1) ^ (n + 1) * Real.sin := by simp [pow_succ]
 
 @[simp]
 theorem contDiffOn_sin (n : WithTop ℕ∞) (s : Set ℝ) :
@@ -179,13 +206,20 @@ structure IntervalPropagator (f : ℝ → ℝ) (a b : ℚ) where
 An interval propagator for `sin` on the interval `Set.Icc (-1) 1`.
 
 If we use the n-th Taylor polynomial,
-the introduced error is bounded by `1 / (2 * n + 1)! ≤ 1 / 2^n`.
+the introduced error is bounded by `1 / (n + 1)! ≤ 1 / 2^n`.
 So if we take `n = (q⁻¹).ceil.toNat.log2`, the error will be bounded by `q`.
 One could do better (i.e. get away with a smaller `n`) by bounding the factorial more tightly,
-or using the input interval, which may be closed to zero.
+or using the input interval, which may be closer to zero.
 -/
 def Real.sin.propagator : IntervalPropagator Real.sin (-1) 1 where
   forward q x y h := Real.sin.interval (q⁻¹).ceil.toNat.log2 x y
   mem q x y h z m :=
     have h := (Set.Icc_subset_Icc_iff (by rify; grind)).mp h
     Real.sin.mem_interval (q⁻¹).ceil.toNat.log2 h.1 h.2 m
+
+-- We'll also have a user level gadget that says:
+-- if you have an interval that doesn't lie inside `Set.Icc (-1) 1`
+-- that you're trying to propagate through `sin`,
+-- add the identity `sin x = 3 sin (x / 3) - 4 * (sin (x / 3)) ^ 3` instead.
+-- This has the effect of shrinking the interval by a factor of 3:
+-- recursing, we can shrink into the interval `Set.Icc (-1) 1`.
