@@ -13,32 +13,6 @@ theorem contDiffOn_cos (n : WithTop ℕ∞) (s : Set ℝ) :
     ContDiffOn ℝ n Real.cos s :=
   ContDiff.contDiffOn Real.contDiff_cos
 
-theorem iteratedDerivWithin_Icc' {n : ℕ} {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Icc a b)
-    {f : ℝ → ℝ} (hf : ContDiffOn ℝ n f (Set.Icc a b)) :
-    iteratedDerivWithin n f (Set.Icc a b) x = iteratedDeriv n f x := by
-  rw [iteratedDerivWithin_eq_iteratedDeriv]
-  · exact uniqueDiffOn_convex (convex_Icc a b) (by simp_all)
-  · exact ContDiffOn.contDiffAt hf (x := x) (by simp_all)
-  · exact hx
-
-theorem iteratedDerivWithin_Icc {n : ℕ} {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Icc a b)
-    {f : ℝ → ℝ} (hf : ContDiff ℝ n f) :
-    iteratedDerivWithin n f (Set.Icc a b) x = iteratedDeriv n f x := by
-  rw [iteratedDerivWithin_eq_iteratedDeriv]
-  · exact uniqueDiffOn_convex (convex_Icc a b) (by simp_all)
-  · exact ContDiff.contDiffAt hf
-  · exact hx
-
-@[simp]
-theorem iteratedDerivWithin_sin_Icc (n : ℕ) {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Icc a b) :
-    iteratedDerivWithin n Real.sin (Set.Icc a b) x = iteratedDeriv n Real.sin x :=
-  iteratedDerivWithin_Icc h hx Real.contDiff_sin
-
-@[simp]
-theorem iteratedDerivWithin_cos_Icc (n : ℕ) {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Icc a b) :
-    iteratedDerivWithin n Real.cos (Set.Icc a b) x = iteratedDeriv n Real.cos x :=
-  iteratedDerivWithin_Icc h hx Real.contDiff_cos
-
 @[simp]
 theorem iteratedDeriv_add_one_sin (n : ℕ) :
     iteratedDeriv (n + 1) Real.sin = iteratedDeriv n Real.cos := by
@@ -78,6 +52,20 @@ theorem iteratedDeriv_odd_sin (n : ℕ) :
 theorem iteratedDeriv_odd_cos (n : ℕ) :
     iteratedDeriv (2 * n + 1) Real.cos = (-1) ^ (n + 1) * Real.sin := by simp [pow_succ]
 
+theorem differentiable_iteratedDeriv_sin (n : ℕ) :
+    Differentiable ℝ (iteratedDeriv n Real.sin) :=
+  match n with
+  | 0 => by simp
+  | 1 => by simp
+  | n + 2 => by simp [differentiable_iteratedDeriv_sin]
+
+theorem differentiable_iteratedDeriv_cos (n : ℕ) :
+    Differentiable ℝ (iteratedDeriv n Real.cos) :=
+  match n with
+  | 0 => by simp
+  | 1 => by simp
+  | n + 2 => by simp [differentiable_iteratedDeriv_cos]
+
 theorem abs_iteratedDeriv_sin_le_one (n : ℕ) (x : ℝ) :
     |iteratedDeriv n Real.sin x| ≤ 1 :=
   match n with
@@ -92,19 +80,31 @@ theorem abs_iteratedDeriv_cos_le_one (n : ℕ) (x : ℝ) :
   | 1 => by simpa using Real.abs_sin_le_one x
   | n + 2 => by simpa using abs_iteratedDeriv_cos_le_one n x
 
-theorem differentiable_iteratedDeriv_sin (n : ℕ) :
-    Differentiable ℝ (iteratedDeriv n Real.sin) :=
-  match n with
-  | 0 => by simp
-  | 1 => by simp
-  | n + 2 => by simp [differentiable_iteratedDeriv_sin]
+theorem iteratedDerivWithin_Ioo {n : ℕ} {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Ioo a b)
+    {f : ℝ → ℝ} (hf : ContDiffOn ℝ n f (Set.Icc a b)) :
+    iteratedDerivWithin n f (Set.Ioo a b) x = iteratedDeriv n f x := by
+  rw [iteratedDerivWithin_eq_iteratedDeriv]
+  · exact uniqueDiffOn_convex (convex_Ioo a b) (by simp_all)
+  · exact ContDiffOn.contDiffAt hf (x := x) (by rwa [Icc_mem_nhds_iff])
+  · exact hx
 
-theorem differentiable_iteratedDeriv_cos (n : ℕ) :
-    Differentiable ℝ (iteratedDeriv n Real.cos) :=
-  match n with
-  | 0 => by simp
-  | 1 => by simp
-  | n + 2 => by simp [differentiable_iteratedDeriv_cos]
+theorem iteratedDerivWithin_Icc {n : ℕ} {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Icc a b)
+    {f : ℝ → ℝ} (hf : ContDiff ℝ n f) :
+    iteratedDerivWithin n f (Set.Icc a b) x = iteratedDeriv n f x := by
+  rw [iteratedDerivWithin_eq_iteratedDeriv]
+  · exact uniqueDiffOn_convex (convex_Icc a b) (by simp_all)
+  · exact ContDiff.contDiffAt hf
+  · exact hx
+
+@[simp]
+theorem iteratedDerivWithin_sin_Icc (n : ℕ) {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Icc a b) :
+    iteratedDerivWithin n Real.sin (Set.Icc a b) x = iteratedDeriv n Real.sin x :=
+  iteratedDerivWithin_Icc h hx Real.contDiff_sin
+
+@[simp]
+theorem iteratedDerivWithin_cos_Icc (n : ℕ) {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Icc a b) :
+    iteratedDerivWithin n Real.cos (Set.Icc a b) x = iteratedDeriv n Real.cos x :=
+  iteratedDerivWithin_Icc h hx Real.contDiff_cos
 
 namespace Real.sin
 
