@@ -1,12 +1,15 @@
 import Mathlib
 
+-- https://github.com/leanprover-community/mathlib4/pull/29022
 attribute [fun_prop] Real.contDiff_sin Real.contDiff_cos
+
+section -- https://github.com/leanprover-community/mathlib4/pull/29023
 
 @[simp]
 theorem iteratedDeriv_add_one_sin (n : ℕ) :
     iteratedDeriv (n + 1) Real.sin = iteratedDeriv n Real.cos := by
   induction n with
-  | zero => simp
+  | zero => simp only [zero_add, iteratedDeriv_one, Real.deriv_sin, iteratedDeriv_zero]
   | succ n ih =>
     rw [iteratedDeriv_succ, ih, iteratedDeriv_succ]
 
@@ -69,6 +72,10 @@ theorem abs_iteratedDeriv_cos_le_one (n : ℕ) (x : ℝ) :
   | 1 => by simpa using Real.abs_sin_le_one x
   | n + 2 => by simpa using abs_iteratedDeriv_cos_le_one n x
 
+end
+
+section -- https://github.com/leanprover-community/mathlib4/pull/29024
+
 theorem iteratedDerivWithin_Ioo {n : ℕ} {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Ioo a b)
     {f : ℝ → ℝ} (hf : ContDiffOn ℝ n f (Set.Icc a b)) :
     iteratedDerivWithin n f (Set.Ioo a b) x = iteratedDeriv n f x := by
@@ -84,6 +91,8 @@ theorem iteratedDerivWithin_Icc {n : ℕ} {a b : ℝ} (h : a < b) {x : ℝ} (hx 
   · exact uniqueDiffOn_convex (convex_Icc a b) (by simp_all)
   · exact ContDiff.contDiffAt hf
   · exact hx
+
+end
 
 @[simp]
 theorem iteratedDerivWithin_sin_Icc (n : ℕ) {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Icc a b) :
