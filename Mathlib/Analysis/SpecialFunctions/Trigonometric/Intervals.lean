@@ -130,14 +130,12 @@ def ratErrorBound (n : ℕ) (x : ℚ) : ℚ :=
 
 theorem iteratedDerivAtZero_eq (n : ℕ) :
     iteratedDerivAtZero n = iteratedDeriv n sin 0 :=
-  match n with
-  | 0 => by simp [iteratedDerivAtZero]
-  | 1 => by simp [iteratedDerivAtZero]
-  | n + 2 => by simp [iteratedDerivAtZero, iteratedDerivAtZero_eq]
+  match n with | 0 | 1 | n + 2 => by simp [iteratedDerivAtZero, iteratedDerivAtZero_eq]
 
+-- https://github.com/leanprover-community/mathlib4/pull/29026
 attribute [simp] PolynomialModule.eval_smul
 
-theorem ratApprox_eq {x : ℚ} {n : ℕ} (h : 0 < x) :
+theorem ratApprox_coe_eq {x : ℚ} {n : ℕ} (h : 0 < x) :
     (ratApprox n x : ℝ) = taylorWithinEval sin n (Set.Icc 0 ↑x) 0 ↑x := by
   have : (0 : ℝ) ∈ Set.Icc 0 (x : ℝ) := by simp; grind
   simp_all [taylorWithinEval, taylorWithin, taylorCoeffWithin, ratApprox, iteratedDerivAtZero_eq]
@@ -148,8 +146,10 @@ theorem ratApprox_bound_aux (n : ℕ) {x : ℚ} (h : 0 < x) :
   have h' : 0 < (x : ℝ) := by rify at h; exact h
   have w := taylor_mean_remainder_lagrange (f := sin) (n := n) h' ?_ ?_
   · obtain ⟨x', m, w⟩ := w
-    rw [ratApprox_eq h, w]
-    simp [abs_div, ratErrorBound]
+    rw [ratApprox_coe_eq h, w]
+    simp? [abs_div, ratErrorBound] says
+      simp only [sub_zero, abs_div, abs_mul, abs_pow, abs_cast, ratErrorBound, Rat.cast_div,
+        Rat.cast_pow, Rat.cast_abs, Rat.cast_natCast, ge_iff_le]
     gcongr
     rw [iteratedDerivWithin_sin_Icc _ h' (by grind)]
     have t₁ := abs_iteratedDeriv_sin_le_one (n + 1) x'
@@ -159,7 +159,7 @@ theorem ratApprox_bound_aux (n : ℕ) {x : ℚ} (h : 0 < x) :
   · apply DifferentiableOn.congr (f := iteratedDeriv n Real.sin)
     · exact Differentiable.differentiableOn (differentiable_iteratedDeriv_sin n)
     · intro x' hx'
-      simp_all
+      simp_all only [Rat.cast_pos, Set.mem_Ioo]
       rw [iteratedDerivWithin_sin_Icc] <;> grind
 
 @[local simp]
@@ -167,7 +167,7 @@ theorem ratApprox_zero {n : ℕ} :
     ratApprox n 0 = 0 := by
   simp [ratApprox, Finset.sum_range_succ', iteratedDerivAtZero]
 
-theorem iteratedDerivAtZero_mul_neg_one_pow {n : ℕ} :
+private theorem iteratedDerivAtZero_mul_neg_one_pow {n : ℕ} :
     iteratedDerivAtZero n * (-1) ^ n = - iteratedDerivAtZero n :=
   match n with
   | 0 => by simp [iteratedDerivAtZero]
@@ -178,12 +178,12 @@ theorem ratApprox_neg {n : ℕ} {x : ℚ} :
     ratApprox n (-x) = -ratApprox n x := by
   simp [ratApprox, neg_pow x, ← mul_assoc, iteratedDerivAtZero_mul_neg_one_pow, neg_div]
 
-theorem errorBound_nonneg {n : ℕ} {x : ℚ} :
+theorem ratErrorBound_nonneg {n : ℕ} {x : ℚ} :
     0 ≤ ratErrorBound n x := by
   simp [ratErrorBound]
   positivity
 
-theorem errorBound_neg {n : ℕ} {x : ℚ} :
+theorem ratErrorBound_neg {n : ℕ} {x : ℚ} :
     ratErrorBound n (-x) = ratErrorBound n x := by
   simp [ratErrorBound]
 
@@ -192,23 +192,32 @@ theorem ratApprox_bound (n : ℕ) (x : ℚ) :
   obtain neg | rfl | pos := lt_trichotomy x 0
   · rw [← neg_neg x]
     rw [Rat.cast_neg, sin_neg, Rat.cast_neg, ratApprox_neg, sub_eq_add_neg, ← neg_add, abs_neg,
-      Rat.cast_neg, ← sub_eq_add_neg, errorBound_neg, ← Rat.cast_neg]
+      Rat.cast_neg, ← sub_eq_add_neg, ratErrorBound_neg, ← Rat.cast_neg]
     exact ratApprox_bound_aux n (by grind)
-  · simpa using errorBound_nonneg
+  · simpa using ratErrorBound_nonneg
   · exact ratApprox_bound_aux n pos
 
-def upperBound (n : ℕ) (x : ℚ) : ℚ :=
-  ratApprox n x + ratErrorBound n x
-
+/--
+A lower bound on `sin x` for `x : ℚ` using the `n`-th Taylor polynomial.
+-/
 def lowerBound (n : ℕ) (x : ℚ) : ℚ :=
   ratApprox n x - ratErrorBound n x
 
+/--
+An upper bound on `sin x` for `x : ℚ` using the `n`-th Taylor polynomial.
+-/
+def upperBound (n : ℕ) (x : ℚ) : ℚ :=
+  ratApprox n x + ratErrorBound n x
+
+/--
+The interval `[lowerBound n x, upperBound n y]` containing `sin x` for `x : ℝ` contained in `[x, y]`
+using the `n`-th Taylor polynomial. This is only valid when `sin` is monotone on `[x, y]`.
+-/
 def interval (n : ℕ) (x y : ℚ) : ℚ × ℚ :=
   (lowerBound n x, upperBound n y)
 
-/-- info: ((-25 : Rat)/48, (25 : Rat)/48) -/
-#guard_msgs in
-#eval interval 2 (-1/2) (1/2)
+example : lowerBound 2 (-1/2) = -25/48 := by decide +kernel
+example : upperBound 3 (1/3) = 637/1944 := by decide +kernel
 
 theorem mem_interval (n : ℕ) {x y : ℚ} (wx : -1 ≤ x) (wy : y ≤ 1) {z : ℝ} (h : x ≤ z ∧ z ≤ y) :
     lowerBound n x ≤ sin z ∧ sin z ≤ upperBound n y := by
@@ -254,6 +263,7 @@ An interval propagator for `sin` on the interval `Set.Icc (-1) 1`.
 If we use the n-th Taylor polynomial,
 the introduced error is bounded by `1 / (n + 1)! ≤ 1 / 2^n`.
 So if we take `n = (q⁻¹).ceil.toNat.log2`, the error will be bounded by `q`.
+(But there is no need to formalize this.)
 One could do better (i.e. get away with a smaller `n`) by bounding the factorial more tightly,
 or using the input interval, which may be closer to zero.
 -/
