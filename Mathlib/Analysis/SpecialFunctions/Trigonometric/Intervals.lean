@@ -92,8 +92,6 @@ theorem iteratedDerivWithin_Icc {n : ℕ} {a b : ℝ} (h : a < b) {x : ℝ} (hx 
   · exact ContDiff.contDiffAt hf
   · exact hx
 
-end
-
 @[simp]
 theorem iteratedDerivWithin_sin_Icc (n : ℕ) {a b : ℝ} (h : a < b) {x : ℝ} (hx : x ∈ Set.Icc a b) :
     iteratedDerivWithin n Real.sin (Set.Icc a b) x = iteratedDeriv n Real.sin x :=
@@ -104,10 +102,17 @@ theorem iteratedDerivWithin_cos_Icc (n : ℕ) {a b : ℝ} (h : a < b) {x : ℝ} 
     iteratedDerivWithin n Real.cos (Set.Icc a b) x = iteratedDeriv n Real.cos x :=
   iteratedDerivWithin_Icc h hx Real.contDiff_cos
 
+end
+
 namespace Real.sin
 
 open Nat
 
+/--
+The `n`-th derivative of `sin` at `0` as a rational number.
+
+We use this to build rational approximations to `sin`.
+-/
 def iteratedDerivAtZero : ℕ → ℚ
 | 0 => 0
 | 1 => 1
@@ -117,10 +122,11 @@ def iteratedDerivAtZero : ℕ → ℚ
 def ratApprox (n : ℕ) (x : ℚ) : ℚ :=
   ∑ i ∈ Finset.range (n + 1), (iteratedDerivAtZero i * x ^ i) / i !
 
-def ratApprox.errorBound (n : ℕ) (x : ℚ) : ℚ :=
+/--
+The error bound for the `n`-th Taylor polynomial of `sin` at `0`.
+-/
+def ratErrorBound (n : ℕ) (x : ℚ) : ℚ :=
   |x| ^ (n + 1) / (n + 1)!
-
-attribute [simp] PolynomialModule.eval_smul
 
 theorem iteratedDerivAtZero_eq (n : ℕ) :
     iteratedDerivAtZero n = iteratedDeriv n sin 0 :=
@@ -129,6 +135,8 @@ theorem iteratedDerivAtZero_eq (n : ℕ) :
   | 1 => by simp [iteratedDerivAtZero]
   | n + 2 => by simp [iteratedDerivAtZero, iteratedDerivAtZero_eq]
 
+attribute [simp] PolynomialModule.eval_smul
+
 theorem ratApprox_eq {x : ℚ} {n : ℕ} (h : 0 < x) :
     (ratApprox n x : ℝ) = taylorWithinEval sin n (Set.Icc 0 ↑x) 0 ↑x := by
   have : (0 : ℝ) ∈ Set.Icc 0 (x : ℝ) := by simp; grind
@@ -136,12 +144,12 @@ theorem ratApprox_eq {x : ℚ} {n : ℕ} (h : 0 < x) :
   grind
 
 theorem ratApprox_bound_aux (n : ℕ) {x : ℚ} (h : 0 < x) :
-    |sin x - ratApprox n x| ≤ ratApprox.errorBound n x := by
+    |sin x - ratApprox n x| ≤ ratErrorBound n x := by
   have h' : 0 < (x : ℝ) := by rify at h; exact h
   have w := taylor_mean_remainder_lagrange (f := sin) (n := n) h' ?_ ?_
   · obtain ⟨x', m, w⟩ := w
     rw [ratApprox_eq h, w]
-    simp [abs_div, ratApprox.errorBound]
+    simp [abs_div, ratErrorBound]
     gcongr
     rw [iteratedDerivWithin_sin_Icc _ h' (by grind)]
     have t₁ := abs_iteratedDeriv_sin_le_one (n + 1) x'
@@ -171,16 +179,16 @@ theorem ratApprox_neg {n : ℕ} {x : ℚ} :
   simp [ratApprox, neg_pow x, ← mul_assoc, iteratedDerivAtZero_mul_neg_one_pow, neg_div]
 
 theorem errorBound_nonneg {n : ℕ} {x : ℚ} :
-    0 ≤ ratApprox.errorBound n x := by
-  simp [ratApprox.errorBound]
+    0 ≤ ratErrorBound n x := by
+  simp [ratErrorBound]
   positivity
 
 theorem errorBound_neg {n : ℕ} {x : ℚ} :
-    ratApprox.errorBound n (-x) = ratApprox.errorBound n x := by
-  simp [ratApprox.errorBound]
+    ratErrorBound n (-x) = ratErrorBound n x := by
+  simp [ratErrorBound]
 
 theorem ratApprox_bound (n : ℕ) (x : ℚ) :
-    |sin x - ratApprox n x| ≤ ratApprox.errorBound n x := by
+    |sin x - ratApprox n x| ≤ ratErrorBound n x := by
   obtain neg | rfl | pos := lt_trichotomy x 0
   · rw [← neg_neg x]
     rw [Rat.cast_neg, sin_neg, Rat.cast_neg, ratApprox_neg, sub_eq_add_neg, ← neg_add, abs_neg,
@@ -190,10 +198,10 @@ theorem ratApprox_bound (n : ℕ) (x : ℚ) :
   · exact ratApprox_bound_aux n pos
 
 def upperBound (n : ℕ) (x : ℚ) : ℚ :=
-  ratApprox n x + ratApprox.errorBound n x
+  ratApprox n x + ratErrorBound n x
 
 def lowerBound (n : ℕ) (x : ℚ) : ℚ :=
-  ratApprox n x - ratApprox.errorBound n x
+  ratApprox n x - ratErrorBound n x
 
 def interval (n : ℕ) (x y : ℚ) : ℚ × ℚ :=
   (lowerBound n x, upperBound n y)
