@@ -273,6 +273,7 @@ def Real.mul.propagator : IntervalPropagator₂ (· * ·) (-1) 1 (-1) 1 where
       split_ifs with h₁ h₂ <;>
       · constructor <;> (rify at *; by_cases 0 ≤ z.1 <;> nlinarith)
 
+-- We probably want to be able to specify the domain is an open interval.
 noncomputable def Real.inv.propagator : IntervalPropagator (·⁻¹) (1/2) 2 where
   forward q x y h := (y⁻¹, x⁻¹)
   mem q x y h z m := by
@@ -280,29 +281,34 @@ noncomputable def Real.inv.propagator : IntervalPropagator (·⁻¹) (1/2) 2 whe
     · constructor <;> apply inv_anti₀ <;> linarith
     linarith
 
-class RatComparision (α : Type) where
+-- A class for types in which we can do interval arithmetic,
+-- by virtuee of order comparisons with `ℚ` (later `Dyadic`).
+
+class IntervalArithmetic (α : Type) where
   le : α → ℚ → Prop
   ge : ℚ → α → Prop
 
-notation:80 x "≤ℚ" y => RatComparision.le x y
-notation:80 x "ℚ≤" y => RatComparision.ge x y
+notation:80 x "≤ℚ" y => IntervalArithmetic.le x y
+notation:80 x "ℚ≤" y => IntervalArithmetic.ge x y
 
-def IntervalType : Type 1 := Σ (α : Type), RatComparision α
+-- Speculative material about heteregeneous and arbitrary arity propagators.
 
-instance (α : IntervalType) : RatComparision α.1 := α.2
+def IntervalType : Type 1 := Σ (α : Type), IntervalArithmetic α
 
-abbrev typeVec (n : Nat) : Type 1 := Vector IntervalType n
+instance (α : IntervalType) : IntervalArithmetic α.1 := α.2
 
-def functionType (args : typeVec n) (dom : IntervalType) : Type :=
+abbrev IntervalTypeVec (n : Nat) : Type 1 := Vector IntervalType n
+
+def functionType (args : IntervalTypeVec n) (dom : IntervalType) : Type :=
   args.foldr (fun α β => α.1 → β) dom.1
 
-instance : RatComparision Nat where
+instance : IntervalArithmetic Nat where
   le x y := (x : Rat) ≤ y
   ge x y := x ≤ (y : Rat)
-instance : RatComparision Int where
+instance : IntervalArithmetic Int where
   le x y := (x : Rat) ≤ y
   ge x y := x ≤ (y : Rat)
-instance : RatComparision ℝ where
+instance : IntervalArithmetic ℝ where
   le x y := x ≤ (y : ℝ)
   ge y x := (y : ℝ) ≤ x
 
@@ -313,21 +319,21 @@ noncomputable example :
 
 def subbox (x y : Fin n → ℚ × ℚ) : Prop := ∀ i, (y i).1 ≤ (x i).1 ∧ (x i).2 ≤ (y i).2
 
-def point (types : typeVec n) : Type :=
+def point (types : IntervalTypeVec n) : Type :=
   Π (i : Fin n), types[i].1
 
-instance (types : typeVec n) (i : Fin n) :
-    RatComparision types[i].1 := types[i].2
+instance (types : IntervalTypeVec n) (i : Fin n) :
+    IntervalArithmetic types[i].1 := types[i].2
 
-def membox {types : typeVec n} (z : point types) (box : Fin n → ℚ × ℚ) : Prop :=
+def membox {types : IntervalTypeVec n} (z : point types) (box : Fin n → ℚ × ℚ) : Prop :=
   ∀ i : Fin n, ((box i).1 ℚ≤ z i) ∧ (z i ≤ℚ (box i).2)
 
-def eval {args : typeVec n} {dom : IntervalType}
+def eval {args : IntervalTypeVec n} {dom : IntervalType}
     (f : functionType args dom) (z : point types) : dom.1 :=
   sorry
 
 structure IntervalPropagator'
-    {n : Nat} (args : typeVec n) (dom : IntervalType)
+    {n : Nat} (args : IntervalTypeVec n) (dom : IntervalType)
     (f : functionType args dom) (validBox : Fin n → ℚ × ℚ) where
   forward (q : ℚ) (box : Fin n → ℚ × ℚ) (h : subbox box validBox) : ℚ × ℚ
   mem (q : ℚ) (box : Fin n → ℚ × ℚ) (h : subbox box validBox) (z : point types)
