@@ -1,5 +1,7 @@
 import Mathlib
 
+set_option autoImplicit true
+
 /-!
 # Examples of building interval propagators.
 -/
@@ -30,9 +32,9 @@ Notes:
   but we can automatically build one from the other.
 * The machinery that uses this will not know anything about `ℝ`, which lives in Mathlib.
   Instead, we will have a typeclass for "has order comparisons with `Dyadic`",
-  which Lean will provide for `ℚ` and Mathlib will provide for `ℝ`.
+  which Lean will provide for built in numeric types and Mathlib will provide for `ℝ`.
 * There will also be fancier versions that
-  * allow for multiple arguments
+  * allow for multiple arguments (including heterogeneous arguments)
   * can maintain state for subsequent calls at higher quality
   * can give suggestions about how to best split the input interval
 -/
@@ -199,7 +201,6 @@ def propagator : IntervalPropagator Real.sin (-1) 1 where
 end Real.sin
 
 
-
 /-!
 We can build forward propagators for functions which have rational approximations and a computable
 modulus of continuity, but I haven't implemented this yet.
@@ -209,7 +210,8 @@ Suppose we have a function $f : {\mathbb R} \to {\mathbb R}$, together with
   $$|\tilde f(x, \epsilon) - f(x)| < \epsilon$$
 * and a (computable) modulus of uniform continuity
   $\mu : {\mathbb Q_{>0}} \to {\mathbb Q_{>0}} \cup \{\infty\}$ satisfying
-  $$|x - y| < \mu(\epsilon) \rightarrow |f(x) - f(y)| < \epsilon.$$
+  $$|x - y| < \mu(\epsilon) \rightarrow |f(x) - f(y)| < \epsilon$$
+  for all $x, y ∈ {\mathbb R}$.
 
 Then we can construct a forward propagator for $f$ with quality $\epsilon \in {\mathbb Q}_{>0}$
 which takes an input interval $[a, b]$ and produces an output interval by:
@@ -227,3 +229,105 @@ The modulus of continuity may be allowed to depend on the input interval $[a,b]$
 when run on a smaller interval we could refine the previous subdivision
 and reuse previously computed values of $\tilde{f}$.)
 -/
+
+-- This is not what things will really look like:
+-- we'll have variable arity and heterogeneous arguments.
+structure IntervalPropagator₂ (f : ℝ → ℝ → ℝ) (a₁ b₁ a₂ b₂ : ℚ) where
+  forward (q : ℚ) (x₁ y₁ x₂ y₂ : ℚ)
+    (h₁ : Set.Icc x₁ y₁ ⊆ Set.Icc a₁ b₁) (h₂ : Set.Icc x₂ y₂ ⊆ Set.Icc a₂ b₂) : ℚ × ℚ
+  mem (q : ℚ) (x₁ y₁ x₂ y₂ : ℚ)
+    (h₁ : Set.Icc x₁ y₁ ⊆ Set.Icc a₁ b₁) (h₂ : Set.Icc x₂ y₂ ⊆ Set.Icc a₂ b₂)
+    (z : ℝ × ℝ) (m₁ : x₁ ≤ z.1 ∧ z.1 ≤ y₁) (m₂ : x₂ ≤ z.2 ∧ z.2 ≤ y₂) :
+    let (r, s) := forward q x₁ y₁ x₂ y₂ h₁ h₂
+    r ≤ f z.1 z.2 ∧ f z.1 z.2 ≤ s
+
+-- This works everywhere: we need WithBot and WithTop to describe the valid box.
+def Real.add.propagator : IntervalPropagator₂ (· + ·) (-1) 1 (-1) 1 where
+  forward q x₁ y₁ x₂ y₂ h₁ h₂ := (x₁ + x₂, y₁ + y₂)
+  mem q x₁ y₁ x₂ y₂ h₁ h₂ z m₁ m₂ := by
+    rify at *
+    grind
+
+def Real.mul.propagator : IntervalPropagator₂ (· * ·) (-1) 1 (-1) 1 where
+  forward q x₁ y₁ x₂ y₂ h₁ h₂ :=
+    if 0 ≤ x₁ then
+      if 0 ≤ x₂ then (x₁ * x₂, y₁ * y₂)
+      else if y₂ ≤ 0 then (y₁ * x₂, x₁ * y₂)
+      else (y₁ * x₂, y₁ * y₂)
+    else if y₁ ≤ 0 then
+      if 0 ≤ x₂ then sorry
+      else if y₂ ≤ 0 then sorry
+      else sorry
+    else
+      if 0 ≤ x₂ then sorry
+      else if y₂ ≤ 0 then sorry
+      else sorry
+  mem q x₁ y₁ x₂ y₂ h₁ h₂ z m₁ m₂ := by
+    rify at *
+    repeat' split
+    · constructor <;>
+      · simp
+        nlinarith
+    · constructor <;>
+      · simp
+        nlinarith
+    · constructor <;>
+      · simp
+        nlinarith
+    all_goals sorry
+
+
+class RatComparision (α : Type) where
+  le : α → ℚ → Prop
+  ge : ℚ → α → Prop
+
+notation:80 x "≤ℚ" y => RatComparision.le x y
+notation:80 x "ℚ≤" y => RatComparision.ge x y
+
+def IntervalType : Type 1 := Σ (α : Type), RatComparision α
+
+instance (α : IntervalType) : RatComparision α.1 := α.2
+
+abbrev typeVec (n : Nat) : Type 1 := Vector IntervalType n
+
+def functionType (args : typeVec n) (dom : IntervalType) : Type :=
+  args.foldr (fun α β => α.1 → β) dom.1
+
+instance : RatComparision Nat where
+  le x y := (x : Rat) ≤ y
+  ge x y := x ≤ (y : Rat)
+instance : RatComparision Int where
+  le x y := (x : Rat) ≤ y
+  ge x y := x ≤ (y : Rat)
+instance : RatComparision ℝ where
+  le x y := x ≤ (y : ℝ)
+  ge y x := (y : ℝ) ≤ x
+
+noncomputable example :
+    functionType #v[⟨ℝ, inferInstance⟩] ⟨ℝ, inferInstance⟩ := Real.sin
+noncomputable example :
+    functionType #v[⟨Int, inferInstance⟩, ⟨Nat, inferInstance⟩] ⟨Int, inferInstance⟩ := Int.pow
+
+def subbox (x y : Fin n → ℚ × ℚ) : Prop := ∀ i, (y i).1 ≤ (x i).1 ∧ (x i).2 ≤ (y i).2
+
+def point (types : typeVec n) : Type :=
+  Π (i : Fin n), types[i].1
+
+instance (types : typeVec n) (i : Fin n) :
+    RatComparision types[i].1 := types[i].2
+
+def membox {types : typeVec n} (z : point types) (box : Fin n → ℚ × ℚ) : Prop :=
+  ∀ i : Fin n, ((box i).1 ℚ≤ z i) ∧ (z i ≤ℚ (box i).2)
+
+def eval {args : typeVec n} {dom : IntervalType}
+    (f : functionType args dom) (z : point types) : dom.1 :=
+  sorry
+
+structure IntervalPropagator'
+    {n : Nat} (args : typeVec n) (dom : IntervalType)
+    (f : functionType args dom) (validBox : Fin n → ℚ × ℚ) where
+  forward (q : ℚ) (box : Fin n → ℚ × ℚ) (h : subbox box validBox) : ℚ × ℚ
+  mem (q : ℚ) (box : Fin n → ℚ × ℚ) (h : subbox box validBox) (z : point types)
+    (m : membox z box) :
+    let (r, s) := forward q box h
+    (r ℚ≤ eval f z) ∧ (eval f z ≤ℚ s)
