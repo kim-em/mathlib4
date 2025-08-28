@@ -255,27 +255,30 @@ def Real.mul.propagator : IntervalPropagator₂ (· * ·) (-1) 1 (-1) 1 where
       else if y₂ ≤ 0 then (y₁ * x₂, x₁ * y₂)
       else (y₁ * x₂, y₁ * y₂)
     else if y₁ ≤ 0 then
-      if 0 ≤ x₂ then sorry
-      else if y₂ ≤ 0 then sorry
-      else sorry
+      if 0 ≤ x₂ then (x₁ * y₂, y₁ * x₂)
+      else if y₂ ≤ 0 then (y₁ * y₂, x₁ * x₂)
+      else (x₁ * y₂, x₁ * x₂)
     else
-      if 0 ≤ x₂ then sorry
-      else if y₂ ≤ 0 then sorry
-      else sorry
+      if 0 ≤ x₂ then (x₁ * y₂, y₁ * y₂)
+      else if y₂ ≤ 0 then (y₁ * x₂, x₁ * x₂)
+      else (min (x₁ * y₂) (y₁ * x₂), max (x₁ * x₂) (y₁ * y₂))
   mem q x₁ y₁ x₂ y₂ h₁ h₂ z m₁ m₂ := by
     rify at *
     repeat' split
-    · constructor <;>
+    iterate 8
+      constructor <;>
       · simp
         nlinarith
-    · constructor <;>
-      · simp
-        nlinarith
-    · constructor <;>
-      · simp
-        nlinarith
-    all_goals sorry
+    · simp only [min_def, max_def]
+      split_ifs with h₁ h₂ <;>
+      · constructor <;> (rify at *; by_cases 0 ≤ z.1 <;> nlinarith)
 
+noncomputable def Real.inv.propagator : IntervalPropagator (·⁻¹) (1/2) 2 where
+  forward q x y h := (y⁻¹, x⁻¹)
+  mem q x y h z m := by
+    rw [Set.Icc_subset_Icc_iff] at h <;> rify at *
+    · constructor <;> apply inv_anti₀ <;> linarith
+    linarith
 
 class RatComparision (α : Type) where
   le : α → ℚ → Prop
