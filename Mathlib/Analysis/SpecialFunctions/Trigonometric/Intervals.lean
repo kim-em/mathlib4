@@ -230,6 +230,21 @@ when run on a smaller interval we could refine the previous subdivision
 and reuse previously computed values of $\tilde{f}$.)
 -/
 
+-- We probably want to be able to specify the domain is an open interval.
+noncomputable def Real.inv.propagator : IntervalPropagator (·⁻¹) (1/2) 2 where
+  forward q x y h := (y⁻¹, x⁻¹)
+  mem q x y h z m := by
+    rw [Set.Icc_subset_Icc_iff] at h <;> rify at *
+    · constructor <;> apply inv_anti₀ <;> linarith
+    linarith
+
+-- This works everywhere: we need WithBot and WithTop to describe the valid interval.
+noncomputable def Real.neg.propagator : IntervalPropagator (- ·) (-1) 1 where
+  forward q x y h := (-y, -x)
+  mem q x y h z m := by
+    rify at *
+    constructor <;> linarith
+
 -- This is not what things will really look like:
 -- we'll have variable arity and heterogeneous arguments.
 structure IntervalPropagator₂ (f : ℝ → ℝ → ℝ) (a₁ b₁ a₂ b₂ : ℚ) where
@@ -241,7 +256,6 @@ structure IntervalPropagator₂ (f : ℝ → ℝ → ℝ) (a₁ b₁ a₂ b₂ :
     let (r, s) := forward q x₁ y₁ x₂ y₂ h₁ h₂
     r ≤ f z.1 z.2 ∧ f z.1 z.2 ≤ s
 
--- This works everywhere: we need WithBot and WithTop to describe the valid box.
 def Real.add.propagator : IntervalPropagator₂ (· + ·) (-1) 1 (-1) 1 where
   forward q x₁ y₁ x₂ y₂ h₁ h₂ := (x₁ + x₂, y₁ + y₂)
   mem q x₁ y₁ x₂ y₂ h₁ h₂ z m₁ m₂ := by
@@ -273,29 +287,26 @@ def Real.mul.propagator : IntervalPropagator₂ (· * ·) (-1) 1 (-1) 1 where
       split_ifs with h₁ h₂ <;>
       · constructor <;> (rify at *; by_cases 0 ≤ z.1 <;> nlinarith)
 
--- We probably want to be able to specify the domain is an open interval.
-noncomputable def Real.inv.propagator : IntervalPropagator (·⁻¹) (1/2) 2 where
-  forward q x y h := (y⁻¹, x⁻¹)
-  mem q x y h z m := by
-    rw [Set.Icc_subset_Icc_iff] at h <;> rify at *
-    · constructor <;> apply inv_anti₀ <;> linarith
-    linarith
-
 -- A class for types in which we can do interval arithmetic,
--- by virtuee of order comparisons with `ℚ` (later `Dyadic`).
+-- by virtue of order comparisons with `ℚ` (later `Dyadic`).
 
-class IntervalArithmetic (α : Type) where
-  le : α → ℚ → Prop
-  ge : ℚ → α → Prop
+class IntervalArithmetic (α : Type) [LE α] where
+  upperBound : α → ℚ → Prop
+  lowerBound : ℚ → α → Prop
+  trans_upperBound : ∀ x y z, x ≤ y → upperBound y z → upperBound x z := by grind
+  upperBound_trans : ∀ x y z, upperBound x y → y ≤ z → upperBound x z := by grind
+  trans_lowerBound : ∀ x y z, x ≤ y → lowerBound y z → lowerBound x z := by grind
+  lowerBound_trans : ∀ x y z, lowerBound x y → y ≤ z → lowerBound x z := by grind
 
-notation:80 x "≤ℚ" y => IntervalArithmetic.le x y
-notation:80 x "ℚ≤" y => IntervalArithmetic.ge x y
+notation:80 x "≤ℚ" y => IntervalArithmetic.upperBound x y
+notation:80 x "ℚ≤" y => IntervalArithmetic.lowerBound x y
 
 -- Speculative material about heteregeneous and arbitrary arity propagators.
 
-def IntervalType : Type 1 := Σ (α : Type), IntervalArithmetic α
+def IntervalType : Type 1 := Σ (α : Type), Σ (_ : LE α), IntervalArithmetic α
 
-instance (α : IntervalType) : IntervalArithmetic α.1 := α.2
+instance (α : IntervalType) : LE α.1 := α.2.1
+instance (α : IntervalType) : IntervalArithmetic α.1 := α.2.2
 
 abbrev IntervalTypeVec (n : Nat) : Type 1 := Vector IntervalType n
 
@@ -303,27 +314,33 @@ def functionType (args : IntervalTypeVec n) (dom : IntervalType) : Type :=
   args.foldr (fun α β => α.1 → β) dom.1
 
 instance : IntervalArithmetic Nat where
-  le x y := (x : Rat) ≤ y
-  ge x y := x ≤ (y : Rat)
+  upperBound x y := (x : Rat) ≤ y
+  lowerBound x y := x ≤ (y : Rat)
+  trans_upperBound x y z h₁ h₂ := sorry
+  lowerBound_trans x y z h₁ h₂ := sorry
 instance : IntervalArithmetic Int where
-  le x y := (x : Rat) ≤ y
-  ge x y := x ≤ (y : Rat)
+  upperBound x y := (x : Rat) ≤ y
+  lowerBound x y := x ≤ (y : Rat)
+  trans_upperBound x y z h₁ h₂ := sorry
+  lowerBound_trans x y z h₁ h₂ := sorry
 instance : IntervalArithmetic ℝ where
-  le x y := x ≤ (y : ℝ)
-  ge y x := (y : ℝ) ≤ x
+  upperBound x y := x ≤ (y : ℝ)
+  lowerBound y x := (y : ℝ) ≤ x
+  trans_upperBound x y z h₁ h₂ := sorry
+  upperBound_trans x y z h₁ h₂ := sorry
+  trans_lowerBound x y z h₁ h₂ := sorry
+  lowerBound_trans x y z h₁ h₂ := sorry
 
 noncomputable example :
-    functionType #v[⟨ℝ, inferInstance⟩] ⟨ℝ, inferInstance⟩ := Real.sin
+    functionType #v[⟨ℝ, inferInstance, inferInstance⟩] ⟨ℝ, inferInstance, inferInstance⟩ := Real.sin
 noncomputable example :
-    functionType #v[⟨Int, inferInstance⟩, ⟨Nat, inferInstance⟩] ⟨Int, inferInstance⟩ := Int.pow
+    functionType #v[⟨Int, inferInstance, inferInstance⟩, ⟨Nat, inferInstance, inferInstance⟩]
+      ⟨Int, inferInstance, inferInstance⟩ := Int.pow
 
 def subbox (x y : Fin n → ℚ × ℚ) : Prop := ∀ i, (y i).1 ≤ (x i).1 ∧ (x i).2 ≤ (y i).2
 
 def point (types : IntervalTypeVec n) : Type :=
   Π (i : Fin n), types[i].1
-
-instance (types : IntervalTypeVec n) (i : Fin n) :
-    IntervalArithmetic types[i].1 := types[i].2
 
 def membox {types : IntervalTypeVec n} (z : point types) (box : Fin n → ℚ × ℚ) : Prop :=
   ∀ i : Fin n, ((box i).1 ℚ≤ z i) ∧ (z i ≤ℚ (box i).2)
