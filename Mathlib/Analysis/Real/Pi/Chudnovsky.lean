@@ -6,6 +6,8 @@ Authors: Kim Morrison
 import Batteries.Data.Rat.Float
 import Mathlib.Tactic.NormNum.NatLog
 import Mathlib.Analysis.Real.Pi.AsTask
+import Batteries.Util.Pickle
+import Mathlib.Tactic.Eval
 
 /-!
 # Chudnovsky's formula for π
@@ -141,20 +143,15 @@ def binarySplit_proof (n m : ℕ) : MetaM ((ℤ × ℤ × ℤ) × Expr) := do
           (← mkEqRefl q($p0)) (← mkEqRefl q($q0)) (← mkEqRefl q($t0)))
     else
       let r := n + (m - n) / 2
-      let t1 ← MetaM.asTask' do
-        let (s1, e1) ← binarySplit_proof n r
-        pure (s1, ← abstractProof e1)
-      let t2 ← MetaM.asTask' do
-        let (s2, e2) ← binarySplit_proof r m
-        pure (s2, ← abstractProof e2)
-      let t1 := t1.get
-      let t2 := t2.get
-      let ((p1, q1, t1), e1) ← t1
-      let ((p2, q2, t2), e2) ← t2
+      let ((p1, q1, t1), e1) ← binarySplit_proof n r
+      let ((p2, q2, t2), e2) ← binarySplit_proof r m
       let p0 := p1 * p2
       let q0 := q1 * q2
       let t0 := t1 * q2 + p1 * t2
-      let e ← binarySplit_helper_2_expr n m p0 q0 t0 p1 q1 t1 p2 q2 t2 r e1 e2
+      let e1 ← abstractProof e1
+      let e2 ← abstractProof e2
+      let e ←
+        binarySplit_helper_2_expr n m p0 q0 t0 p1 q1 t1 p2 q2 t2 r e1 e2
       return ((p0, q0, t0), e)
   else
     let (p0, q0, t0) := (1, 1, 0)
@@ -180,32 +177,70 @@ elab "binary_split_tac" : tactic => binarySplit_tac
 example : binarySplit 0 1 = (-720, 1575224475844608000, 21409520118014687772672000) := by
   binary_split_tac
 
+def pickleBinarySplit (n m : ℕ) : IO Unit := do
+  pickle s!"Mathlib/Analysis/Real/Pi/chudnovsky_{n}_{m}.olean" ((n, m), binarySplit n m)
+
+-- #eval pickleBinarySplit 0 1
+-- #eval pickleBinarySplit 0 10
+-- #eval pickleBinarySplit 0 100
+-- #eval pickleBinarySplit 0 1000
+-- #eval pickleBinarySplit 0 2000
+-- #eval pickleBinarySplit 0 5000
+-- #eval pickleBinarySplit 0 10000
+-- #eval pickleBinarySplit 0 71000
+
+def unpickleBinarySplit (n m : ℕ) : IO (ℤ × ℤ × ℤ) := unsafe do
+  withUnpickle s!"Mathlib/Analysis/Real/Pi/chudnovsky_{n}_{m}.olean"
+    fun t : ((ℕ × ℕ) × (ℤ × ℤ × ℤ)) =>
+      if t.1.1 ≠ n ∨ t.1.2 ≠ m then
+        throw <| IO.userError s!"Badly pickled file!"
+      else
+        return (t.2.1 * 1, t.2.2.1 * 1, t.2.2.2 * 1)
+
 open Lean.Elab.Term in
-elab "file!" s:str : term => unsafe do
-  let path ← evalTerm System.FilePath (Lean.mkConst ``System.FilePath) s
-  let ctx ← readThe Lean.Core.Context
-  let srcPath := System.FilePath.mk ctx.fileName
-  let some srcDir := srcPath.parent
-    | throwError "cannot compute parent directory of `{srcPath}`"
-  let path := srcDir / path
-  let lines ← IO.FS.lines path
-  let #[p, q, t] := lines.map String.toNat! | failure
-  let a : Q(ℤ × ℤ × Int) := q(($p, $q, $t))
-  return a
+elab "unpickleBinarySplit!" n:num m:num : term => unsafe do
+  let n := n.getNat
+  let m := m.getNat
+  let (p, q, t) ← unpickleBinarySplit n m
+  return toExpr (p, q, t)
 
-set_option profiler true in  -- about 1s
-theorem f1000 : binarySplit 0 1000 = (file! "chudnovsky_1000.txt") := by binary_split_tac
+#eval (binarySplit 0 71000).2.2.natAbs.log2
+#eval (unpickleBinarySplit! 0 71000).2.2.natAbs.log2
 
-set_option profiler true in  -- about 2s
-theorem f2000 : binarySplit 0 2000 = (file! "chudnovsky_2000.txt") := by binary_split_tac
-set_option profiler true in  -- about 16s
-theorem f10000 : binarySplit 0 10000 = (file! "chudnovsky_10000.txt") := by binary_split_tac
+
+-- set_option profiler true in  -- about 1s
+-- theorem f1000 : binarySplit 0 1000 = eval% binarySplit 0 1000 := by binary_split_tac
+
+-- set_option profiler true in  -- about 2s
+-- theorem f2000 : binarySplit 0 2000 = eval% binarySplit 0 2000 := by binary_split_tac
+
+-- set_option profiler true in  -- about 6s
+-- theorem f5000 : binarySplit 0 5000 = eval% binarySplit 0 5000 := by binary_split_tac
+
+-- set_option profiler true in  -- about 11s
+-- theorem f10000 : binarySplit 0 10000 = eval% binarySplit 0 10000 := by binary_split_tac
+
+-- set_option profiler true in
+-- theorem f20000 : binarySplit 0 20000 = eval% binarySplit 0 20000 := by binary_split_tac
 
 set_option profiler true in
--- `chudnovskyTerm 71001 < 10^(-1,001,000)`,
--- so this suffices to get `π` to over a million decimal places
-theorem f71000 : binarySplit 0 71000 = (file! "chudnovsky_71000.txt") := by binary_split_tac
+theorem f30000 : binarySplit 0 30000 = eval% binarySplit 0 30000 := by binary_split_tac
 
+-- set_option profiler true in
+-- theorem f40000 : binarySplit 0 40000 = eval% binarySplit 0 40000 := by binary_split_tac
+
+-- set_option profiler true in
+-- theorem f50000 : binarySplit 0 50000 = eval% binarySplit 0 50000 := by binary_split_tac
+
+-- set_option profiler true in
+-- theorem f60000 : binarySplit 0 60000 = eval% binarySplit 0 60000 := by binary_split_tac
+
+
+-- set_option profiler true in
+-- -- `chudnovskyTerm 71000 < 10^(-1,001,000)`,
+-- -- so this suffices to get `π` to over a million decimal places
+-- theorem f71000 : binarySplit 0 71000 = eval% binarySplit 0 71000 := by binary_split_tac
+#exit
 /--
 Variant of `binarySplit` that takes a fuel parameter, for evaluation in the kernel.
 -/
