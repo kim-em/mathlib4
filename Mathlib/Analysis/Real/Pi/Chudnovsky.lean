@@ -384,39 +384,22 @@ example : binarySplit 0 100 = eval% binarySplit 0 100 := by binary_split_tac
 
 set_option Elab.async false
 
-#time
-example : binarySplit 0 100000 = eval% binarySplit 0 100000 := by binary_split_tac
-#time
-example : binarySplit 0 200000 = eval% binarySplit 0 200000 := by binary_split_tac
-#time
-example : binarySplit 0 500000 = eval% binarySplit 0 500000 := by binary_split_tac
-#time
-example : binarySplit 0 1000000 = eval% binarySplit 0 1000000 := by binary_split_tac
-#time
-example : binarySplit 0 2000000 = eval% binarySplit 0 2000000 := by binary_split_tac
-#time
-example : binarySplit 0 5000000 = eval% binarySplit 0 5000000 := by binary_split_tac
+-- #time
+-- example : binarySplit 0 100000 = eval% binarySplit 0 100000 := by binary_split_tac
+-- #time
+-- example : binarySplit 0 200000 = eval% binarySplit 0 200000 := by binary_split_tac
+-- #time
+-- example : binarySplit 0 500000 = eval% binarySplit 0 500000 := by binary_split_tac
+-- #time
+-- example : binarySplit 0 1000000 = eval% binarySplit 0 1000000 := by binary_split_tac
+-- #time
+-- example : binarySplit 0 2000000 = eval% binarySplit 0 2000000 := by binary_split_tac
+-- #time
+-- example : binarySplit 0 5000000 = eval% binarySplit 0 5000000 := by binary_split_tac
 
 
 def sqrt_640320 : ℚ := Nat.sqrt (640320 * 4 * 10^(10^6))
 
-def sqrt (n : Nat) : Nat :=
-  if n ≤ 1 then n else
-  iter n (1 <<< ((n.log2 / 2) + 1))
-where
-  /-- Auxiliary for `sqrt`. If `guess` is greater than the integer square root of `n`,
-  returns the integer square root of `n`.
-
-  By default this well-founded recursion would be irreducible.
-  This prevents use `decide` to resolve `Nat.sqrt n` for small values of `n`,
-  so we mark this as `@[semireducible]`. -/
-  @[semireducible] iter (n guess : Nat) : Nat :=
-    let next := (guess + n / guess) / 2
-    if _h : next < guess then
-      iter n next
-    else
-      guess
-  termination_by guess
 
 #eval sqrt (10^(10^7)) |>.log2
 -- #eval Nat.log 10 (Nat.sqrt (10^(10^5)))
