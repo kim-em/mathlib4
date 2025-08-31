@@ -313,9 +313,8 @@ def binarySplit_proof (n m : ℕ) : MetaM ((ℤ × ℕ × ℤ) × Expr) := do
       let p0 := p1 * p2
       let q0 := q1 * q2
       let t0 := t1 * q2 + p1 * t2
-      -- Don't always abstract proofs, otherwise we get too many entries in the SnapshotTree :-(
-      let e1 ← if (m' - n').log2 % 4 = 0 then abstractProof e1 else pure e1
-      let e2 ← if (m' - n').log2 % 4 = 0 then abstractProof e2 else pure e2
+      let e1 ← abstractProof e1
+      let e2 ← abstractProof e2
       let e ← binarySplit_helper_2_expr n' m' p0 t0 p1 t1 p2 t2 q0 q1 q2 r e1 e2
       return memo.insert (n', m') ((p0, q0, t0), e)
 
@@ -385,11 +384,17 @@ example : binarySplit 0 100 = eval% binarySplit 0 100 := by binary_split_tac
 
 set_option Elab.async false
 
+#time
 example : binarySplit 0 100000 = eval% binarySplit 0 100000 := by binary_split_tac
+#time
 example : binarySplit 0 200000 = eval% binarySplit 0 200000 := by binary_split_tac
+#time
 example : binarySplit 0 500000 = eval% binarySplit 0 500000 := by binary_split_tac
+#time
 example : binarySplit 0 1000000 = eval% binarySplit 0 1000000 := by binary_split_tac
+#time
 example : binarySplit 0 2000000 = eval% binarySplit 0 2000000 := by binary_split_tac
+#time
 example : binarySplit 0 5000000 = eval% binarySplit 0 5000000 := by binary_split_tac
 
 
