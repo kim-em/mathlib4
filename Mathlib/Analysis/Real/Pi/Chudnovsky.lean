@@ -187,7 +187,7 @@ theorem prod_q {k n} (h : k ≤ n) :
     field_simp
     grind
 
-theorem binarySplitSum_eq_chudnovskySum (n : ℕ) :
+theorem binarySplitSum_eq_partialSum (n : ℕ) :
     binarySplitSum n = partialSum 0 n := by
   rw [binarySplitSum]
   dsimp only
@@ -255,12 +255,9 @@ def binarySplit_helper_2_expr
       (toExpr q0) (toExpr q1) (toExpr q2)) (toExpr r) (← mkEqRefl q($r)) w1 w2)
         (← mkEqRefl q($p0)) (← mkEqRefl q($q0)) (← mkEqRefl q($t0))
 
--- Non-recursive implementation using explicit stack and memoization
 def binarySplit_proof (n m : ℕ) : MetaM ((ℤ × ℕ × ℤ) × Expr) := do
-  -- Use a memoization table to store computed results
   let mut memo : Std.HashMap (ℕ × ℕ) ((ℤ × ℕ × ℤ) × Expr) := Std.HashMap.emptyWithCapacity (m - n)
 
-  -- Build work list in post-order (children before parents)
   let mut workList : Array (ℕ × ℕ) := Array.empty
   let mut toVisit : List (ℕ × ℕ × Bool) := [(n, m, false)]
 
@@ -269,32 +266,22 @@ def binarySplit_proof (n m : ℕ) : MetaM ((ℤ × ℕ × ℤ) × Expr) := do
     | [] => break
     | (n', m', visited) :: rest =>
       if visited then
-        -- Already visited children, add to work list
         workList := workList.push (n', m')
         toVisit := rest
       else if n' + 1 = m' || ¬(n' < m') then
-        -- Leaf node, add directly
         toVisit := rest
         workList := workList.push (n', m')
       else
-        -- Internal node, mark as visited and push children
         let r := n' + (m' - n') / 2
-        -- Push in order: left child, right child, then self (marked as visited)
-        -- This ensures children are processed before parent
         toVisit := (n', r, false) :: (r, m', false) :: (n', m', true) :: rest
 
-  -- Process work list (now in post-order)
-  -- IO.eprintln s!"WorkList: {workList.toList}"
   memo ← workList.foldlM (init := memo) fun memo (n', m') => do
-    -- IO.eprintln s!"Processing [{n'}, {m'}), current memo size: {memo.size}"
     if ¬(n' < m') then
-      -- Empty range
       let (p0, q0, t0) := (1, 1, 0)
       let e := mkApp3 (mkConst ``binarySplit_helper_3 [])
         (toExpr n') (toExpr m') (← mkEqRefl q(Nat.ble $m' $n'))
       return memo.insert (n', m') ((p0, q0, t0), e)
     else if n' + 1 = m' then
-      -- Base case: single element
       let (p0, q0, t0) := (p n', q n', (A n' * q n' : Int))
       let e := mkApp9 (mkConst ``binarySplit_helper_1 [])
         (toExpr n') (toExpr m') (← mkEqRefl q($n' + 1))
@@ -302,7 +289,6 @@ def binarySplit_proof (n m : ℕ) : MetaM ((ℤ × ℕ × ℤ) × Expr) := do
         (← mkEqRefl q($p0)) (← mkEqRefl q($q0)) (← mkEqRefl q($t0))
       return memo.insert (n', m') ((p0, q0, t0), e)
     else
-      -- Combine two children
       let r := n' + (m' - n') / 2
 
       let some ((p1, q1, t1), e1) := memo.get? (n', r) |
@@ -318,7 +304,6 @@ def binarySplit_proof (n m : ℕ) : MetaM ((ℤ × ℕ × ℤ) × Expr) := do
       let e ← binarySplit_helper_2_expr n' m' p0 t0 p1 t1 p2 t2 q0 q1 q2 r e1 e2
       return memo.insert (n', m') ((p0, q0, t0), e)
 
-  -- Return the root result
   match memo.get? (n, m) with
   | some result => return result
   | none => panic! s!"Failed to compute result for range [{n}, {m})"
