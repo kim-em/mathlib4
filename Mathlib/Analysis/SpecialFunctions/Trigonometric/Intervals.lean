@@ -360,39 +360,73 @@ def Real.mul.propagator : IntervalPropagator₂ (· * · : ℝ → ℝ → ℝ) 
 
 -- Speculative material about arbitrary arity propagators.
 
-def IntervalType : Type 1 := Σ (α : Type), Σ (_ : LE α), IntervalArithmetic α
+abbrev TypeVector (n : Nat) : Type 1 := Vector Type n
 
-instance (α : IntervalType) : LE α.1 := α.2.1
-instance (α : IntervalType) : IntervalArithmetic α.1 := α.2.2
+class TypeVector.LE (α : TypeVector n) : Type where
+  le : ∀ (i : Nat) (h : i < n), _root_.LE α[i]
 
-abbrev IntervalTypeVec (n : Nat) : Type 1 := Vector IntervalType n
+attribute [instance] TypeVector.LE.le
 
-def functionType (args : IntervalTypeVec n) (dom : IntervalType) : Type :=
-  args.foldr (fun α β => α.1 → β) dom.1
+class TypeVector.IntervalArithmetic (α : TypeVector n) [TypeVector.LE α] : Type where
+  intervalArithmetic : ∀ (i : Nat) (h : i < n), _root_.IntervalArithmetic α[i]
 
-noncomputable example :
-    functionType #v[⟨ℝ, inferInstance, inferInstance⟩] ⟨ℝ, inferInstance, inferInstance⟩ := Real.sin
-noncomputable example :
-    functionType #v[⟨Int, inferInstance, inferInstance⟩, ⟨Nat, inferInstance, inferInstance⟩]
-      ⟨Int, inferInstance, inferInstance⟩ := Int.pow
+attribute [instance] TypeVector.IntervalArithmetic.intervalArithmetic
 
-def subbox (x y : Fin n → ℚ × ℚ) : Prop := ∀ i, (y i).1 ≤ (x i).1 ∧ (x i).2 ≤ (y i).2
+instance TypeVector.LE_nil : TypeVector.LE #v[] where
+  le i h := by simp at h
+instance TypeVector.LE_cons [_root_.LE α] [I : TypeVector.LE (Vector.mk (List.toArray αs) rfl)] :
+    TypeVector.LE (Vector.mk (List.toArray (α :: αs)) rfl) where
+  le i h :=
+    match i with
+    | 0 => by
+      assumption
+    | i + 1 => by
+      apply @TypeVector.LE.le _ _ I i
+      grind
 
-def point (types : IntervalTypeVec n) : Type :=
-  Π (i : Fin n), types[i].1
+instance TypeVector.IntervalArithmetic_nil : TypeVector.IntervalArithmetic #v[] where
+  intervalArithmetic i h := by simp at h
+instance TypeVector.IntervalArithmetic_cons [_root_.LE α] [_root_.IntervalArithmetic α]
+    [I : TypeVector.LE (Vector.mk (List.toArray αs) rfl)]
+    [I' : TypeVector.IntervalArithmetic (Vector.mk (List.toArray αs) rfl)] :
+    TypeVector.IntervalArithmetic (Vector.mk (List.toArray (α :: αs)) rfl) where
+  intervalArithmetic i h :=
+    match i with
+    | 0 => by
+      assumption
+    | i + 1 => by
+      apply @TypeVector.IntervalArithmetic.intervalArithmetic _ _ _ I' i
 
-def membox {types : IntervalTypeVec n} (z : point types) (box : Fin n → ℚ × ℚ) : Prop :=
-  ∀ i : Fin n, ((box i).1 ℚ≤ z i) ∧ (z i ≤ℚ (box i).2)
+example : TypeVector.LE #v[ℝ, ℝ, ℝ] := inferInstance
+example : TypeVector.IntervalArithmetic #v[ℝ, ℝ, ℝ] := inferInstance
 
-def eval {args : IntervalTypeVec n} {dom : IntervalType}
-    (f : functionType args dom) (z : point types) : dom.1 :=
+def functionType (args : TypeVector n) (dom : Type) : Type :=
+  args.foldr (fun α β => α → β) dom
+
+noncomputable example : functionType #v[ℝ] ℝ := Real.sin
+example : functionType #v[ℤ, ℕ] ℤ := Int.pow
+
+def point (types : TypeVector n) : Type :=
+  Π (i : Nat) (h : i < n), types[i]
+
+def eval {args : TypeVector n} {dom : Type}
+    (f : functionType args dom) (z : point args) : dom :=
   sorry
 
+def subbox (x y : (i : Nat) → i < n → ℚ × ℚ) : Prop :=
+    ∀ i h, (y i h).1 ≤ (x i h).1 ∧ (x i h).2 ≤ (y i h).2
+
+def membox {types : TypeVector n} [TypeVector.LE types] [TypeVector.IntervalArithmetic types]
+    (z : point types) (box : (i : Nat) → i < n → ℚ × ℚ) : Prop :=
+  ∀ (i : Nat) (h : i < n), ((box i h).1 ℚ≤ z i h) ∧ (z i h ≤ℚ (box i h).2)
+
 structure IntervalPropagator'
-    {n : Nat} (args : IntervalTypeVec n) (dom : IntervalType)
-    (f : functionType args dom) (validBox : Fin n → ℚ × ℚ) where
-  forward (q : ℚ) (box : Fin n → ℚ × ℚ) (h : subbox box validBox) : ℚ × ℚ
-  mem (q : ℚ) (box : Fin n → ℚ × ℚ) (h : subbox box validBox) (z : point types)
+    {n : Nat}
+    (args : TypeVector n) [TypeVector.LE args] [TypeVector.IntervalArithmetic args]
+    (dom : Type) [LE dom] [IntervalArithmetic dom]
+    (f : functionType args dom) (validBox : (i : Nat) → i < n → ℚ × ℚ) where
+  forward (q : ℚ) (box : (i : Nat) → i < n → ℚ × ℚ) (h : subbox box validBox) : ℚ × ℚ
+  mem (q : ℚ) (box : (i : Nat) → i < n → ℚ × ℚ) (h : subbox box validBox) (z : point args)
     (m : membox z box) :
     let (r, s) := forward q box h
     (r ℚ≤ eval f z) ∧ (eval f z ≤ℚ s)
