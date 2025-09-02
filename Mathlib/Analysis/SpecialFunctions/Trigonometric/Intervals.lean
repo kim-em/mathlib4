@@ -360,73 +360,77 @@ def Real.mul.propagator : IntervalPropagator₂ (· * · : ℝ → ℝ → ℝ) 
 
 -- Speculative material about arbitrary arity propagators.
 
-abbrev TypeVector (n : Nat) : Type 1 := Vector Type n
+abbrev TypeList : Type 1 := List Type
 
-class TypeVector.LE (α : TypeVector n) : Type where
-  le : ∀ (i : Nat) (h : i < n), _root_.LE α[i]
+class TypeList.LE (α : TypeList) : Type where
+  le : ∀ (i : Nat) (h : i < α.length), _root_.LE α[i]
 
-attribute [instance] TypeVector.LE.le
+attribute [instance] TypeList.LE.le
 
-class TypeVector.IntervalArithmetic (α : TypeVector n) [TypeVector.LE α] : Type where
-  intervalArithmetic : ∀ (i : Nat) (h : i < n), _root_.IntervalArithmetic α[i]
+class TypeList.IntervalArithmetic (α : TypeList) [TypeList.LE α] : Type where
+  intervalArithmetic : ∀ (i : Nat) (h : i < α.length), _root_.IntervalArithmetic α[i]
 
-attribute [instance] TypeVector.IntervalArithmetic.intervalArithmetic
+attribute [instance] TypeList.IntervalArithmetic.intervalArithmetic
 
-instance TypeVector.LE_nil : TypeVector.LE #v[] where
+instance TypeList.LE_nil : TypeList.LE [] where
   le i h := by simp at h
-instance TypeVector.LE_cons [_root_.LE α] [I : TypeVector.LE (Vector.mk (List.toArray αs) rfl)] :
-    TypeVector.LE (Vector.mk (List.toArray (α :: αs)) rfl) where
+instance TypeList.LE_cons [_root_.LE α] [I : TypeList.LE αs] :
+    TypeList.LE (α :: αs) where
   le i h :=
     match i with
     | 0 => by
       assumption
     | i + 1 => by
-      apply @TypeVector.LE.le _ _ I i
-      grind
+      apply @TypeList.LE.le _ I i
 
-instance TypeVector.IntervalArithmetic_nil : TypeVector.IntervalArithmetic #v[] where
+instance TypeList.IntervalArithmetic_nil : TypeList.IntervalArithmetic [] where
   intervalArithmetic i h := by simp at h
-instance TypeVector.IntervalArithmetic_cons [_root_.LE α] [_root_.IntervalArithmetic α]
-    [I : TypeVector.LE (Vector.mk (List.toArray αs) rfl)]
-    [I' : TypeVector.IntervalArithmetic (Vector.mk (List.toArray αs) rfl)] :
-    TypeVector.IntervalArithmetic (Vector.mk (List.toArray (α :: αs)) rfl) where
+instance TypeList.IntervalArithmetic_cons [_root_.LE α] [_root_.IntervalArithmetic α]
+    [I : TypeList.LE αs]
+    [I' : TypeList.IntervalArithmetic αs] :
+    TypeList.IntervalArithmetic (α :: αs) where
   intervalArithmetic i h :=
     match i with
     | 0 => by
       assumption
     | i + 1 => by
-      apply @TypeVector.IntervalArithmetic.intervalArithmetic _ _ _ I' i
+      apply @TypeList.IntervalArithmetic.intervalArithmetic _ _ I' i
 
-example : TypeVector.LE #v[ℝ, ℝ, ℝ] := inferInstance
-example : TypeVector.IntervalArithmetic #v[ℝ, ℝ, ℝ] := inferInstance
+example : TypeList.LE [ℝ, ℝ, ℝ] := inferInstance
+example : TypeList.IntervalArithmetic [ℝ, ℝ, ℝ] := inferInstance
 
-def functionType (args : TypeVector n) (dom : Type) : Type :=
+def functionType (args : TypeList) (dom : Type) : Type :=
   args.foldr (fun α β => α → β) dom
 
-noncomputable example : functionType #v[ℝ] ℝ := Real.sin
-example : functionType #v[ℤ, ℕ] ℤ := Int.pow
+noncomputable example : functionType [ℝ] ℝ := Real.sin
+example : functionType [ℤ, ℕ] ℤ := Int.pow
 
-def point (types : TypeVector n) : Type :=
-  Π (i : Nat) (h : i < n), types[i]
+def point (types : TypeList) : Type :=
+  Π (i : Nat) (h : i < types.length), types[i]
 
-def eval {args : TypeVector n} {dom : Type}
+def point.head (p : point (α :: αs)) : α := p 0 (by simp)
+def point.tail (p : point (α :: αs)) : point αs := fun i h => p (i + 1) (by simpa using h)
+
+def eval {args : TypeList} {dom : Type}
     (f : functionType args dom) (z : point args) : dom :=
-  sorry
+  match args with
+  | [] => f
+  | _ :: _ => eval (f z.head) z.tail
 
 def subbox (x y : (i : Nat) → i < n → ℚ × ℚ) : Prop :=
     ∀ i h, (y i h).1 ≤ (x i h).1 ∧ (x i h).2 ≤ (y i h).2
 
-def membox {types : TypeVector n} [TypeVector.LE types] [TypeVector.IntervalArithmetic types]
-    (z : point types) (box : (i : Nat) → i < n → ℚ × ℚ) : Prop :=
-  ∀ (i : Nat) (h : i < n), ((box i h).1 ℚ≤ z i h) ∧ (z i h ≤ℚ (box i h).2)
+def membox {types : TypeList} [TypeList.LE types] [TypeList.IntervalArithmetic types]
+    (z : point types) (box : (i : Nat) → i < types.length → ℚ × ℚ) : Prop :=
+  ∀ (i : Nat) (h : i < types.length), ((box i h).1 ℚ≤ z i h) ∧ (z i h ≤ℚ (box i h).2)
 
 structure IntervalPropagator'
     {n : Nat}
-    (args : TypeVector n) [TypeVector.LE args] [TypeVector.IntervalArithmetic args]
+    (args : TypeList) [TypeList.LE args] [TypeList.IntervalArithmetic args]
     (dom : Type) [LE dom] [IntervalArithmetic dom]
-    (f : functionType args dom) (validBox : (i : Nat) → i < n → ℚ × ℚ) where
-  forward (q : ℚ) (box : (i : Nat) → i < n → ℚ × ℚ) (h : subbox box validBox) : ℚ × ℚ
-  mem (q : ℚ) (box : (i : Nat) → i < n → ℚ × ℚ) (h : subbox box validBox) (z : point args)
+    (f : functionType args dom) (validBox : (i : Nat) → i < args.length → ℚ × ℚ) where
+  forward (q : ℚ) (box : (i : Nat) → i < args.length → ℚ × ℚ) (h : subbox box validBox) : ℚ × ℚ
+  mem (q : ℚ) (box : (i : Nat) → i < args.length → ℚ × ℚ) (h : subbox box validBox) (z : point args)
     (m : membox z box) :
     let (r, s) := forward q box h
     (r ℚ≤ eval f z) ∧ (eval f z ≤ℚ s)
