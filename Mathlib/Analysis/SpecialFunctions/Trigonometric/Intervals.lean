@@ -294,6 +294,8 @@ noncomputable def Real.inv.propagator : IntervalPropagator (α := ℝ) (·⁻¹)
     linarith
 
 -- This works everywhere: we need WithBot and WithTop to describe the valid interval.
+-- I'm busy trying to making `WithBot` usable at
+-- https://github.com/leanprover-community/mathlib4/pull/27918
 noncomputable def Real.neg.propagator : IntervalPropagator (α := ℝ) (- ·) (-1) 1 where
   forward q x y h := (-y, -x)
   mem q x y h z m := by
