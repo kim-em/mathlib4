@@ -7,6 +7,55 @@ set_option autoImplicit true
 -/
 
 /--
+A class for types in which we can do interval arithmetic,
+by virtue of order comparisons with `ℚ` (later `Dyadic`).
+-/
+class IntervalArithmetic (α : Type) [LE α] where
+  upperBound : α → ℚ → Prop
+  lowerBound : ℚ → α → Prop
+  trans_upperBound : ∀ x y z, x ≤ y → upperBound y z → upperBound x z := by grind
+  upperBound_trans : ∀ x y z, upperBound x y → y ≤ z → upperBound x z := by grind
+  trans_lowerBound : ∀ x y z, x ≤ y → lowerBound y z → lowerBound x z := by grind
+  lowerBound_trans : ∀ x y z, lowerBound x y → y ≤ z → lowerBound x z := by grind
+
+infix:50 " ≤ℚ " => IntervalArithmetic.upperBound
+infix:50 " ℚ≤ " => IntervalArithmetic.lowerBound
+
+instance : IntervalArithmetic Nat where
+  upperBound x y := (x : Rat) ≤ y
+  lowerBound x y := x ≤ (y : Rat)
+  trans_upperBound x y z h₁ h₂ := by qify at h₁; grind
+  lowerBound_trans x y z h₁ h₂ := by qify at h₂; grind
+
+@[simp, grind =]
+theorem Nat.IntervalArithmetic.upperBound (x : Nat) (y : Rat) : x ≤ℚ y ↔ (x : Rat) ≤ y := Iff.rfl
+@[simp, grind =]
+theorem Nat.IntervalArithmetic.lowerBound (x : Rat) (y : Nat) : x ℚ≤ y ↔ x ≤ (y : Nat) := Iff.rfl
+
+instance : IntervalArithmetic Int where
+  upperBound x y := (x : Rat) ≤ y
+  lowerBound x y := x ≤ (y : Rat)
+  trans_upperBound x y z h₁ h₂ := by qify at h₁; grind
+  lowerBound_trans x y z h₁ h₂ := by qify at h₂; grind
+
+@[simp, grind =]
+theorem Int.IntervalArithmetic.upperBound (x : Int) (y : Rat) : x ≤ℚ y ↔ (x : Rat) ≤ y := Iff.rfl
+@[simp, grind =]
+theorem Int.IntervalArithmetic.lowerBound (x : Rat) (y : Int) : x ℚ≤ y ↔ x ≤ (y : Int) := Iff.rfl
+
+-- This instance will live in Mathlib
+instance : IntervalArithmetic ℝ where
+  upperBound x y := x ≤ (y : ℝ)
+  lowerBound y x := (y : ℝ) ≤ x
+  upperBound_trans x y z h₁ h₂ := by rify at h₂; grind
+  trans_lowerBound x y z h₁ h₂ := by rify at h₁; grind
+
+@[simp, grind =]
+theorem Real.IntervalArithmetic.upperBound (x : ℝ) (y : Rat) : x ≤ℚ y ↔ x ≤ (y : ℝ) := Iff.rfl
+@[simp, grind =]
+theorem Real.IntervalArithmetic.lowerBound (x : Rat) (y : ℝ) : x ℚ≤ y ↔ (x : ℝ) ≤ y := Iff.rfl
+
+/--
 A machine for propagating intervals through a function.
 (The interface here will certainly change.)
 
@@ -20,11 +69,13 @@ which is used to control the effort expended in producing a tight interval.
 No guarantees are required regarding the dependence on `q`,
 but we suggest that where possible the additional error introduced should be bounded by `q`.
 -/
-structure IntervalPropagator (f : ℝ → ℝ) (a b : ℚ) where
+structure IntervalPropagator
+    {α β : Type} [LE α] [LE β] [IntervalArithmetic α] [IntervalArithmetic β]
+    (f : α → β) (a b : ℚ) where
   forward (q : ℚ) (x : ℚ) (y : ℚ) (h : Set.Icc x y ⊆ Set.Icc a b) : ℚ × ℚ
-  mem (q : ℚ) (x : ℚ) (y : ℚ) (h : Set.Icc x y ⊆ Set.Icc a b) (z : ℝ) (m : x ≤ z ∧ z ≤ y) :
+  mem (q : ℚ) (x : ℚ) (y : ℚ) (h : Set.Icc x y ⊆ Set.Icc a b) (z : α) (m : x ℚ≤ z ∧ z ≤ℚ y) :
     let (r, s) := forward q x y h
-    r ≤ f z ∧ f z ≤ s
+    r ℚ≤ f z ∧ f z ≤ℚ s
 
 /-!
 Notes:
@@ -34,7 +85,7 @@ Notes:
   Instead, we will have a typeclass for "has order comparisons with `Dyadic`",
   which Lean will provide for built in numeric types and Mathlib will provide for `ℝ`.
 * There will also be fancier versions that
-  * allow for multiple arguments (including heterogeneous arguments)
+  * allow for multiple arguments
   * can maintain state for subsequent calls at higher quality
   * can give suggestions about how to best split the input interval
 -/
@@ -120,16 +171,16 @@ private theorem iteratedDerivAtZero_mul_neg_one_pow {n : ℕ} :
   | 1 => by simp [iteratedDerivAtZero]
   | n + 2 => by simp [iteratedDerivAtZero, pow_add, iteratedDerivAtZero_mul_neg_one_pow]
 
-theorem ratApprox_neg {n : ℕ} {x : ℚ} :
+private theorem ratApprox_neg {n : ℕ} {x : ℚ} :
     ratApprox n (-x) = -ratApprox n x := by
   simp [ratApprox, neg_pow x, ← mul_assoc, iteratedDerivAtZero_mul_neg_one_pow, neg_div]
 
-theorem ratErrorBound_nonneg {n : ℕ} {x : ℚ} :
+private theorem ratErrorBound_nonneg {n : ℕ} {x : ℚ} :
     0 ≤ ratErrorBound n x := by
   simp [ratErrorBound]
   positivity
 
-theorem ratErrorBound_neg {n : ℕ} {x : ℚ} :
+private theorem ratErrorBound_neg {n : ℕ} {x : ℚ} :
     ratErrorBound n (-x) = ratErrorBound n x := by
   simp [ratErrorBound]
 
@@ -231,38 +282,41 @@ and reuse previously computed values of $\tilde{f}$.)
 -/
 
 -- We probably want to be able to specify the domain is an open interval.
-noncomputable def Real.inv.propagator : IntervalPropagator (·⁻¹) (1/2) 2 where
+noncomputable def Real.inv.propagator : IntervalPropagator (α := ℝ) (·⁻¹) (1/2) 2 where
   forward q x y h := (y⁻¹, x⁻¹)
   mem q x y h z m := by
-    rw [Set.Icc_subset_Icc_iff] at h <;> rify at *
+    rw [Set.Icc_subset_Icc_iff] at h <;> simp at * <;> rify at *
     · constructor <;> apply inv_anti₀ <;> linarith
     linarith
 
 -- This works everywhere: we need WithBot and WithTop to describe the valid interval.
-noncomputable def Real.neg.propagator : IntervalPropagator (- ·) (-1) 1 where
+noncomputable def Real.neg.propagator : IntervalPropagator (α := ℝ) (- ·) (-1) 1 where
   forward q x y h := (-y, -x)
   mem q x y h z m := by
-    rify at *
+    simp at *
     constructor <;> linarith
 
 -- This is not what things will really look like:
--- we'll have variable arity and heterogeneous arguments.
-structure IntervalPropagator₂ (f : ℝ → ℝ → ℝ) (a₁ b₁ a₂ b₂ : ℚ) where
+-- we'll have variable arity arguments.
+structure IntervalPropagator₂
+    {α β γ : Type} [LE α] [LE β] [LE γ]
+    [IntervalArithmetic α] [IntervalArithmetic β] [IntervalArithmetic γ]
+    (f : α → β → γ) (a₁ b₁ a₂ b₂ : ℚ) where
   forward (q : ℚ) (x₁ y₁ x₂ y₂ : ℚ)
     (h₁ : Set.Icc x₁ y₁ ⊆ Set.Icc a₁ b₁) (h₂ : Set.Icc x₂ y₂ ⊆ Set.Icc a₂ b₂) : ℚ × ℚ
   mem (q : ℚ) (x₁ y₁ x₂ y₂ : ℚ)
     (h₁ : Set.Icc x₁ y₁ ⊆ Set.Icc a₁ b₁) (h₂ : Set.Icc x₂ y₂ ⊆ Set.Icc a₂ b₂)
-    (z : ℝ × ℝ) (m₁ : x₁ ≤ z.1 ∧ z.1 ≤ y₁) (m₂ : x₂ ≤ z.2 ∧ z.2 ≤ y₂) :
+    (z : α × β) (m₁ : x₁ ℚ≤ z.1 ∧ z.1 ≤ℚ y₁) (m₂ : x₂ ℚ≤ z.2 ∧ z.2 ≤ℚ y₂) :
     let (r, s) := forward q x₁ y₁ x₂ y₂ h₁ h₂
-    r ≤ f z.1 z.2 ∧ f z.1 z.2 ≤ s
+    r ℚ≤ f z.1 z.2 ∧ f z.1 z.2 ≤ℚ s
 
-def Real.add.propagator : IntervalPropagator₂ (· + ·) (-1) 1 (-1) 1 where
+def Real.add.propagator : IntervalPropagator₂ (· + · : ℝ → ℝ → ℝ) (-1) 1 (-1) 1 where
   forward q x₁ y₁ x₂ y₂ h₁ h₂ := (x₁ + x₂, y₁ + y₂)
   mem q x₁ y₁ x₂ y₂ h₁ h₂ z m₁ m₂ := by
-    rify at *
+    simp at *
     grind
 
-def Real.mul.propagator : IntervalPropagator₂ (· * ·) (-1) 1 (-1) 1 where
+def Real.mul.propagator : IntervalPropagator₂ (· * · : ℝ → ℝ → ℝ) (-1) 1 (-1) 1 where
   forward q x₁ y₁ x₂ y₂ h₁ h₂ :=
     if 0 ≤ x₁ then
       if 0 ≤ x₂ then (x₁ * x₂, y₁ * y₂)
@@ -277,6 +331,7 @@ def Real.mul.propagator : IntervalPropagator₂ (· * ·) (-1) 1 (-1) 1 where
       else if y₂ ≤ 0 then (y₁ * x₂, x₁ * x₂)
       else (min (x₁ * y₂) (y₁ * x₂), max (x₁ * x₂) (y₁ * y₂))
   mem q x₁ y₁ x₂ y₂ h₁ h₂ z m₁ m₂ := by
+    simp at *
     rify at *
     repeat' split
     iterate 8
@@ -287,19 +342,6 @@ def Real.mul.propagator : IntervalPropagator₂ (· * ·) (-1) 1 (-1) 1 where
       split_ifs with h₁ h₂ <;>
       · constructor <;> (rify at *; by_cases 0 ≤ z.1 <;> nlinarith)
 
--- A class for types in which we can do interval arithmetic,
--- by virtue of order comparisons with `ℚ` (later `Dyadic`).
-
-class IntervalArithmetic (α : Type) [LE α] where
-  upperBound : α → ℚ → Prop
-  lowerBound : ℚ → α → Prop
-  trans_upperBound : ∀ x y z, x ≤ y → upperBound y z → upperBound x z := by grind
-  upperBound_trans : ∀ x y z, upperBound x y → y ≤ z → upperBound x z := by grind
-  trans_lowerBound : ∀ x y z, x ≤ y → lowerBound y z → lowerBound x z := by grind
-  lowerBound_trans : ∀ x y z, lowerBound x y → y ≤ z → lowerBound x z := by grind
-
-notation:80 x "≤ℚ" y => IntervalArithmetic.upperBound x y
-notation:80 x "ℚ≤" y => IntervalArithmetic.lowerBound x y
 
 -- Speculative material about heteregeneous and arbitrary arity propagators.
 
@@ -312,24 +354,6 @@ abbrev IntervalTypeVec (n : Nat) : Type 1 := Vector IntervalType n
 
 def functionType (args : IntervalTypeVec n) (dom : IntervalType) : Type :=
   args.foldr (fun α β => α.1 → β) dom.1
-
-instance : IntervalArithmetic Nat where
-  upperBound x y := (x : Rat) ≤ y
-  lowerBound x y := x ≤ (y : Rat)
-  trans_upperBound x y z h₁ h₂ := sorry
-  lowerBound_trans x y z h₁ h₂ := sorry
-instance : IntervalArithmetic Int where
-  upperBound x y := (x : Rat) ≤ y
-  lowerBound x y := x ≤ (y : Rat)
-  trans_upperBound x y z h₁ h₂ := sorry
-  lowerBound_trans x y z h₁ h₂ := sorry
-instance : IntervalArithmetic ℝ where
-  upperBound x y := x ≤ (y : ℝ)
-  lowerBound y x := (y : ℝ) ≤ x
-  trans_upperBound x y z h₁ h₂ := sorry
-  upperBound_trans x y z h₁ h₂ := sorry
-  trans_lowerBound x y z h₁ h₂ := sorry
-  lowerBound_trans x y z h₁ h₂ := sorry
 
 noncomputable example :
     functionType #v[⟨ℝ, inferInstance, inferInstance⟩] ⟨ℝ, inferInstance, inferInstance⟩ := Real.sin
