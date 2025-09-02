@@ -298,6 +298,17 @@ noncomputable def Real.neg.propagator : IntervalPropagator (α := ℝ) (- ·) (-
 
 -- This is not what things will really look like:
 -- we'll have variable arity arguments.
+structure IntervalPropagator₀
+    {α : Type} [LE α] [IntervalArithmetic α] (f : α) where
+  forward (q : ℚ) : ℚ × ℚ
+  mem (q : ℚ) :
+    let (r, s) := forward q
+    r ℚ≤ f ∧ f ≤ℚ s
+
+-- TODO: an example of a 0-ary propagator, e.g. approximating `π`.
+
+-- This is not what things will really look like:
+-- we'll have variable arity arguments.
 structure IntervalPropagator₂
     {α β γ : Type} [LE α] [LE β] [LE γ]
     [IntervalArithmetic α] [IntervalArithmetic β] [IntervalArithmetic γ]
@@ -318,6 +329,10 @@ def Real.add.propagator : IntervalPropagator₂ (· + · : ℝ → ℝ → ℝ) 
 
 def Real.mul.propagator : IntervalPropagator₂ (· * · : ℝ → ℝ → ℝ) (-1) 1 (-1) 1 where
   forward q x₁ y₁ x₂ y₂ h₁ h₂ :=
+    -- It might be nice to use the more uniform
+    -- (min (min (x₁ * x₂) (x₁ * y₂)) (min (y₁ * x₂) (y₁ * y₂)),
+    --   max (max (x₁ * x₂) (x₁ * y₂)) (max (y₁ * x₂) (y₁ * y₂)))
+    -- but I couldn't immediately get the proofs through.
     if 0 ≤ x₁ then
       if 0 ≤ x₂ then (x₁ * x₂, y₁ * y₂)
       else if y₂ ≤ 0 then (y₁ * x₂, x₁ * y₂)
@@ -343,7 +358,7 @@ def Real.mul.propagator : IntervalPropagator₂ (· * · : ℝ → ℝ → ℝ) 
       · constructor <;> (rify at *; by_cases 0 ≤ z.1 <;> nlinarith)
 
 
--- Speculative material about heteregeneous and arbitrary arity propagators.
+-- Speculative material about arbitrary arity propagators.
 
 def IntervalType : Type 1 := Σ (α : Type), Σ (_ : LE α), IntervalArithmetic α
 
