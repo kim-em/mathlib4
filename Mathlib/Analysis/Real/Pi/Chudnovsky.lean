@@ -6,8 +6,6 @@ Authors: Kim Morrison
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Batteries.Data.Rat.Float
 import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Analysis.Real.Pi.AsTask
-import Batteries.Util.Pickle
 import Mathlib.Tactic.Eval
 import Std.Data.HashMap.Basic
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
@@ -180,7 +178,7 @@ theorem prod_q {k n} (h : k ≤ n) :
   obtain ⟨c, rfl⟩ := exists_add_of_le h
   induction c with
   | zero =>
-    field_simp
+    simp [field]
   | succ c ih =>
     simp [← Nat.add_assoc]
     rw [Finset.prod_Ico_succ_top (by grind), ih (by grind), q]
@@ -217,7 +215,7 @@ theorem binarySplitSum_eq_partialSum (n : ℕ) :
   rw [← zpow_mul, ← zpow_mul]
   simp only [← Rat.zpow_natCast]
   rw [← zpow_mul]
-  field_simp
+  simp [field]
   grind
 
 theorem binarySplit_helper_1 (n m : ℕ) (h : n + 1 = m) (p0 : ℤ) (q0 : ℕ) (t0 : ℤ)
@@ -259,8 +257,11 @@ def binarySplit_helper_2_expr
       (toExpr q0) (toExpr q1) (toExpr q2)) (toExpr r) (← mkEqRefl q($r)) w1 w2)
         (← mkEqRefl q($p0)) (← mkEqRefl q($q0)) (← mkEqRefl q($t0))
 
+/-- We use a HashMap to collect partial proof terms, as a recursive definition that follows the
+structure of `binarySplit` itself will consume all stack space in the range we're interested in. -/
 def binarySplit_proof (n m : ℕ) : MetaM ((ℤ × ℕ × ℤ) × Expr) := do
-  let mut memo : Std.HashMap (ℕ × ℕ) ((ℤ × ℕ × ℤ) × Expr) := Std.HashMap.emptyWithCapacity (m - n)
+  let mut memo : Std.HashMap (ℕ × ℕ) ((ℤ × ℕ × ℤ) × Expr) :=
+    Std.HashMap.emptyWithCapacity (3 * (m - n))
 
   let mut workList : Array (ℕ × ℕ) := Array.empty
   let mut toVisit : List (ℕ × ℕ × Bool) := [(n, m, false)]
