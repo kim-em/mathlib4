@@ -336,7 +336,9 @@ example : binarySplit 0 4 = eval% binarySplit 0 4 := by binary_split_tac
 example : binarySplit 0 100 = eval% binarySplit 0 100 := by binary_split_tac
 
 -- set_option profiler true in  -- about 1s
--- theorem f1000 : binarySplit 0 1000 = eval% binarySplit 0 1000 := by binary_split_tac
+theorem f100 : binarySplit 0 100 = eval% binarySplit 0 100 := by simp! [binarySplit, p, q, A]
+
+theorem f1000 : binarySplit 0 1000 = eval% binarySplit 0 1000 := by binary_split_tac
 
 -- set_option profiler true in  -- about 2s
 -- theorem f_1000_2000 : binarySplit 1000 2000 = eval% binarySplit 1000 2000 := by binary_split_tac
@@ -375,16 +377,14 @@ set_option Elab.async false
 
 -- #time
 -- example : binarySplit 0 100000 = eval% binarySplit 0 100000 := by binary_split_tac
--- #time
+-- #time -- 278s
 -- example : binarySplit 0 200000 = eval% binarySplit 0 200000 := by binary_split_tac
--- #time
+-- #time -- 820s
 -- example : binarySplit 0 500000 = eval% binarySplit 0 500000 := by binary_split_tac
--- #time
+-- #time -- 1600s -- this one is enough to get 10 million decimal places of pi.
+-- example : binarySplit 0 710000 = eval% binarySplit 0 710000 := by binary_split_tac
+-- #time -- stackoverflow (and consumes all memory)
 -- example : binarySplit 0 1000000 = eval% binarySplit 0 1000000 := by binary_split_tac
--- #time
--- example : binarySplit 0 2000000 = eval% binarySplit 0 2000000 := by binary_split_tac
--- #time
--- example : binarySplit 0 5000000 = eval% binarySplit 0 5000000 := by binary_split_tac
 
 
 def sqrt_640320 : ℚ := Nat.sqrt (640320 * 4 * 10^(10^6))
