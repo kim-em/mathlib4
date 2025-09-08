@@ -42,7 +42,7 @@ open Nat
 
 /-- The numerator of the nth term in Chudnovsky's series -/
 def chudnovskyNum (n : ℕ) : ℤ :=
-  (-1 : ℤ) ^ n * (6 * n)! * (545140134 * n + 13591409)
+  (6 * n)! * (545140134 * n + 13591409)
 
 /-- The denominator of the nth term in Chudnovsky's series -/
 def chudnovskyDenom (n : ℕ) : ℕ :=
@@ -56,16 +56,67 @@ def chudnovskyTerm (n : ℕ) : ℚ :=
 /-- info: 3.141593 -/
 #guard_msgs in
 #eval 1 / (12 / (640320 : Float) ^ (3 / 2) *
-  (List.ofFn fun n : Fin 37 => (chudnovskyTerm n).toFloat).sum)
+  (List.ofFn fun n : Fin 37 => ((-1) ^ (n : Nat) * chudnovskyTerm n).toFloat).sum)
 
 /-- The infinite sum in Chudnovsky's formula for `π⁻¹` -/
 noncomputable def chudnovskySum : ℝ :=
-  12 / (640320 : ℝ) ^ (3 / 2 : ℝ) * ∑' n : ℕ, (chudnovskyTerm n : ℝ)
+  12 / (640320 : ℝ) ^ (3 / 2 : ℝ) * ∑' n : ℕ, ((-1) ^ n * chudnovskyTerm n : ℝ)
 
 /-- **Chudnovsky's formula**: The sum equals `π⁻¹` -/
 proof_wanted chudnovskySum_eq_pi_inv : chudnovskySum = π⁻¹
 
+namespace Summable
+
+open Filter Finset
+open Topology
+
+theorem alternating {f : ℕ → ℝ} (hf : Summable f) :
+    Summable (fun n => (-1) ^ n * f n) :=
+  Summable.of_abs (by simpa [summable_abs_iff])
+
+theorem tendsto_alternating_series_tsum {f : ℕ → ℝ} (hfs : Summable f) :
+    Tendsto (fun n => (∑ i ∈ range n, (-1) ^ i * f i)) atTop (𝓝 (∑' i : ℕ, (-1) ^ i * f i)) :=
+  Summable.tendsto_sum_tsum_nat hfs.alternating
+
+theorem alternating_series_error_bound
+    (f : ℕ → ℝ) (hfa : Antitone f) (hfs : Summable f) (n : ℕ) :
+    |(∑' i : ℕ, (-1) ^ i * f i) - (∑ i ∈ range n, (-1) ^ i * f i)| ≤ f n := by
+  obtain h := hfs.tendsto_alternating_series_tsum
+  have upper := hfa.alternating_series_le_tendsto h
+  have lower := hfa.tendsto_le_alternating_series h
+  obtain (h | h) := even_or_odd n
+  · obtain ⟨n, rfl⟩ := even_iff_exists_two_mul.mp h
+    specialize upper n
+    specialize lower n
+    simp [Finset.sum_range_succ] at lower
+    rw [abs_sub_le_iff]
+    constructor <;> linarith
+  · obtain ⟨n, rfl⟩ := odd_iff_exists_bit1.mp h
+    specialize upper (n + 1)
+    specialize lower n
+    rw [Nat.mul_add, Finset.sum_range_succ,
+      show (-1 : ℝ) ^ (2 * n + 1) = -1 by simp [pow_add]] at upper
+    rw [abs_sub_le_iff]
+    constructor <;> linarith
+
+end Summable
 namespace Chudnovsky
+
+example : 640320 = 2^6 * 10005 := by rfl
+
+def partialSum (n m : ℕ) : ℚ :=
+  ∑ k ∈ Finset.Ico n m, (-1 : ℤ) ^ k * chudnovskyTerm k
+
+theorem foo (n : ℕ) :
+    |(∑' n : ℕ, ((-1) ^ n * chudnovskyTerm n : ℝ)) - partialSum 0 n| ≤ |chudnovskyTerm n| := by
+  unfold partialSum
+  simp
+  have := Summable.alternating_series_error_bound
+    (fun n => (chudnovskyTerm n : ℝ)) sorry sorry n
+  apply le_trans this
+  apply le_abs_self
+
+-- Still a few steps missing here.
 
 /-- The constant C = 640320^3 used in the binary splitting -/
 def C : ℕ := 640320 ^ 3
@@ -161,9 +212,6 @@ def binarySplitSum (n : ℕ) : ℚ :=
   let (_, q, t) := binarySplit 0 n
   t / q
 
-def partialSum (n m : ℕ) : ℚ :=
-  ∑ k ∈ Finset.Ico n m, chudnovskyTerm k
-
 theorem prod_p {k} : ∏ i ∈ Finset.Ico 0 k, (p i : ℚ) = (-1)^k * (6 * k)! := by
   induction k with
   | zero => simp
@@ -209,7 +257,7 @@ theorem binarySplitSum_eq_partialSum (n : ℕ) :
   simp only [this]
   simp only [cast_add, cast_ofNat, cast_mul, zpow_natCast, Int.sub_eq_add_neg, mul_zero,
     factorial_zero, cast_one, div_one, one_zpow, tsub_zero, mul_inv_rev, Int.reduceNeg,
-    Int.cast_mul, Int.cast_pow, Int.cast_neg, Int.cast_one, Int.cast_natCast, Int.cast_add,
+    Int.cast_mul, Int.cast_neg, Int.cast_one, Int.cast_natCast, Int.cast_add,
     Int.cast_ofNat, cast_pow]
   rw [Rat.zpow_add (by decide)]
   rw [← zpow_mul, ← zpow_mul]
