@@ -37,6 +37,7 @@ between 1-morphisms `f g : a ⟶ b` and a 1-morphism `f : b ⟶ c`, there is a 2
 which is required as an axiom in the definition here.
 -/
 
+set_option mathlib.tactic.category.grind true
 namespace CategoryTheory
 
 universe w v u
@@ -165,26 +166,25 @@ are associators and unitors in the RHS in the several simp lemmas here (e.g. `id
 which at first glance look more complicated than the LHS, but they will be eventually reduced by
 the pentagon or the triangle identities, and more generally, (forthcoming) `coherence` tactic.
 -/
-attribute [simp]
+attribute [simp, grind =]
   whiskerLeft_id whiskerLeft_comp id_whiskerLeft comp_whiskerLeft id_whiskerRight comp_whiskerRight
   whiskerRight_id whiskerRight_comp whisker_assoc
 
-
 variable {B : Type u} [Bicategory.{w, v} B] {a b c d e : B}
 
-@[reassoc (attr := simp)]
+@[reassoc (attr := simp), grind =]
 theorem whiskerLeft_hom_inv (f : a ⟶ b) {g h : b ⟶ c} (η : g ≅ h) :
     f ◁ η.hom ≫ f ◁ η.inv = 𝟙 (f ≫ g) := by rw [← whiskerLeft_comp, hom_inv_id, whiskerLeft_id]
 
-@[reassoc (attr := simp)]
+@[reassoc (attr := simp), grind =]
 theorem hom_inv_whiskerRight {f g : a ⟶ b} (η : f ≅ g) (h : b ⟶ c) :
     η.hom ▷ h ≫ η.inv ▷ h = 𝟙 (f ≫ h) := by rw [← comp_whiskerRight, hom_inv_id, id_whiskerRight]
 
-@[reassoc (attr := simp)]
+@[reassoc (attr := simp), grind =]
 theorem whiskerLeft_inv_hom (f : a ⟶ b) {g h : b ⟶ c} (η : g ≅ h) :
     f ◁ η.inv ≫ f ◁ η.hom = 𝟙 (f ≫ h) := by rw [← whiskerLeft_comp, inv_hom_id, whiskerLeft_id]
 
-@[reassoc (attr := simp)]
+@[reassoc (attr := simp), grind =]
 theorem inv_hom_whiskerRight {f g : a ⟶ b} (η : f ≅ g) (h : b ⟶ c) :
     η.inv ▷ h ≫ η.hom ▷ h = 𝟙 (g ≫ h) := by rw [← comp_whiskerRight, inv_hom_id, id_whiskerRight]
 
@@ -447,13 +447,15 @@ theorem unitors_inv_equal : (λ_ (𝟙 a)).inv = (ρ_ (𝟙 a)).inv := by simp [
 
 section
 
-attribute [local simp] whisker_exchange
+attribute [local simp, local grind =] whisker_exchange
 
 /-- Precomposition of a 1-morphism as a functor. -/
 @[simps]
 def precomp (c : B) (f : a ⟶ b) : (b ⟶ c) ⥤ (a ⟶ c) where
   obj := (f ≫ ·)
   map := (f ◁ ·)
+
+attribute [grind =] precomp_obj precomp_map
 
 /-- Precomposition of a 1-morphism as a functor from the category of 1-morphisms `a ⟶ b` into the
 category of functors `(b ⟶ c) ⥤ (a ⟶ c)`. -/
@@ -462,11 +464,15 @@ def precomposing (a b c : B) : (a ⟶ b) ⥤ (b ⟶ c) ⥤ (a ⟶ c) where
   obj f := precomp c f
   map η := { app := (η ▷ ·) }
 
+attribute [grind =] precomposing_obj precomposing_map_app
+
 /-- Postcomposition of a 1-morphism as a functor. -/
 @[simps]
 def postcomp (a : B) (f : b ⟶ c) : (a ⟶ b) ⥤ (a ⟶ c) where
   obj := (· ≫ f)
   map := (· ▷ f)
+
+attribute [grind =] postcomp_obj postcomp_map
 
 /-- Postcomposition of a 1-morphism as a functor from the category of 1-morphisms `b ⟶ c` into the
 category of functors `(a ⟶ b) ⥤ (a ⟶ c)`. -/
@@ -474,6 +480,8 @@ category of functors `(a ⟶ b) ⥤ (a ⟶ c)`. -/
 def postcomposing (a b c : B) : (b ⟶ c) ⥤ (a ⟶ b) ⥤ (a ⟶ c) where
   obj f := postcomp a f
   map η := { app := (· ◁ η) }
+
+attribute [grind =] postcomposing_obj postcomposing_map_app
 
 /-- Left component of the associator as a natural isomorphism. -/
 @[simps!]

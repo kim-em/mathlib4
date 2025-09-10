@@ -151,8 +151,6 @@ theorem cancel_natIso_inv_right_assoc {W X X' : D} {Y : C} (f : W ⟶ X) (g : X 
     f ≫ g ≫ α.inv.app Y = f' ≫ g' ≫ α.inv.app Y ↔ f ≫ g = f' ≫ g' := by
   simp only [← Category.assoc, cancel_mono, refl]
 
-attribute [grind ←=] CategoryTheory.IsIso.inv_eq_of_hom_inv_id
-
 @[simp]
 theorem inv_inv_app {F G : C ⥤ D} (e : F ≅ G) (X : C) : inv (e.inv.app X) = e.hom.app X := by
   cat_disch
@@ -186,10 +184,6 @@ theorem isIso_inv_app (α : F ⟶ G) {_ : IsIso α} (X) : (inv α).app X = inv (
 theorem inv_map_inv_app (F : C ⥤ D ⥤ E) {X Y : C} (e : X ≅ Y) (Z : D) :
     inv ((F.map e.inv).app Z) = (F.map e.hom).app Z := by cat_disch
 
--- TODO: `hom_inv_id` and `inv_hom_id` are not yet working via `grind`,
--- but they work fine in my minimization in the `grind` test suite.
--- Investigate on nightly-testing / the next release?
-set_option mathlib.tactic.category.grind false in
 /-- Construct a natural isomorphism between functors by giving object level isomorphisms,
 and checking naturality only in the forward direction.
 -/
@@ -242,7 +236,6 @@ namespace Functor
 
 variable (F : C ⥤ D) (obj : C → D) (e : ∀ X, F.obj X ≅ obj X)
 
-set_option mathlib.tactic.category.grind false in
 /-- Constructor for a functor that is isomorphic to a given functor `F : C ⥤ D`,
 while being definitionally equal on objects to a given map `obj : C → D`
 such that for all `X : C`, we have an isomorphism `F.obj X ≅ obj X`. -/

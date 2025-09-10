@@ -30,6 +30,8 @@ equivalence if and only if it is fully faithful and essentially surjective.
 -- declare the `v`'s first; see `CategoryTheory.Category` for an explanation
 universe v₁ v₂ v₃ u₁ u₂ u₃
 
+set_option mathlib.tactic.category.grind true
+
 namespace CategoryTheory
 
 variable {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D] {E : Type*} [Category E]
@@ -70,7 +72,7 @@ theorem map_surjective (F : C ⥤ D) [Full F] :
 noncomputable def preimage (F : C ⥤ D) [Full F] (f : F.obj X ⟶ F.obj Y) : X ⟶ Y :=
   (F.map_surjective f).choose
 
-@[simp]
+@[simp, grind =]
 theorem map_preimage (F : C ⥤ D) [Full F] {X Y : C} (f : F.obj X ⟶ F.obj Y) :
     F.map (preimage F f) = f :=
   (F.map_surjective f).choose_spec
@@ -89,7 +91,7 @@ theorem preimage_comp (f : F.obj X ⟶ F.obj Y) (g : F.obj Y ⟶ F.obj Z) :
     F.preimage (f ≫ g) = F.preimage f ≫ F.preimage g :=
   F.map_injective (by simp)
 
-@[simp]
+@[simp, grind =]
 theorem preimage_map (f : X ⟶ Y) : F.preimage (F.map f) = f :=
   F.map_injective (by simp)
 
@@ -122,7 +124,7 @@ structure FullyFaithful where
 
 namespace FullyFaithful
 
-attribute [simp] map_preimage preimage_map
+attribute [simp, grind =] map_preimage preimage_map
 
 variable (F) in
 /-- A `FullyFaithful` structure can be obtained from the assumption the `F` is both
@@ -195,6 +197,8 @@ def preimageIso {X Y : C} (e : F.obj X ≅ F.obj Y) : X ≅ Y where
   hom_inv_id := hF.map_injective (by simp)
   inv_hom_id := hF.map_injective (by simp)
 
+attribute [grind =] preimageIso_hom preimageIso_inv
+
 lemma isIso_of_isIso_map {X Y : C} (f : X ⟶ Y) [IsIso (F.map f)] :
     IsIso f := by
   simpa using (hF.preimageIso (asIso (F.map f))).isIso_hom
@@ -243,6 +247,7 @@ end CategoryTheory
 
 namespace CategoryTheory
 
+set_option mathlib.tactic.category.grind false
 namespace Functor
 
 variable {C : Type u₁} [Category.{v₁} C]
@@ -270,7 +275,7 @@ variable {F F'}
 /-- If `F` is full, and naturally isomorphic to some `F'`, then `F'` is also full. -/
 lemma Full.of_iso [Full F] (α : F ≅ F') : Full F' where
   map_surjective {X Y} f :=
-    ⟨F.preimage ((α.app X).hom ≫ f ≫ (α.app Y).inv), by simp [← NatIso.naturality_1 α]⟩
+    ⟨F.preimage (α.hom.app X ≫ f ≫ α.inv.app Y), by simp [← NatIso.naturality_1 α]⟩
 
 theorem Faithful.of_iso [F.Faithful] (α : F ≅ F') : F'.Faithful :=
   { map_injective := fun h =>
