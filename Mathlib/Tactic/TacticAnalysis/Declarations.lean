@@ -149,13 +149,13 @@ def omegaToCutsatRegressions :=
 
 /-- Report places where `omega` can be replaced by `cutsat`. -/
 register_option linter.tacticAnalysis.omegaToCutsat : Bool := {
-  defValue := false
+  defValue := true
 }
 @[tacticAnalysis linter.tacticAnalysis.omegaToCutsat,
   inherit_doc linter.tacticAnalysis.omegaToCutsat]
 def omegaToCutsat :=
   terminalReplacement "omega" "cutsat" ``Lean.Parser.Tactic.omega (fun _ _ => `(tactic| cutsat))
-    (reportSuccess := true) (reportFailure := false)
+    (reportSuccess := true) (reportSlowdown := true) (reportFailure := false)
 
 /-- Suggest merging two adjacent `rw` tactics if that also solves the goal. -/
 register_option linter.tacticAnalysis.rwMerge : Bool := {
