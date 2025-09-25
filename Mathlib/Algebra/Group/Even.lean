@@ -98,11 +98,8 @@ instance Multiplicative.instDecidablePredIsSquare [DecidablePred (Even : α → 
 
 end Add
 
-@[to_additive (attr := simp)]
+@[to_additive (attr := simp, grind ←)]
 lemma IsSquare.one [MulOneClass α] : IsSquare (1 : α) := ⟨1, (mul_one _).symm⟩
-
-grind_pattern IsSquare.one => IsSquare (1 : α)
-grind_pattern Even.zero => Even (0 : α)
 
 section MonoidHom
 variable [MulOneClass α] [MulOneClass β] [FunLike F α β] [MonoidHomClass F α β]
