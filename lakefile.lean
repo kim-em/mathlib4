@@ -17,6 +17,8 @@ require "leanprover-community" / "proofwidgets" @ git "v0.0.74" -- ProofWidgets 
 require "leanprover-community" / "importGraph" @ git "main"
 require "leanprover-community" / "LeanSearchClient" @ git "main"
 require "leanprover-community" / "plausible" @ git "main"
+require llmlean from git
+  "https://github.com/cmu-l3/llmlean.git"
 
 /-!
 ## Options for building mathlib
