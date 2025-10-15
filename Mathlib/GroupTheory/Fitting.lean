@@ -13,8 +13,8 @@ This file proves Fitting's theorem about nilpotent normal subgroups.
 ## Main results
 
 * `Subgroup.lowerCentralSeries_sup_eq_bot`: The key technical lemma stating that if
-  `lowerCentralSeries M (m + 1) = ⊥` and `lowerCentralSeries N (n + 1) = ⊥`, then
-  `lowerCentralSeries (M ⊔ N) (m + n + 1) = ⊥`.
+  `lowerCentralSeries M m = ⊥` and `lowerCentralSeries N n = ⊥`, then
+  `lowerCentralSeries (M ⊔ N) (m + n) = ⊥`.
 * `Subgroup.isNilpotent_sup`: If `M` and `N` are nilpotent normal subgroups of `G`,
   then their supremum `M ⊔ N` is also nilpotent.
 * `Subgroup.nilpotencyClass_sup_le`: If `M` has nilpotency class `m` and `N` has
