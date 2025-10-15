@@ -64,8 +64,8 @@ times must equal `⊥`.
 
 **Step 7**: Since all commutators in the expansion are `⊥`, the entire supremum is `⊥`. -/
 theorem lowerCentralSeries_sup_eq_bot (M N : Subgroup G) [M.Normal] [N.Normal]
-    (m n : ℕ) (hM : lowerCentralSeries M (m + 1) = ⊥) (hN : lowerCentralSeries N (n + 1) = ⊥) :
-    lowerCentralSeries (M ⊔ N : Subgroup G) (m + n + 1) = ⊥ := by
+    (m n : ℕ) (hM : lowerCentralSeries M m = ⊥) (hN : lowerCentralSeries N n = ⊥) :
+    lowerCentralSeries (M ⊔ N : Subgroup G) (m + n) = ⊥ := by
   sorry
 
 /-- **Fitting's theorem**: The supremum of two nilpotent normal subgroups is nilpotent.
@@ -84,7 +84,11 @@ we can take `m = nilpotencyClass M + 1` and `n = nilpotencyClass N + 1` by
 `nilpotent_iff_lowerCentralSeries` shows that `M ⊔ N` is nilpotent. -/
 instance isNilpotent_sup (M N : Subgroup G) [M.Normal] [N.Normal]
     [IsNilpotent M] [IsNilpotent N] : IsNilpotent (M ⊔ N : Subgroup G) := by
-  sorry
+  rw [nilpotent_iff_lowerCentralSeries]
+  use nilpotencyClass M + nilpotencyClass N
+  apply lowerCentralSeries_sup_eq_bot
+  · rw [lowerCentralSeries_eq_bot_iff_nilpotencyClass_le]
+  · rw [lowerCentralSeries_eq_bot_iff_nilpotencyClass_le]
 
 /-- **Fitting's theorem** with nilpotency class bound: If `M` has nilpotency class `m` and `N`
 has nilpotency class `n`, then `M ⊔ N` has nilpotency class at most `m + n`.
@@ -106,6 +110,10 @@ theorem nilpotencyClass_sup_le (M N : Subgroup G) [M.Normal] [N.Normal]
     [IsNilpotent M] [IsNilpotent N] :
     nilpotencyClass (M ⊔ N : Subgroup G) ≤
       nilpotencyClass M + nilpotencyClass N := by
-  sorry
+  rw [← lowerCentralSeries_eq_bot_iff_nilpotencyClass_le]
+  have h := lowerCentralSeries_sup_eq_bot M N (nilpotencyClass M) (nilpotencyClass N)
+  simp only [lowerCentralSeries_eq_bot_iff_nilpotencyClass_le] at h
+  have h' := h (by omega) (by omega)
+  exact lowerCentralSeries_eq_bot_iff_nilpotencyClass_le.mpr h'
 
 end Subgroup
