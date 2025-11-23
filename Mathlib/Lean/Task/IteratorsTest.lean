@@ -1,0 +1,140 @@
+/-
+Copyright (c) 2025 Lean FRO, LLC. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Kim Morrison
+-/
+import Mathlib.Lean.Task.Iterators
+
+/-!
+# Tests for Iterator-based parallel execution
+
+This file contains tests to verify:
+1. Results are returned in completion order (not submission order)
+2. State is properly threaded through the iteration
+-/
+
+namespace Tests
+
+open Std.Iterators
+
+/-- Test that IO.iterTasks returns results in completion order. -/
+def testCompletionOrder : IO Unit := do
+  IO.println "Testing completion order..."
+
+  -- Create tasks that complete in reverse order
+  let task1 : IO Nat := IO.sleep 300 *> pure 1
+  let task2 : IO Nat := IO.sleep 200 *> pure 2
+  let task3 : IO Nat := IO.sleep 100 *> pure 3
+
+  let iter ← IO.runIteratively [task1, task2, task3]
+
+  -- Map to add logging and collect results
+  let results ← (iter.mapM fun value => do
+    IO.println s!"Got: {value}"
+    return value).take 3 |>.allowNontermination.toList
+
+  -- Should be [3, 2, 1] (completion order), not [1, 2, 3] (submission order)
+  if results == [3, 2, 1] then
+    IO.println "✓ Completion order test passed"
+  else
+    IO.println s!"✗ Failed: expected [3, 2, 1], got {results}"
+
+/-- Test that state is properly threaded through CoreM iteration. -/
+def testStateThreading : IO Unit := do
+  IO.println "\nTesting state threading in CoreM..."
+
+  -- Create minimal environment
+  let env ← Lean.importModules #[] {} 0
+  let ctx : Lean.Core.Context := {
+    fileName := "<test>"
+    fileMap := default
+  }
+  let state : Lean.Core.State := {
+    env := env
+  }
+
+  let testCore : Lean.CoreM (List Nat × List Nat × List String) := do
+    -- Tasks that log messages with different delays
+    let task1 : Lean.CoreM Nat := do
+      Lean.logInfo "Task 1"
+      IO.sleep 150
+      return 1
+
+    let task2 : Lean.CoreM Nat := do
+      Lean.logInfo "Task 2"
+      IO.sleep 100
+      return 2
+
+    let task3 : Lean.CoreM Nat := do
+      Lean.logInfo "Task 3"
+      IO.sleep 50
+      return 3
+
+    let iter ← Lean.Core.CoreM.runIteratively [task1, task2, task3]
+
+    -- Map to capture state after each task and collect results
+    let results ← (iter.mapM fun value => do
+      let messages ← Lean.Core.getMessageLog
+      let msgs := messages.toList
+      let count := msgs.length
+      -- Get the message text
+      let msgText ← msgs.headD default |>.data.toString
+      return (value, count, msgText)).take 3 |>.allowNontermination.toList
+
+    return (results.map (·.1), results.map (·.2.1), results.map (·.2.2))
+
+  let ((values, counts, msgTexts), _) ← testCore.toIO ctx state
+
+  IO.println s!"  Values: {values}"
+  IO.println s!"  Message counts: {counts}"
+  IO.println s!"  Message texts: {msgTexts}"
+
+  if values == [3, 2, 1] then
+    IO.println "  ✓ Values in completion order"
+  else
+    IO.println s!"  ✗ Wrong order: {values}"
+
+  -- Each task should see exactly 1 message (its own)
+  if counts == [1, 1, 1] then
+    IO.println "  ✓ Each task sees 1 message"
+  else
+    IO.println s!"  ✗ Wrong message counts: {counts}"
+
+  -- Verify message content matches the task
+  if msgTexts == ["Task 3", "Task 2", "Task 1"] then
+    IO.println "  ✓ Message content verified"
+  else
+    IO.println s!"  ✗ Wrong messages: {msgTexts}"
+
+  IO.println "✓ State threading test passed"
+
+/-- Run all tests. -/
+def runTests : IO Unit := do
+  IO.println "=== Iterator Task Tests ==="
+  testCompletionOrder
+  testStateThreading
+  IO.println "\n=== All tests completed ==="
+
+end Tests
+
+/--
+info: === Iterator Task Tests ===
+Testing completion order...
+Got: 3
+Got: 2
+Got: 1
+✓ Completion order test passed
+
+Testing state threading in CoreM...
+  Values: [3, 2, 1]
+  Message counts: [1, 1, 1]
+  Message texts: [Task 3, Task 2, Task 1]
+  ✓ Values in completion order
+  ✓ Each task sees 1 message
+  ✓ Message content verified
+✓ State threading test passed
+
+=== All tests completed ===
+-/
+#guard_msgs in
+#eval Tests.runTests
