@@ -3,7 +3,9 @@ Copyright (c) 2025 Lean FRO, LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Kim Morrison
 -/
-import Lean.Elab.Tactic.Basic
+module
+
+public import Lean.Elab.Tactic.Basic
 
 /-!
 # Task creation utilities for Lean's tactic monads.
@@ -22,6 +24,8 @@ Note: Calling `IO.cancel` on `t.map f` does not cancel `t`,
 so these functions are careful to construct cancellation hooks
 connected to the underlying task rather than various maps of it.
 -/
+
+@[expose] public section
 
 set_option autoImplicit true
 
