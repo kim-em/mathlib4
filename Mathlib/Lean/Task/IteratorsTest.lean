@@ -112,6 +112,22 @@ def testStateThreading : IO Unit := do
 def testTacticMStateThreading : IO Unit := do
   IO.println "\nTesting state threading in TacticM..."
 
+  -- Three tasks that run different tactics with different delays
+  let task1 : Lean.Elab.Tactic.TacticM String := do
+    Lean.Elab.Tactic.evalTactic (← `(tactic| sorry))
+    IO.sleep 300
+    return "sorry"
+
+  let task2 : Lean.Elab.Tactic.TacticM String := do
+    Lean.Elab.Tactic.evalTactic (← `(tactic| exact True.intro))
+    IO.sleep 50
+    return "exact"
+
+  let task3 : Lean.Elab.Tactic.TacticM String := do
+    Lean.Elab.Tactic.evalTactic (← `(tactic| skip))
+    IO.sleep 150
+    return "skip"
+
   -- Create environment with tactic elaborators loaded (loadExts := true to run initializers)
   let env ← Lean.importModules #[{module := `Lean.Elab.Tactic.BuiltinTactic}] {} 0 (loadExts := true)
   let ctx : Lean.Core.Context := {
@@ -122,54 +138,23 @@ def testTacticMStateThreading : IO Unit := do
     env := env
   }
 
-  -- Create a single True goal, then run three tactics in parallel
-  let metaTest : Lean.Meta.MetaM (List String × List Nat) := do
+  -- Run everything in one MetaM → CoreM → IO unwrapping
+  let test : Lean.Meta.MetaM (List String × List Nat) := do
+    -- Create a single True goal
     let goal ← Lean.Meta.mkFreshExprMVar (Lean.mkConst ``True)
 
-    -- Now run TacticM with this goal
     let tacticTest : Lean.Elab.Tactic.TacticM (List String × List Nat) := do
-      -- Set initial goal
-      Lean.Elab.Tactic.setGoals [goal.mvarId!]
-
-      -- Three tasks that run different tactics with different delays
-      let task1 : Lean.Elab.Tactic.TacticM String := do
-        Lean.Elab.Tactic.evalTactic (← `(tactic| sorry))
-        IO.sleep 300
-        return "sorry"
-
-      let task2 : Lean.Elab.Tactic.TacticM String := do
-        Lean.Elab.Tactic.evalTactic (← `(tactic| exact True.intro))
-        IO.sleep 50
-        return "exact"
-
-      let task3 : Lean.Elab.Tactic.TacticM String := do
-        Lean.Elab.Tactic.evalTactic (← `(tactic| skip))
-        IO.sleep 150
-        return "skip"
-
       let (_, iter) ← Lean.Elab.Tactic.TacticM.runIteratively [task1, task2, task3]
+      let results ← (iter.mapM fun tacticName =>
+        return (tacticName, (← Lean.Elab.Tactic.getGoals).length)).take 3 |>.allowNontermination.toList
+      return results.unzip
 
-      -- Collect results and check goals after each task
-      let results ← (iter.mapM fun tacticName => do
-        let goals ← Lean.Elab.Tactic.getGoals
-        return (tacticName, goals.length)).take 3 |>.allowNontermination.toList
-
-      return (results.map (·.1), results.map (·.2))
-
-    -- Run TacticM
-    let tacticCtx : Lean.Elab.Tactic.Context := {
-      elaborator := .anonymous
-    }
-    let tacticState : Lean.Elab.Tactic.State := {
-      goals := [goal.mvarId!]
-    }
-    let termCtx : Lean.Elab.Term.Context := {}
-    let termState : Lean.Elab.Term.State := {}
-
-    let ((result, _tacticState), _termState) ← (((tacticTest tacticCtx).run tacticState) termCtx).run termState
+    let tacticCtx : Lean.Elab.Tactic.Context := { elaborator := .anonymous }
+    let tacticState : Lean.Elab.Tactic.State := { goals := [goal.mvarId!] }
+    let ((result, _), _) ← (((tacticTest tacticCtx).run tacticState) {}).run {}
     return result
 
-  let (((tacticNames, goalCounts), _metaState), _coreState) ← metaTest.run |>.toIO ctx coreState
+  let (((tacticNames, goalCounts), _), _) ← test.run |>.toIO ctx coreState
 
   IO.println s!"  Tactic names: {tacticNames}"
   IO.println s!"  Goal counts: {goalCounts}"
