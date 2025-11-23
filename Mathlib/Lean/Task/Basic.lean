@@ -32,10 +32,19 @@ Given a monadic value in `CoreM`, creates a task that runs it in the current sta
 returning
 * a cancellation hook and
 * a monadic value with the cached result (and subsequent state as it was after running).
+
+The task is run with a fresh `CancelToken` in its context, so it can detect cancellation
+via `Core.checkInterrupted`. The cancellation hook sets this token.
+
+Note: We only set the cancel token and don't call `IO.cancel task`. We're uncertain whether
+`IO.cancel` is also necessary - it may be required for tasks that use `IO.checkCanceled`
+instead of `Core.checkInterrupted`.
 -/
 def asTask (t : CoreM α) : CoreM (BaseIO Unit × Task (CoreM α)) := do
-  let task ← (t.toIO (← read) (← get)).asTask
-  return (IO.cancel task, task.map (prio := .max) fun
+  let cancelToken ← IO.CancelToken.new
+  let ctx := { (← read) with cancelTk? := some cancelToken }
+  let task ← (t.toIO ctx (← get)).asTask
+  return (cancelToken.set, task.map (prio := .max) fun
   | .ok (a, s) => do
       -- Set state to the task's state (not merging)
       set s

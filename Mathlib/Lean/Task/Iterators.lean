@@ -140,8 +140,6 @@ namespace Lean.Core.CoreM
 open Std.Iterators
 
 /--
-Iterator-based version of `CoreM.runGreedily`.
-
 Runs a list of CoreM computations in parallel and returns:
 * a combined cancellation hook for all tasks, and
 * an iterator that yields results in completion order.
@@ -150,23 +148,30 @@ The iterator runs in CoreM, and as it yields each result, it updates the CoreM s
 to reflect the state when that particular task completed. This means the state is
 threaded through the iteration in task completion order.
 
+Results are wrapped in `Except Error α` so that errors in individual tasks don't stop
+the iteration - you can observe all results including which tasks failed.
+
 The iterator will terminate after all jobs complete (assuming they all do complete).
 -/
-def runIteratively {α : Type} (jobs : List (CoreM α)) := do
+def runParallel {α : Type} (jobs : List (CoreM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   let baseIter := IO.iterTasks tasks
-  -- mapM lifts to CoreM and executes each action to thread state
-  return (combinedCancel, baseIter.mapM id)
+  -- mapM with error handling - execute each task and catch errors
+  let iterWithErrors := baseIter.mapM fun taskMonadic => do
+    try
+      pure (Except.ok (← taskMonadic))
+    catch e =>
+      pure (Except.error e)
+  return (combinedCancel, iterWithErrors)
 
 /--
-Iterator-based version of `CoreM.runGreedily` without cancellation hook.
+Runs a list of CoreM computations in parallel (without cancellation hook).
 
-Runs a list of CoreM computations in parallel and returns an iterator
-that yields results in completion order.
+Returns an iterator that yields results in completion order, wrapped in `Except Error α`.
 -/
-def runIteratively' {α : Type} (jobs : List (CoreM α)) :=
-  (·.2) <$> runIteratively jobs
+def runParallel' {α : Type} (jobs : List (CoreM α)) :=
+  (·.2) <$> runParallel jobs
 
 end Lean.Core.CoreM
 
@@ -175,8 +180,6 @@ namespace Lean.Meta.MetaM
 open Std.Iterators
 
 /--
-Iterator-based version of `MetaM.runGreedily`.
-
 Runs a list of MetaM computations in parallel and returns:
 * a combined cancellation hook for all tasks, and
 * an iterator that yields results in completion order.
@@ -185,23 +188,30 @@ The iterator runs in MetaM, and as it yields each result, it updates the MetaM s
 to reflect the state when that particular task completed. This means the state is
 threaded through the iteration in task completion order.
 
+Results are wrapped in `Except Error α` so that errors in individual tasks don't stop
+the iteration - you can observe all results including which tasks failed.
+
 The iterator will terminate after all jobs complete (assuming they all do complete).
 -/
-def runIteratively {α : Type} (jobs : List (MetaM α)) := do
+def runParallel {α : Type} (jobs : List (MetaM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   let baseIter := IO.iterTasks tasks
-  -- mapM lifts to MetaM and executes each action to thread state
-  return (combinedCancel, baseIter.mapM id)
+  -- mapM with error handling - execute each task and catch errors
+  let iterWithErrors := baseIter.mapM fun taskMonadic => do
+    try
+      pure (Except.ok (← taskMonadic))
+    catch e =>
+      pure (Except.error e)
+  return (combinedCancel, iterWithErrors)
 
 /--
-Iterator-based version of `MetaM.runGreedily` without cancellation hook.
+Runs a list of MetaM computations in parallel (without cancellation hook).
 
-Runs a list of MetaM computations in parallel and returns an iterator
-that yields results in completion order.
+Returns an iterator that yields results in completion order, wrapped in `Except Error α`.
 -/
-def runIteratively' {α : Type} (jobs : List (MetaM α)) :=
-  (·.2) <$> runIteratively jobs
+def runParallel' {α : Type} (jobs : List (MetaM α)) :=
+  (·.2) <$> runParallel jobs
 
 end Lean.Meta.MetaM
 
@@ -210,8 +220,6 @@ namespace Lean.Elab.Term.TermElabM
 open Std.Iterators
 
 /--
-Iterator-based version of `TermElabM.runGreedily`.
-
 Runs a list of TermElabM computations in parallel and returns:
 * a combined cancellation hook for all tasks, and
 * an iterator that yields results in completion order.
@@ -220,23 +228,30 @@ The iterator runs in TermElabM, and as it yields each result, it updates the Ter
 to reflect the state when that particular task completed. This means the state is
 threaded through the iteration in task completion order.
 
+Results are wrapped in `Except Error α` so that errors in individual tasks don't stop
+the iteration - you can observe all results including which tasks failed.
+
 The iterator will terminate after all jobs complete (assuming they all do complete).
 -/
-def runIteratively {α : Type} (jobs : List (TermElabM α)) := do
+def runParallel {α : Type} (jobs : List (TermElabM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   let baseIter := IO.iterTasks tasks
-  -- mapM lifts to TermElabM and executes each action to thread state
-  return (combinedCancel, baseIter.mapM id)
+  -- mapM with error handling - execute each task and catch errors
+  let iterWithErrors := baseIter.mapM fun taskMonadic => do
+    try
+      pure (Except.ok (← taskMonadic))
+    catch e =>
+      pure (Except.error e)
+  return (combinedCancel, iterWithErrors)
 
 /--
-Iterator-based version of `TermElabM.runGreedily` without cancellation hook.
+Runs a list of TermElabM computations in parallel (without cancellation hook).
 
-Runs a list of TermElabM computations in parallel and returns an iterator
-that yields results in completion order.
+Returns an iterator that yields results in completion order, wrapped in `Except Error α`.
 -/
-def runIteratively' {α : Type} (jobs : List (TermElabM α)) :=
-  (·.2) <$> runIteratively jobs
+def runParallel' {α : Type} (jobs : List (TermElabM α)) :=
+  (·.2) <$> runParallel jobs
 
 end Lean.Elab.Term.TermElabM
 
@@ -245,8 +260,6 @@ namespace Lean.Elab.Tactic.TacticM
 open Std.Iterators
 
 /--
-Iterator-based version of `TacticM.runGreedily`.
-
 Runs a list of TacticM computations in parallel and returns:
 * a combined cancellation hook for all tasks, and
 * an iterator that yields results in completion order.
@@ -255,22 +268,29 @@ The iterator runs in TacticM, and as it yields each result, it updates the Tacti
 to reflect the state when that particular task completed. This means the state is
 threaded through the iteration in task completion order.
 
+Results are wrapped in `Except Error α` so that errors in individual tasks don't stop
+the iteration - you can observe all results including which tasks failed.
+
 The iterator will terminate after all jobs complete (assuming they all do complete).
 -/
-def runIteratively {α : Type} (jobs : List (TacticM α)) := do
+def runParallel {α : Type} (jobs : List (TacticM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   let baseIter := IO.iterTasks tasks
-  -- mapM lifts to TacticM and executes each action to thread state
-  return (combinedCancel, baseIter.mapM id)
+  -- mapM with error handling - execute each task and catch errors
+  let iterWithErrors := baseIter.mapM fun taskMonadic => do
+    try
+      pure (Except.ok (← taskMonadic))
+    catch e =>
+      pure (Except.error e)
+  return (combinedCancel, iterWithErrors)
 
 /--
-Iterator-based version of `TacticM.runGreedily` without cancellation hook.
+Runs a list of TacticM computations in parallel (without cancellation hook).
 
-Runs a list of TacticM computations in parallel and returns an iterator
-that yields results in completion order.
+Returns an iterator that yields results in completion order, wrapped in `Except Error α`.
 -/
-def runIteratively' {α : Type} (jobs : List (TacticM α)) :=
-  (·.2) <$> runIteratively jobs
+def runParallel' {α : Type} (jobs : List (TacticM α)) :=
+  (·.2) <$> runParallel jobs
 
 end Lean.Elab.Tactic.TacticM
