@@ -118,22 +118,21 @@ def testTacticMStateThreading : IO Unit := do
 
   -- Three tasks that run different tactics with different delays
   let task1 : Lean.Elab.Tactic.TacticM String := do
-    Lean.Elab.Tactic.evalTactic (← `(tactic| sorry))
     IO.sleep 300
+    Lean.Elab.Tactic.evalTactic (← `(tactic| sorry))
     return "sorry"
 
   let task2 : Lean.Elab.Tactic.TacticM String := do
-    Lean.Elab.Tactic.evalTactic (← `(tactic| exact True.intro))
     IO.sleep 50
+    Lean.Elab.Tactic.evalTactic (← `(tactic| exact True.intro))
     return "exact"
 
   let task3 : Lean.Elab.Tactic.TacticM String := do
-    Lean.Elab.Tactic.evalTactic (← `(tactic| skip))
     IO.sleep 150
+    Lean.Elab.Tactic.evalTactic (← `(tactic| skip))
     return "skip"
 
-  -- Create environment with tactic elaborators loaded (loadExts := true to run initializers)
-  let env ← Lean.importModules #[{module := `Lean.Elab.Tactic.BuiltinTactic}] {} 0 (loadExts := true)
+  let env ← Lean.importModules #[{module := `Init}] {} 0 (loadExts := true)
   let coreCtx : Lean.Core.Context := {
     fileName := "<test>"
     fileMap := default
@@ -154,12 +153,9 @@ def testTacticMStateThreading : IO Unit := do
         | .error _ => return ("error", 999)).take 3 |>.allowNontermination.toList
       return results.unzip
 
-    let tacticCtx := { elaborator := .anonymous }
-    let tacticState := { goals := [goal.mvarId!] }
-    let ((result, _), _) ← (((tacticTest tacticCtx).run tacticState) {}).run {}
-    return result
+    (((tacticTest { elaborator := .anonymous }).run' { goals := [goal.mvarId!] }) {}).run' {}
 
-  let (((tacticNames, goalCounts), _), _) ← test.run |>.toIO coreCtx coreState
+  let ((tacticNames, goalCounts), _) ← test.run' |>.toIO coreCtx coreState
 
   IO.println s!"  Tactic names: {tacticNames}"
   IO.println s!"  Goal counts: {goalCounts}"
@@ -200,8 +196,7 @@ def testCancellation : IO Unit := do
     Lean.Elab.Tactic.evalTactic (← `(tactic| sorry))
     return "sorry"
 
-  -- Create environment with tactic elaborators loaded
-  let env ← Lean.importModules #[{module := `Lean.Elab.Tactic.BuiltinTactic}] {} 0 (loadExts := true)
+  let env ← Lean.importModules #[{module := `Init}] {} 0 (loadExts := true)
   let coreCtx : Lean.Core.Context := {
     fileName := "<test>"
     fileMap := default
@@ -223,16 +218,13 @@ def testCancellation : IO Unit := do
 
       -- Consume the iterator and partition into successes and failures
       let results ← iter.take 4 |>.allowNontermination.toList
-      let successNames := results.filterMap (fun r => match r with | .ok n => some n | .error _ => none)
-      let failedCount := results.filter (fun r => match r with | .error _ => true | _ => false) |>.length
+      let successNames := results.filterMap fun r => match r with | .ok n => some n | .error _ => none
+      let failedCount := results.countP fun r => match r with | .error _ => true | _ => false
       return (cancel, successNames, failedCount)
 
-    let tacticCtx : Lean.Elab.Tactic.Context := { elaborator := .anonymous }
-    let tacticState : Lean.Elab.Tactic.State := { goals := [goal.mvarId!] }
-    let (((cancel, successNames, failedCount), _), _) ← (((tacticTest tacticCtx).run tacticState) {}).run {}
-    return (cancel, successNames, failedCount)
+    (((tacticTest { elaborator := .anonymous }).run' { goals := [goal.mvarId!] }) {}).run' {}
 
-  let (((cancel, successNames, failedCount), _), _) ← test.run |>.toIO coreCtx coreState
+  let ((cancel, successNames, failedCount), _) ← test.run' |>.toIO coreCtx coreState
 
   -- Sort success names for deterministic output (timing can vary)
   let successNamesSorted := successNames.mergeSort (· < ·)
