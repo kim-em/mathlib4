@@ -21,10 +21,10 @@ open Std.Iterators
 def testCompletionOrder : IO Unit := do
   IO.println "Testing completion order..."
 
-  -- Create tasks that complete in reverse order
+  -- Create tasks that complete in neither forward nor backward order
   let task1 : IO Nat := IO.sleep 300 *> pure 1
-  let task2 : IO Nat := IO.sleep 200 *> pure 2
-  let task3 : IO Nat := IO.sleep 100 *> pure 3
+  let task2 : IO Nat := IO.sleep 50 *> pure 2
+  let task3 : IO Nat := IO.sleep 150 *> pure 3
 
   let iter ← IO.runIteratively [task1, task2, task3]
 
@@ -33,11 +33,11 @@ def testCompletionOrder : IO Unit := do
     IO.println s!"Got: {value}"
     return value).take 3 |>.allowNontermination.toList
 
-  -- Should be [3, 2, 1] (completion order), not [1, 2, 3] (submission order)
-  if results == [3, 2, 1] then
+  -- Should be [2, 3, 1] (completion order), neither [1, 2, 3] (submission) nor [3, 2, 1] (reverse)
+  if results == [2, 3, 1] then
     IO.println "✓ Completion order test passed"
   else
-    IO.println s!"✗ Failed: expected [3, 2, 1], got {results}"
+    IO.println s!"✗ Failed: expected [2, 3, 1], got {results}"
 
 /-- Test that state is properly threaded through CoreM iteration. -/
 def testStateThreading : IO Unit := do
@@ -57,20 +57,20 @@ def testStateThreading : IO Unit := do
     -- Tasks that log messages with different delays
     let task1 : Lean.CoreM Nat := do
       Lean.logInfo "Task 1"
-      IO.sleep 150
+      IO.sleep 300
       return 1
 
     let task2 : Lean.CoreM Nat := do
       Lean.logInfo "Task 2"
-      IO.sleep 100
+      IO.sleep 50
       return 2
 
     let task3 : Lean.CoreM Nat := do
       Lean.logInfo "Task 3"
-      IO.sleep 50
+      IO.sleep 150
       return 3
 
-    let iter ← Lean.Core.CoreM.runIteratively [task1, task2, task3]
+    let iter ← Lean.Core.CoreM.runIteratively' [task1, task2, task3]
 
     -- Map to capture state after each task and collect results
     let results ← (iter.mapM fun value => do
@@ -89,7 +89,7 @@ def testStateThreading : IO Unit := do
   IO.println s!"  Message counts: {counts}"
   IO.println s!"  Message texts: {msgTexts}"
 
-  if values == [3, 2, 1] then
+  if values == [2, 3, 1] then
     IO.println "  ✓ Values in completion order"
   else
     IO.println s!"  ✗ Wrong order: {values}"
@@ -101,7 +101,7 @@ def testStateThreading : IO Unit := do
     IO.println s!"  ✗ Wrong message counts: {counts}"
 
   -- Verify message content matches the task
-  if msgTexts == ["Task 3", "Task 2", "Task 1"] then
+  if msgTexts == ["Task 2", "Task 3", "Task 1"] then
     IO.println "  ✓ Message content verified"
   else
     IO.println s!"  ✗ Wrong messages: {msgTexts}"
@@ -120,15 +120,15 @@ end Tests
 /--
 info: === Iterator Task Tests ===
 Testing completion order...
-Got: 3
 Got: 2
+Got: 3
 Got: 1
 ✓ Completion order test passed
 
 Testing state threading in CoreM...
-  Values: [3, 2, 1]
+  Values: [2, 3, 1]
   Message counts: [1, 1, 1]
-  Message texts: [Task 3, Task 2, Task 1]
+  Message texts: [Task 2, Task 3, Task 1]
   ✓ Values in completion order
   ✓ Each task sees 1 message
   ✓ Message content verified
