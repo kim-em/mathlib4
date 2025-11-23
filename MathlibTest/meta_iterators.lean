@@ -42,7 +42,7 @@ def mkTacticTask (sleepMs : Nat) (tacticStx : Lean.Syntax) (name : String) :
 
 /-- Test that IO.iterTasks returns results in completion order. -/
 def testCompletionOrder : IO Unit := do
-  let iter ← IO.runParallel' [
+  let iter ← IO.parIter [
     IO.sleep 300 *> pure 1,
     IO.sleep 50 *> pure 2,
     IO.sleep 150 *> pure 3
@@ -62,7 +62,7 @@ def testStateThreading : IO Unit := do
 
   let testCore : Lean.CoreM (List Nat × List Nat × List String) := do
     -- Tasks that log messages with different delays
-    let iter ← Lean.Core.CoreM.runParallel' [
+    let iter ← Lean.Core.CoreM.parIter [
       do Lean.logInfo "Task 1"; IO.sleep 300; return 1,
       do Lean.logInfo "Task 2"; IO.sleep  50; return 2,
       do Lean.logInfo "Task 3"; IO.sleep 150; return 3
@@ -105,7 +105,7 @@ def testTacticMStateThreading : IO Unit := do
       mkTacticTask 50 (← `(tactic| exact True.intro)) "exact",
       mkTacticTask 150 (← `(tactic| skip)) "skip"
     ]
-    let (_, iter) ← Lean.Elab.Tactic.TacticM.runParallel tasks
+    let (_, iter) ← Lean.Elab.Tactic.TacticM.parIterWithCancel tasks
     let results ← (iter.mapM fun result =>
       match result with
       | .ok tacticName => return (tacticName, (← Lean.Elab.Tactic.getGoals).length)
@@ -133,7 +133,7 @@ def testCancellation : IO Unit := do
       mkTacticTask 150  (← `(tactic| skip)) "skip",
       mkTacticTask 1000 (← `(tactic| sorry)) "sorry-slow"
     ]
-    let (cancel, iter) ← Lean.Elab.Tactic.TacticM.runParallel tasks
+    let (cancel, iter) ← Lean.Elab.Tactic.TacticM.parIterWithCancel tasks
 
     -- Cancel after 500ms (task4 will still be sleeping)
     IO.sleep 500
