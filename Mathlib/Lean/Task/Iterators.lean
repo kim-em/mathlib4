@@ -66,26 +66,6 @@ Maintains the list of tasks that haven't completed yet.
 structure TaskIterator (α : Type w) where
   tasks : List (Task α)
 
-/--
-Wrapper for sequential iteration over a list.
-This allows us to provide an Iterator instance that processes elements in order.
--/
-structure SequentialList (α : Type w) where
-  list : List α
-
-/--
-Iterator instance for SequentialList that processes elements in the original order.
--/
-instance [Monad m] : Iterator (SequentialList α) m α where
-  IsPlausibleStep it
-    | .yield _it' _out => True
-    | .skip _ => False
-    | .done => it.internalState.list = []
-  step it := do
-    match it.internalState.list with
-    | [] => pure <| .deflate ⟨.done, rfl⟩
-    | x :: rest => pure <| .deflate ⟨.yield (Std.Iterators.toIterM { list := rest } m α) x, trivial⟩
-
 end Std.Iterators
 
 namespace IO
@@ -218,9 +198,7 @@ The iterator will terminate after all jobs complete (assuming they all do comple
 def parIterWithCancel {α : Type} (jobs : List (CoreM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
-  -- Create iterator that processes tasks sequentially
-  let iter := Std.Iterators.toIterM ({ list := tasks } : SequentialList (Task (CoreM α))) CoreM (Task (CoreM α))
-  let iterWithErrors := iter.mapM fun (task : Task (CoreM α)) => do
+  let iterWithErrors := tasks.iter.mapM fun (task : Task (CoreM α)) => do
     try
       let result ← task.get
       pure (Except.ok result)
@@ -405,8 +383,7 @@ def parIterWithCancel {α : Type} (jobs : List (MetaM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   -- Create iterator that processes tasks sequentially
-  let iter := Std.Iterators.toIterM ({ list := tasks } : SequentialList (Task (MetaM α))) MetaM (Task (MetaM α))
-  let iterWithErrors := iter.mapM fun (task : Task (MetaM α)) => do
+  let iterWithErrors := tasks.iter.mapM fun (task : Task (MetaM α)) => do
     try
       let result ← task.get
       pure (Except.ok result)
@@ -496,8 +473,7 @@ def parIterWithCancel {α : Type} (jobs : List (TermElabM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   -- Create iterator that processes tasks sequentially
-  let iter := Std.Iterators.toIterM ({ list := tasks } : SequentialList (Task (TermElabM α))) TermElabM (Task (TermElabM α))
-  let iterWithErrors := iter.mapM fun (task : Task (TermElabM α)) => do
+  let iterWithErrors := tasks.iter.mapM fun (task : Task (TermElabM α)) => do
     try
       let result ← task.get
       pure (Except.ok result)
@@ -635,8 +611,7 @@ def parIterWithCancel {α : Type} (jobs : List (TacticM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   -- Create iterator that processes tasks sequentially
-  let iter := Std.Iterators.toIterM ({ list := tasks } : SequentialList (Task (TacticM α))) TacticM (Task (TacticM α))
-  let iterWithErrors := iter.mapM fun (task : Task (TacticM α)) => do
+  let iterWithErrors := tasks.iter.mapM fun (task : Task (TacticM α)) => do
     try
       let result ← task.get
       pure (Except.ok result)
