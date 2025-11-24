@@ -29,14 +29,11 @@ For each monad (`IO`, `CoreM`, `MetaM`, `TermElabM`, `TacticM`), the following f
 - `parIter` / `parIterWithCancel`
   - Run jobs in parallel, iterate over results in original order
   - Takes `List (MonadM α)`, returns iterator
-  - Results yielded in the original submission order
   - `parIterWithCancel` also returns cancellation hook
 
 - `parIterGreedy` / `parIterGreedyWithCancel`
   - Run jobs in parallel, iterate over results in completion order (greedily)
   - Takes `List (MonadM α)`, returns iterator
-  - Results yielded as tasks complete (not in original order)
-  - Useful for processing results as soon as available
   - `parIterGreedyWithCancel` also returns cancellation hook
 
 - `parFirst`
@@ -48,6 +45,16 @@ For each monad (`IO`, `CoreM`, `MetaM`, `TermElabM`, `TacticM`), the following f
 
 The greedy iterator-based functions use `IO.waitAny'` internally to wait for task completion in any order.
 The ordered iterator-based functions process tasks sequentially in the original order.
+
+**State threading in iterators:**
+The iterators (`parIter`, `parIterGreedy`, and their `WithCancel` variants) preserve state from each
+completed task. When you map over an iterator with a monadic function, the monad state will be that at
+the conclusion of the monadic action that produced each value. This means:
+- For `parIter`: State is threaded sequentially in the original task order
+- For `parIterGreedy`: State is threaded in task completion order
+
+This allows you to observe state changes (like logged messages, modified metavariable contexts, etc.)
+as tasks complete, unlike `par`/`par'` which restore the initial state after collecting all results.
 
 Iterators do not have `Finite` instances, as we cannot prove termination from the available
 information. For consumers that require `Finite` (like `.toList`), use `.allowNontermination.toList`.
