@@ -155,8 +155,8 @@ def par {α : Type} (jobs : List (IO α)) : BaseIO (List (Except IO.Error α)) :
   let tasks ← jobs.mapM IO.asTask
   let mut results := []
   for task in tasks do
-    results := results.concat task.get
-  return results
+    results := task.get :: results
+  return results.reverse
 
 /--
 Given a list of IO computations, executes them all in parallel as tasks,
@@ -268,11 +268,11 @@ def par {α : Type} (jobs : List (CoreM α)) : CoreM (List (Except Exception (α
     try
       let result ← task.get
       let taskState ← get
-      results := results.concat (.ok (result, taskState))
+      results := .ok (result, taskState) :: results
     catch e =>
-      results := results.concat (.error e)
+      results := .error e :: results
   set initialState
-  return results
+  return results.reverse
 
 /--
 Runs a list of CoreM computations in parallel and collects results in the original order,
@@ -289,11 +289,11 @@ def par' {α : Type} (jobs : List (CoreM α)) : CoreM (List (Except Exception α
   for task in tasks do
     try
       let result ← task.get
-      results := results.concat (.ok result)
+      results := .ok result :: results
     catch e =>
-      results := results.concat (.error e)
+      results := .error e :: results
   set initialState
-  return results
+  return results.reverse
 
 /--
 Runs a list of CoreM computations in parallel and returns the first successful result
@@ -338,11 +338,11 @@ def par {α : Type} (jobs : List (MetaM α)) : MetaM (List (Except Exception (α
     try
       let result ← task.get
       let taskState ← get
-      results := results.concat (.ok (result, taskState))
+      results := .ok (result, taskState) :: results
     catch e =>
-      results := results.concat (.error e)
+      results := .error e :: results
   set initialState
-  return results
+  return results.reverse
 
 /--
 Runs a list of MetaM computations in parallel and collects results in the original order,
@@ -359,11 +359,11 @@ def par' {α : Type} (jobs : List (MetaM α)) : MetaM (List (Except Exception α
   for task in tasks do
     try
       let result ← task.get
-      results := results.concat (.ok result)
+      results := .ok result :: results
     catch e =>
-      results := results.concat (.error e)
+      results := .error e :: results
   set initialState
-  return results
+  return results.reverse
 
 /--
 Runs a list of MetaM computations in parallel and returns:
@@ -544,11 +544,11 @@ def par {α : Type} (jobs : List (TermElabM α)) : TermElabM (List (Except Excep
     try
       let result ← task.get
       let taskState ← get
-      results := results.concat (.ok (result, taskState))
+      results := .ok (result, taskState) :: results
     catch e =>
-      results := results.concat (.error e)
+      results := .error e :: results
   set initialState
-  return results
+  return results.reverse
 
 /--
 Runs a list of TermElabM computations in parallel and collects results in the original order,
@@ -565,11 +565,11 @@ def par' {α : Type} (jobs : List (TermElabM α)) : TermElabM (List (Except Exce
   for task in tasks do
     try
       let result ← task.get
-      results := results.concat (.ok result)
+      results := .ok result :: results
     catch e =>
-      results := results.concat (.error e)
+      results := .error e :: results
   set initialState
-  return results
+  return results.reverse
 
 /--
 Runs a list of TermElabM computations in parallel and returns the first successful result
@@ -682,11 +682,11 @@ def par {α : Type} (jobs : List (TacticM α)) : TacticM (List (Except Exception
     try
       let result ← task.get
       let taskState ← get
-      results := results.concat (.ok (result, taskState))
+      results := .ok (result, taskState) :: results
     catch e =>
-      results := results.concat (.error e)
+      results := .error e :: results
   set initialState
-  return results
+  return results.reverse
 
 /--
 Runs a list of TacticM computations in parallel and collects results in the original order,
@@ -703,11 +703,11 @@ def par' {α : Type} (jobs : List (TacticM α)) : TacticM (List (Except Exceptio
   for task in tasks do
     try
       let result ← task.get
-      results := results.concat (.ok result)
+      results := .ok result :: results
     catch e =>
-      results := results.concat (.error e)
+      results := .error e :: results
   set initialState
-  return results
+  return results.reverse
 
 /--
 Runs a list of TacticM computations in parallel and returns the first successful result
