@@ -330,3 +330,56 @@ Failed: 1
 -/
 #guard_msgs in
 #eval! testCancellation
+
+/-- Test that parIter runs tasks in parallel AND returns results in original order. -/
+def testParIterParallelism : IO Unit := do
+  let (ctx, state) ← mkCoreState #[]
+
+  let testCore : Lean.CoreM (List Nat × Nat) := do
+    let startTime ← IO.monoMsNow
+
+    -- Three tasks with different sleep times: 300ms, 50ms, 150ms
+    -- If parallel: ~300ms total (max)
+    -- If sequential: ~500ms total (sum)
+    -- Expected order: [1, 2, 3] (original order, not completion order [2, 3, 1])
+    let iter ← Lean.Core.CoreM.parIter [
+      do IO.sleep 300; return 1,
+      do IO.sleep 50; return 2,
+      do IO.sleep 150; return 3
+    ]
+
+    -- Consume all results from the iterator
+    let mut results := []
+    for result in iter.allowNontermination do
+      match result with
+      | .ok value => results := results.concat value
+      | .error _ => pure ()
+
+    let endTime ← IO.monoMsNow
+    let elapsed := endTime - startTime
+
+    return (results, elapsed)
+
+  let ((results, elapsed), _) ← testCore.toIO ctx state
+
+  IO.println s!"Results: {results}"
+
+  -- Check ordering: should be [1, 2, 3], not [2, 3, 1]
+  if results != [1, 2, 3] then
+    IO.println s!"FAILED: Expected results in original order [1, 2, 3], got {results}"
+  else
+    IO.println s!"PASSED: Results in correct original order"
+
+  -- Check parallelism: should be ~300ms, not ~500ms
+  if elapsed > 450 then
+    IO.println s!"FAILED: Elapsed time >450ms suggests sequential execution!"
+  else
+    IO.println s!"PASSED: Elapsed time ≤450ms indicates parallel execution"
+
+/--
+info: Results: [1, 2, 3]
+PASSED: Results in correct original order
+PASSED: Elapsed time ≤450ms indicates parallel execution
+-/
+#guard_msgs in
+#eval! testParIterParallelism
