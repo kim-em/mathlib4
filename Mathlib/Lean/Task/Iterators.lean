@@ -16,33 +16,38 @@ with support for collecting results in different ways.
 
 ## Main functions
 
-For each monad (`IO`, `CoreM`, `MetaM`, `TermElabM`, `TacticM`), three main functions are provided:
+For each monad (`IO`, `CoreM`, `MetaM`, `TermElabM`, `TacticM`), the following functions are provided:
 
-- `par`
+- `par` / `par'`
   - Run jobs in parallel, collect results in original order
-  - Takes `List (MonadM α)`, returns `MonadM (List (Except Error α))`
+  - Takes `List (MonadM α)`, returns `MonadM (List (Except Error (α × State)))` / `MonadM (List (Except Error α))`
   - All tasks run in parallel, results returned in input order
+  - `par` returns state information, `par'` discards state
+  - Final state is restored to initial state (before tasks ran)
   - Errors wrapped in `Except` so all results are collected
 
-- `parIter`
-  - Run jobs in parallel, iterate over results in completion order
+- `parIter` / `parIterWithCancel`
+  - Run jobs in parallel, iterate over results in original order
+  - Takes `List (MonadM α)`, returns iterator
+  - Results yielded in the original submission order
+  - `parIterWithCancel` also returns cancellation hook
+
+- `parIterGreedy` / `parIterGreedyWithCancel`
+  - Run jobs in parallel, iterate over results in completion order (greedily)
   - Takes `List (MonadM α)`, returns iterator
   - Results yielded as tasks complete (not in original order)
   - Useful for processing results as soon as available
-
-- `parIterWithCancel`
-  - Like `parIter`, but also returns cancellation hook
-  - Returns `(cancel, iterator)` pair
-  - Call `cancel` to cancel remaining tasks
+  - `parIterGreedyWithCancel` also returns cancellation hook
 
 - `parFirst`
-  - Run jobs in parallel, return first successful result
+  - Run jobs in parallel, return first successful result (by completion order)
   - Cancels remaining tasks after first success (by default)
   - Throws error if all tasks fail
 
 ## Implementation notes
 
-The iterator-based functions use `IO.waitAny'` internally to wait for task completion.
+The greedy iterator-based functions use `IO.waitAny'` internally to wait for task completion in any order.
+The ordered iterator-based functions process tasks sequentially in the original order.
 
 Iterators do not have `Finite` instances, as we cannot prove termination from the available
 information. For consumers that require `Finite` (like `.toList`), use `.allowNontermination.toList`.
@@ -60,6 +65,26 @@ Maintains the list of tasks that haven't completed yet.
 -/
 structure TaskIterator (α : Type w) where
   tasks : List (Task α)
+
+/--
+Wrapper for sequential iteration over a list.
+This allows us to provide an Iterator instance that processes elements in order.
+-/
+structure SequentialList (α : Type w) where
+  list : List α
+
+/--
+Iterator instance for SequentialList that processes elements in the original order.
+-/
+instance [Monad m] : Iterator (SequentialList α) m α where
+  IsPlausibleStep it
+    | .yield _it' _out => True
+    | .skip _ => False
+    | .done => it.internalState.list = []
+  step it := do
+    match it.internalState.list with
+    | [] => pure <| .deflate ⟨.done, rfl⟩
+    | x :: rest => pure <| .deflate ⟨.yield (Std.Iterators.toIterM { list := rest } m α) x, trivial⟩
 
 end Std.Iterators
 
@@ -109,6 +134,7 @@ instance {α : Type} : Iterator (TaskIterator α) BaseIO α where
           trivial⟩
 
 
+
 /--
 Given a list of IO computations, executes them all in parallel as tasks,
 and returns a cancellation hook and an iterator that yields results in completion order.
@@ -154,7 +180,7 @@ def par {α : Type} (jobs : List (IO α)) : BaseIO (List (Except IO.Error α)) :
 
 /--
 Given a list of IO computations, executes them all in parallel as tasks,
-and returns the first successful result.
+and returns the first successful result (by completion order, not list order).
 
 If `cancel := true` (the default), cancels all remaining tasks after the first success.
 -/
@@ -178,7 +204,42 @@ open Std.Iterators
 /--
 Runs a list of CoreM computations in parallel and returns:
 * a combined cancellation hook for all tasks, and
-* an iterator that yields results in completion order.
+* an iterator that yields results in original order.
+
+The iterator runs in CoreM, and as it yields each result, it updates the CoreM state
+to reflect the state when that particular task completed. This means the state is
+threaded through the iteration in the order of the original list.
+
+Results are wrapped in `Except Exception α` so that errors in individual tasks don't stop
+the iteration - you can observe all results including which tasks failed.
+
+The iterator will terminate after all jobs complete (assuming they all do complete).
+-/
+def parIterWithCancel {α : Type} (jobs : List (CoreM α)) := do
+  let (cancels, tasks) := (← jobs.mapM asTask).unzip
+  let combinedCancel := cancels.forM id
+  -- Create iterator that processes tasks sequentially
+  let iter := Std.Iterators.toIterM ({ list := tasks } : SequentialList (Task (CoreM α))) CoreM (Task (CoreM α))
+  let iterWithErrors := iter.mapM fun (task : Task (CoreM α)) => do
+    try
+      let result ← task.get
+      pure (Except.ok result)
+    catch e =>
+      pure (Except.error e)
+  return (combinedCancel, iterWithErrors)
+
+/--
+Runs a list of CoreM computations in parallel (without cancellation hook).
+
+Returns an iterator that yields results in original order, wrapped in `Except Exception α`.
+-/
+def parIter {α : Type} (jobs : List (CoreM α)) :=
+  (·.2) <$> parIterWithCancel jobs
+
+/--
+Runs a list of CoreM computations in parallel and returns:
+* a combined cancellation hook for all tasks, and
+* an iterator that yields results in completion order (greedily).
 
 The iterator runs in CoreM, and as it yields each result, it updates the CoreM state
 to reflect the state when that particular task completed. This means the state is
@@ -189,7 +250,7 @@ the iteration - you can observe all results including which tasks failed.
 
 The iterator will terminate after all jobs complete (assuming they all do complete).
 -/
-def parIterWithCancel {α : Type} (jobs : List (CoreM α)) := do
+def parIterGreedyWithCancel {α : Type} (jobs : List (CoreM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   let baseIter := IO.iterTasks tasks
@@ -206,19 +267,45 @@ Runs a list of CoreM computations in parallel (without cancellation hook).
 
 Returns an iterator that yields results in completion order, wrapped in `Except Exception α`.
 -/
-def parIter {α : Type} (jobs : List (CoreM α)) :=
-  (·.2) <$> parIterWithCancel jobs
+def parIterGreedy {α : Type} (jobs : List (CoreM α)) :=
+  (·.2) <$> parIterGreedyWithCancel jobs
 
 /--
-Runs a list of CoreM computations in parallel and collects results in the original order.
+Runs a list of CoreM computations in parallel and collects results in the original order,
+including the state after each task completes.
 
 Unlike `parIter`, this waits for all tasks to complete and returns results
 in the same order as the input list, not in completion order.
 
-Results are wrapped in `Except Exception α` so that errors in individual tasks don't stop
-the collection - you can observe all results including which tasks failed.
+Results are wrapped in `Except Exception (α × Core.State)` so that errors in individual
+tasks don't stop the collection - you can observe all results including which tasks failed.
+
+The final CoreM state is restored to the initial state (before tasks ran).
 -/
-def par {α : Type} (jobs : List (CoreM α)) : CoreM (List (Except Exception α)) := do
+def par {α : Type} (jobs : List (CoreM α)) : CoreM (List (Except Exception (α × Core.State))) := do
+  let initialState ← get
+  let tasks ← jobs.mapM asTask'
+  let mut results := []
+  for task in tasks do
+    try
+      let result ← task.get
+      let taskState ← get
+      results := results.concat (.ok (result, taskState))
+    catch e =>
+      results := results.concat (.error e)
+  set initialState
+  return results
+
+/--
+Runs a list of CoreM computations in parallel and collects results in the original order,
+discarding state information.
+
+Unlike `par`, this doesn't return state information from tasks.
+
+The final CoreM state is restored to the initial state (before tasks ran).
+-/
+def par' {α : Type} (jobs : List (CoreM α)) : CoreM (List (Except Exception α)) := do
+  let initialState ← get
   let tasks ← jobs.mapM asTask'
   let mut results := []
   for task in tasks do
@@ -227,15 +314,17 @@ def par {α : Type} (jobs : List (CoreM α)) : CoreM (List (Except Exception α)
       results := results.concat (.ok result)
     catch e =>
       results := results.concat (.error e)
+  set initialState
   return results
 
 /--
-Runs a list of CoreM computations in parallel and returns the first successful result.
+Runs a list of CoreM computations in parallel and returns the first successful result
+(by completion order, not list order).
 
 If `cancel := true` (the default), cancels all remaining tasks after the first success.
 -/
 def parFirst {α : Type} (jobs : List (CoreM α)) (cancel : Bool := true) : CoreM α := do
-  let (cancelHook, iter) ← parIterWithCancel jobs
+  let (cancelHook, iter) ← parIterGreedyWithCancel jobs
   for result in iter.allowNontermination do
     match result with
     | .ok value =>
@@ -251,15 +340,42 @@ namespace Lean.Meta.MetaM
 open Std.Iterators
 
 /--
-Runs a list of MetaM computations in parallel and collects results in the original order.
+Runs a list of MetaM computations in parallel and collects results in the original order,
+including the state after each task completes.
 
 Unlike `parIter`, this waits for all tasks to complete and returns results
 in the same order as the input list, not in completion order.
 
-Results are wrapped in `Except Exception α` so that errors in individual tasks don't stop
-the collection - you can observe all results including which tasks failed.
+Results are wrapped in `Except Exception (α × Meta.State)` so that errors in individual
+tasks don't stop the collection - you can observe all results including which tasks failed.
+
+The final MetaM state is restored to the initial state (before tasks ran).
+Note: Only Meta.State is captured/reverted, not Core.State or IO effects.
 -/
-def par {α : Type} (jobs : List (MetaM α)) : MetaM (List (Except Exception α)) := do
+def par {α : Type} (jobs : List (MetaM α)) : MetaM (List (Except Exception (α × Meta.State))) := do
+  let initialState ← get
+  let tasks ← jobs.mapM asTask'
+  let mut results := []
+  for task in tasks do
+    try
+      let result ← task.get
+      let taskState ← get
+      results := results.concat (.ok (result, taskState))
+    catch e =>
+      results := results.concat (.error e)
+  set initialState
+  return results
+
+/--
+Runs a list of MetaM computations in parallel and collects results in the original order,
+discarding state information.
+
+Unlike `par`, this doesn't return state information from tasks.
+
+The final MetaM state is restored to the initial state (before tasks ran).
+-/
+def par' {α : Type} (jobs : List (MetaM α)) : MetaM (List (Except Exception α)) := do
+  let initialState ← get
   let tasks ← jobs.mapM asTask'
   let mut results := []
   for task in tasks do
@@ -268,12 +384,48 @@ def par {α : Type} (jobs : List (MetaM α)) : MetaM (List (Except Exception α)
       results := results.concat (.ok result)
     catch e =>
       results := results.concat (.error e)
+  set initialState
   return results
 
 /--
 Runs a list of MetaM computations in parallel and returns:
 * a combined cancellation hook for all tasks, and
-* an iterator that yields results in completion order.
+* an iterator that yields results in original order.
+
+The iterator runs in MetaM, and as it yields each result, it updates the MetaM state
+to reflect the state when that particular task completed. This means the state is
+threaded through the iteration in the order of the original list.
+
+Results are wrapped in `Except Exception α` so that errors in individual tasks don't stop
+the iteration - you can observe all results including which tasks failed.
+
+The iterator will terminate after all jobs complete (assuming they all do complete).
+-/
+def parIterWithCancel {α : Type} (jobs : List (MetaM α)) := do
+  let (cancels, tasks) := (← jobs.mapM asTask).unzip
+  let combinedCancel := cancels.forM id
+  -- Create iterator that processes tasks sequentially
+  let iter := Std.Iterators.toIterM ({ list := tasks } : SequentialList (Task (MetaM α))) MetaM (Task (MetaM α))
+  let iterWithErrors := iter.mapM fun (task : Task (MetaM α)) => do
+    try
+      let result ← task.get
+      pure (Except.ok result)
+    catch e =>
+      pure (Except.error e)
+  return (combinedCancel, iterWithErrors)
+
+/--
+Runs a list of MetaM computations in parallel (without cancellation hook).
+
+Returns an iterator that yields results in original order, wrapped in `Except Exception α`.
+-/
+def parIter {α : Type} (jobs : List (MetaM α)) :=
+  (·.2) <$> parIterWithCancel jobs
+
+/--
+Runs a list of MetaM computations in parallel and returns:
+* a combined cancellation hook for all tasks, and
+* an iterator that yields results in completion order (greedily).
 
 The iterator runs in MetaM, and as it yields each result, it updates the MetaM state
 to reflect the state when that particular task completed. This means the state is
@@ -284,7 +436,7 @@ the iteration - you can observe all results including which tasks failed.
 
 The iterator will terminate after all jobs complete (assuming they all do complete).
 -/
-def parIterWithCancel {α : Type} (jobs : List (MetaM α)) := do
+def parIterGreedyWithCancel {α : Type} (jobs : List (MetaM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   let baseIter := IO.iterTasks tasks
@@ -301,16 +453,17 @@ Runs a list of MetaM computations in parallel (without cancellation hook).
 
 Returns an iterator that yields results in completion order, wrapped in `Except Exception α`.
 -/
-def parIter {α : Type} (jobs : List (MetaM α)) :=
-  (·.2) <$> parIterWithCancel jobs
+def parIterGreedy {α : Type} (jobs : List (MetaM α)) :=
+  (·.2) <$> parIterGreedyWithCancel jobs
 
 /--
-Runs a list of MetaM computations in parallel and returns the first successful result.
+Runs a list of MetaM computations in parallel and returns the first successful result
+(by completion order, not list order).
 
 If `cancel := true` (the default), cancels all remaining tasks after the first success.
 -/
 def parFirst {α : Type} (jobs : List (MetaM α)) (cancel : Bool := true) : MetaM α := do
-  let (cancelHook, iter) ← parIterWithCancel jobs
+  let (cancelHook, iter) ← parIterGreedyWithCancel jobs
   for result in iter.allowNontermination do
     match result with
     | .ok value =>
@@ -328,7 +481,42 @@ open Std.Iterators
 /--
 Runs a list of TermElabM computations in parallel and returns:
 * a combined cancellation hook for all tasks, and
-* an iterator that yields results in completion order.
+* an iterator that yields results in original order.
+
+The iterator runs in TermElabM, and as it yields each result, it updates the TermElabM state
+to reflect the state when that particular task completed. This means the state is
+threaded through the iteration in the order of the original list.
+
+Results are wrapped in `Except Exception α` so that errors in individual tasks don't stop
+the iteration - you can observe all results including which tasks failed.
+
+The iterator will terminate after all jobs complete (assuming they all do complete).
+-/
+def parIterWithCancel {α : Type} (jobs : List (TermElabM α)) := do
+  let (cancels, tasks) := (← jobs.mapM asTask).unzip
+  let combinedCancel := cancels.forM id
+  -- Create iterator that processes tasks sequentially
+  let iter := Std.Iterators.toIterM ({ list := tasks } : SequentialList (Task (TermElabM α))) TermElabM (Task (TermElabM α))
+  let iterWithErrors := iter.mapM fun (task : Task (TermElabM α)) => do
+    try
+      let result ← task.get
+      pure (Except.ok result)
+    catch e =>
+      pure (Except.error e)
+  return (combinedCancel, iterWithErrors)
+
+/--
+Runs a list of TermElabM computations in parallel (without cancellation hook).
+
+Returns an iterator that yields results in original order, wrapped in `Except Exception α`.
+-/
+def parIter {α : Type} (jobs : List (TermElabM α)) :=
+  (·.2) <$> parIterWithCancel jobs
+
+/--
+Runs a list of TermElabM computations in parallel and returns:
+* a combined cancellation hook for all tasks, and
+* an iterator that yields results in completion order (greedily).
 
 The iterator runs in TermElabM, and as it yields each result, it updates the TermElabM state
 to reflect the state when that particular task completed. This means the state is
@@ -339,7 +527,7 @@ the iteration - you can observe all results including which tasks failed.
 
 The iterator will terminate after all jobs complete (assuming they all do complete).
 -/
-def parIterWithCancel {α : Type} (jobs : List (TermElabM α)) := do
+def parIterGreedyWithCancel {α : Type} (jobs : List (TermElabM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   let baseIter := IO.iterTasks tasks
@@ -356,19 +544,46 @@ Runs a list of TermElabM computations in parallel (without cancellation hook).
 
 Returns an iterator that yields results in completion order, wrapped in `Except Exception α`.
 -/
-def parIter {α : Type} (jobs : List (TermElabM α)) :=
-  (·.2) <$> parIterWithCancel jobs
+def parIterGreedy {α : Type} (jobs : List (TermElabM α)) :=
+  (·.2) <$> parIterGreedyWithCancel jobs
 
 /--
-Runs a list of TermElabM computations in parallel and collects results in the original order.
+Runs a list of TermElabM computations in parallel and collects results in the original order,
+including the state after each task completes.
 
 Unlike `parIter`, this waits for all tasks to complete and returns results
 in the same order as the input list, not in completion order.
 
-Results are wrapped in `Except Exception α` so that errors in individual tasks don't stop
-the collection - you can observe all results including which tasks failed.
+Results are wrapped in `Except Exception (α × Term.State)` so that errors in individual
+tasks don't stop the collection - you can observe all results including which tasks failed.
+
+The final TermElabM state is restored to the initial state (before tasks ran).
+Note: Only Term.State is captured/reverted, not Meta.State, Core.State or IO effects.
 -/
-def par {α : Type} (jobs : List (TermElabM α)) : TermElabM (List (Except Exception α)) := do
+def par {α : Type} (jobs : List (TermElabM α)) : TermElabM (List (Except Exception (α × Term.State))) := do
+  let initialState ← get
+  let tasks ← jobs.mapM asTask'
+  let mut results := []
+  for task in tasks do
+    try
+      let result ← task.get
+      let taskState ← get
+      results := results.concat (.ok (result, taskState))
+    catch e =>
+      results := results.concat (.error e)
+  set initialState
+  return results
+
+/--
+Runs a list of TermElabM computations in parallel and collects results in the original order,
+discarding state information.
+
+Unlike `par`, this doesn't return state information from tasks.
+
+The final TermElabM state is restored to the initial state (before tasks ran).
+-/
+def par' {α : Type} (jobs : List (TermElabM α)) : TermElabM (List (Except Exception α)) := do
+  let initialState ← get
   let tasks ← jobs.mapM asTask'
   let mut results := []
   for task in tasks do
@@ -377,15 +592,17 @@ def par {α : Type} (jobs : List (TermElabM α)) : TermElabM (List (Except Excep
       results := results.concat (.ok result)
     catch e =>
       results := results.concat (.error e)
+  set initialState
   return results
 
 /--
-Runs a list of TermElabM computations in parallel and returns the first successful result.
+Runs a list of TermElabM computations in parallel and returns the first successful result
+(by completion order, not list order).
 
 If `cancel := true` (the default), cancels all remaining tasks after the first success.
 -/
 def parFirst {α : Type} (jobs : List (TermElabM α)) (cancel : Bool := true) : TermElabM α := do
-  let (cancelHook, iter) ← parIterWithCancel jobs
+  let (cancelHook, iter) ← parIterGreedyWithCancel jobs
   for result in iter.allowNontermination do
     match result with
     | .ok value =>
@@ -403,7 +620,42 @@ open Std.Iterators
 /--
 Runs a list of TacticM computations in parallel and returns:
 * a combined cancellation hook for all tasks, and
-* an iterator that yields results in completion order.
+* an iterator that yields results in original order.
+
+The iterator runs in TacticM, and as it yields each result, it updates the TacticM state
+to reflect the state when that particular task completed. This means the state is
+threaded through the iteration in the order of the original list.
+
+Results are wrapped in `Except Exception α` so that errors in individual tasks don't stop
+the iteration - you can observe all results including which tasks failed.
+
+The iterator will terminate after all jobs complete (assuming they all do complete).
+-/
+def parIterWithCancel {α : Type} (jobs : List (TacticM α)) := do
+  let (cancels, tasks) := (← jobs.mapM asTask).unzip
+  let combinedCancel := cancels.forM id
+  -- Create iterator that processes tasks sequentially
+  let iter := Std.Iterators.toIterM ({ list := tasks } : SequentialList (Task (TacticM α))) TacticM (Task (TacticM α))
+  let iterWithErrors := iter.mapM fun (task : Task (TacticM α)) => do
+    try
+      let result ← task.get
+      pure (Except.ok result)
+    catch e =>
+      pure (Except.error e)
+  return (combinedCancel, iterWithErrors)
+
+/--
+Runs a list of TacticM computations in parallel (without cancellation hook).
+
+Returns an iterator that yields results in original order, wrapped in `Except Exception α`.
+-/
+def parIter {α : Type} (jobs : List (TacticM α)) :=
+  (·.2) <$> parIterWithCancel jobs
+
+/--
+Runs a list of TacticM computations in parallel and returns:
+* a combined cancellation hook for all tasks, and
+* an iterator that yields results in completion order (greedily).
 
 The iterator runs in TacticM, and as it yields each result, it updates the TacticM state
 to reflect the state when that particular task completed. This means the state is
@@ -414,7 +666,7 @@ the iteration - you can observe all results including which tasks failed.
 
 The iterator will terminate after all jobs complete (assuming they all do complete).
 -/
-def parIterWithCancel {α : Type} (jobs : List (TacticM α)) := do
+def parIterGreedyWithCancel {α : Type} (jobs : List (TacticM α)) := do
   let (cancels, tasks) := (← jobs.mapM asTask).unzip
   let combinedCancel := cancels.forM id
   let baseIter := IO.iterTasks tasks
@@ -431,19 +683,46 @@ Runs a list of TacticM computations in parallel (without cancellation hook).
 
 Returns an iterator that yields results in completion order, wrapped in `Except Exception α`.
 -/
-def parIter {α : Type} (jobs : List (TacticM α)) :=
-  (·.2) <$> parIterWithCancel jobs
+def parIterGreedy {α : Type} (jobs : List (TacticM α)) :=
+  (·.2) <$> parIterGreedyWithCancel jobs
 
 /--
-Runs a list of TacticM computations in parallel and collects results in the original order.
+Runs a list of TacticM computations in parallel and collects results in the original order,
+including the state after each task completes.
 
 Unlike `parIter`, this waits for all tasks to complete and returns results
 in the same order as the input list, not in completion order.
 
-Results are wrapped in `Except Exception α` so that errors in individual tasks don't stop
-the collection - you can observe all results including which tasks failed.
+Results are wrapped in `Except Exception (α × Tactic.State)` so that errors in individual
+tasks don't stop the collection - you can observe all results including which tasks failed.
+
+The final TacticM state is restored to the initial state (before tasks ran).
+Note: Only Tactic.State is captured/reverted, not Term.State, Meta.State, Core.State or IO effects.
 -/
-def par {α : Type} (jobs : List (TacticM α)) : TacticM (List (Except Exception α)) := do
+def par {α : Type} (jobs : List (TacticM α)) : TacticM (List (Except Exception (α × Tactic.State))) := do
+  let initialState ← get
+  let tasks ← jobs.mapM asTask'
+  let mut results := []
+  for task in tasks do
+    try
+      let result ← task.get
+      let taskState ← get
+      results := results.concat (.ok (result, taskState))
+    catch e =>
+      results := results.concat (.error e)
+  set initialState
+  return results
+
+/--
+Runs a list of TacticM computations in parallel and collects results in the original order,
+discarding state information.
+
+Unlike `par`, this doesn't return state information from tasks.
+
+The final TacticM state is restored to the initial state (before tasks ran).
+-/
+def par' {α : Type} (jobs : List (TacticM α)) : TacticM (List (Except Exception α)) := do
+  let initialState ← get
   let tasks ← jobs.mapM asTask'
   let mut results := []
   for task in tasks do
@@ -452,15 +731,17 @@ def par {α : Type} (jobs : List (TacticM α)) : TacticM (List (Except Exception
       results := results.concat (.ok result)
     catch e =>
       results := results.concat (.error e)
+  set initialState
   return results
 
 /--
-Runs a list of TacticM computations in parallel and returns the first successful result.
+Runs a list of TacticM computations in parallel and returns the first successful result
+(by completion order, not list order).
 
 If `cancel := true` (the default), cancels all remaining tasks after the first success.
 -/
 def parFirst {α : Type} (jobs : List (TacticM α)) (cancel : Bool := true) : TacticM α := do
-  let (cancelHook, iter) ← parIterWithCancel jobs
+  let (cancelHook, iter) ← parIterGreedyWithCancel jobs
   for result in iter.allowNontermination do
     match result with
     | .ok value =>

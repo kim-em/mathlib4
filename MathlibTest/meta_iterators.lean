@@ -56,6 +56,73 @@ def testCompletionOrder : IO Unit := do
 #guard_msgs in
 #eval! testCompletionOrder
 
+/-- Test that IO.par returns results in original order. -/
+def testParOriginalOrder : IO Unit := do
+  let results ← IO.par [
+    IO.sleep 300 *> pure 1,
+    IO.sleep 50 *> pure 2,
+    IO.sleep 150 *> pure 3
+  ]
+
+  -- Extract successful results - should be in original order despite completion order
+  IO.println s!"{results.filterMap (·.toOption)}"
+
+/-- info: [1, 2, 3] -/
+#guard_msgs in
+#eval! testParOriginalOrder
+
+/-- Test that IO.parFirst returns the first successful result and cancels others. -/
+def testParFirst : IO Unit := do
+  -- Track which tasks completed
+  let completed : IO.Ref (List Nat) ← IO.mkRef []
+
+  let results ← IO.parFirst [
+    do IO.sleep 300; completed.modify (1 :: ·); pure 1,
+    do IO.sleep 50; completed.modify (2 :: ·); pure 2,
+    do IO.sleep 150; completed.modify (3 :: ·); pure 3
+  ]
+
+  IO.println s!"First result: {results}"
+
+  -- Give a bit of time to see if other tasks complete (they shouldn't due to cancellation)
+  IO.sleep 200
+
+  let completedList ← completed.get
+  IO.println s!"Completed tasks: {completedList.mergeSort (· < ·)}"
+
+/--
+info: First result: 2
+Completed tasks: [2, 3]
+-/
+#guard_msgs in
+#eval! testParFirst
+
+/-- Test that IO.parFirst with cancel := false doesn't cancel other tasks. -/
+def testParFirstNoCancel : IO Unit := do
+  -- Track which tasks completed
+  let completed : IO.Ref (List Nat) ← IO.mkRef []
+
+  let result ← IO.parFirst (cancel := false) [
+    do IO.sleep 300; completed.modify (1 :: ·); pure 1,
+    do IO.sleep 50; completed.modify (2 :: ·); pure 2,
+    do IO.sleep 150; completed.modify (3 :: ·); pure 3
+  ]
+
+  IO.println s!"First result: {result}"
+
+  -- Give time for other tasks to complete
+  IO.sleep 400
+
+  let completedList ← completed.get
+  IO.println s!"Completed tasks: {completedList.mergeSort (· < ·)}"
+
+/--
+info: First result: 2
+Completed tasks: [1, 2, 3]
+-/
+#guard_msgs in
+#eval! testParFirstNoCancel
+
 /-- Test that state is properly threaded through CoreM iteration. -/
 def testStateThreading : IO Unit := do
   let (ctx, state) ← mkCoreState #[]
@@ -90,12 +157,118 @@ def testStateThreading : IO Unit := do
   IO.println s!"Message texts: {msgTexts}"
 
 /--
-info: Values: [2, 3, 1]
+info: Values: [1, 2, 3]
 Message counts: [1, 1, 1]
-Message texts: [Task 2, Task 3, Task 1]
+Message texts: [Task 1, Task 2, Task 3]
 -/
 #guard_msgs in
 #eval! testStateThreading
+
+/-- Test that MetaM.par' returns results in original order. -/
+def testMetaMPar : IO Unit := do
+  let (ctx, state) ← mkCoreState #[]
+
+  let testMeta : Lean.MetaM (List Nat) := do
+    let results ← Lean.Meta.MetaM.par' [
+      do IO.sleep 300; return 1,
+      do IO.sleep 50; return 2,
+      do IO.sleep 150; return 3
+    ]
+    return results.filterMap (·.toOption)
+
+  let (values, _) ← testMeta.run' |>.toIO ctx state
+  IO.println s!"Values in original order: {values}"
+
+/--
+info: Values in original order: [1, 2, 3]
+-/
+#guard_msgs in
+#eval! testMetaMPar
+
+/-- Test that MetaM.parFirst returns the first successful result. -/
+def testMetaMParFirst : IO Unit := do
+  let (ctx, state) ← mkCoreState #[]
+
+  let testMeta : Lean.MetaM Nat := do
+    Lean.Meta.MetaM.parFirst [
+      do IO.sleep 300; Lean.logInfo "Task 1 completed"; return 1,
+      do IO.sleep 50; Lean.logInfo "Task 2 completed"; return 2,
+      do IO.sleep 150; Lean.logInfo "Task 3 completed"; return 3
+    ]
+
+  let (result, finalState) ← testMeta.run' |>.toIO ctx state
+  IO.println s!"First result: {result}"
+
+  -- Check message log to see which tasks completed before cancellation
+  let messages := finalState.messages.toList
+  IO.println s!"Messages logged: {messages.length}"
+
+/--
+info: First result: 2
+Messages logged: 1
+-/
+#guard_msgs in
+#eval! testMetaMParFirst
+
+/-- Test that MetaM.par' properly handles errors. -/
+def testMetaMParWithErrors : IO Unit := do
+  let (ctx, state) ← mkCoreState #[]
+
+  let testMeta : Lean.MetaM (List String) := do
+    let results ← Lean.Meta.MetaM.par' [
+      do IO.sleep 100; return "success",
+      do IO.sleep 50; throwError "intentional error",
+      do IO.sleep 75; return "also success"
+    ]
+    return results.map fun
+      | .ok val => s!"ok: {val}"
+      | .error _ => "error"
+
+  let (resultStrings, _) ← testMeta.run' |>.toIO ctx state
+  IO.println s!"Results: {resultStrings}"
+
+/--
+info: Results: [ok: success, error, ok: also success]
+-/
+#guard_msgs in
+#eval! testMetaMParWithErrors
+
+/-- Test that CoreM.par returns state information and restores initial state. -/
+def testCoreMParWithState : IO Unit := do
+  let (ctx, state) ← mkCoreState #[]
+
+  let testCore : Lean.CoreM (List Nat × Nat) := do
+    -- Log initial message
+    Lean.logInfo "Initial state"
+
+    let results ← Lean.Core.CoreM.par [
+      do Lean.logInfo "Task 1"; IO.sleep 100; return 1,
+      do Lean.logInfo "Task 2"; IO.sleep 50; return 2,
+      do Lean.logInfo "Task 3"; IO.sleep 75; return 3
+    ]
+
+    -- After par, Core.State should be restored to initial (only "Initial state" message)
+    let finalMessages ← Lean.Core.getMessageLog
+    let finalCount := finalMessages.toList.length
+
+    -- Extract values from results
+    let values : List Nat := results.filterMap fun r => match r with
+      | .ok (val, _taskState) =>
+        some val
+      | .error _ => none
+
+    return (values, finalCount)
+
+  let ((values, finalCount), _) ← testCore.toIO ctx state
+  IO.println s!"Values: {values}"
+  IO.println s!"Final message count (should be 1): {finalCount}"
+
+/--
+info: Values: [1, 2, 3]
+Final message count (should be 1): 1
+-/
+#guard_msgs in
+#eval! testCoreMParWithState
 
 /-- Test that TacticM state is properly threaded through iterations. -/
 def testTacticMStateThreading : IO Unit := do
@@ -118,8 +291,8 @@ def testTacticMStateThreading : IO Unit := do
   IO.println s!"Goal counts: {goalCounts}"
 
 /--
-info: Tactic names: [exact, skip, sorry]
-Goal counts: [0, 1, 0]
+info: Tactic names: [sorry, exact, skip]
+Goal counts: [0, 0, 1]
 -/
 #guard_msgs in
 #eval! testTacticMStateThreading
