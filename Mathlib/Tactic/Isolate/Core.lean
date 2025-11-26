@@ -164,7 +164,7 @@ initialize registerBuiltinAttribute {
 Example: To see whether there are any lemmas tagged `@[isolate]` whose conclusion is an
 if-and-only-if from `a + x < y` (i.e. `HAdd.hAdd _ _ _ a x < y`), use the following command syntax:
 ```
-#query_isolate_lemmas `LT.lt `HAdd.hAdd 5 0
+#query_isolate_lemmas LT.lt HAdd.hAdd 5 0
 ```
 -/
 elab "#query_isolate_lemmas" e0:(ppSpace colGt ident)? e1:(ppSpace colGt ident)?
