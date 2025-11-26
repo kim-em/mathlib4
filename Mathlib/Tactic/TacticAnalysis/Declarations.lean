@@ -276,6 +276,34 @@ def Mathlib.TacticAnalysis.terminalToGrind : TacticAnalysis.Config where
       if oldHeartbeats * 2 < newHeartbeats then
         logWarningAt stx m!"'grind' is slower than the original: {oldHeartbeats} -> {newHeartbeats}"
 
+/-- Run a `MetaM` action with the given declaration marked as deprecated in the environment.
+This prevents `grind +suggestions` from using the declaration to prove itself (circular reference).
+Uses `asyncMode := .local` to work in async contexts (like linters). -/
+private def withDeclDeprecated {α : Type} (declName : Name) (x : MetaM α) : MetaM α := do
+  let env ← getEnv
+  -- Check if already deprecated or in imported module (same checks as setParam)
+  if (env.getModuleIdxFor? declName).isSome then
+    x  -- Declaration is in imported module, can't modify
+  else if (Linter.deprecatedAttr.ext.getState (asyncMode := .local) env).2.find? declName |>.isSome then
+    x  -- Already deprecated
+  else
+    -- Add entry with asyncMode := .local to work in async contexts
+    let env' := Linter.deprecatedAttr.ext.addEntry (asyncMode := .local) env (declName, {})
+    withEnv env' x
+
+/-- Run tactic code with the parent declaration marked as deprecated.
+This prevents `grind +suggestions` from using the theorem being proved to prove itself. -/
+private def runTacticCodeDeprecatingParent (i : TacticNode) (goal : MVarId) (code : Syntax) :
+    Elab.Command.CommandElabM (List MVarId) := do
+  let termCtx ← Elab.Command.liftTermElabM (do return (← read))
+  let termState ← Elab.Command.liftTermElabM (do return (← get))
+  i.ctxI.runTactic i.tacI goal fun goal => do
+    let action := Lean.Elab.runTactic' (ctx := termCtx) (s := termState) goal code
+    if let some parentDecl := i.ctxI.parentDecl? then
+      withDeclDeprecated parentDecl action
+    else
+      action
+
 /-- Identify places where `grind +suggestions` succeeds but `grind` alone fails,
 replacing at least 3 tactics. -/
 register_option linter.tacticAnalysis.grindSuggestionsExamples : Bool := {
@@ -286,7 +314,7 @@ register_option linter.tacticAnalysis.grindSuggestionsExamples : Bool := {
   inherit_doc linter.tacticAnalysis.grindSuggestionsExamples]
 def Mathlib.TacticAnalysis.grindSuggestionsExamples : TacticAnalysis.Config where
   run seq := do
-    let threshold := 1
+    let threshold := 7
     let mut replaced : List (TSyntax `tactic) := []
     let mut success := false
     -- Iterate in reverse to find terminal sequences
@@ -295,9 +323,11 @@ def Mathlib.TacticAnalysis.grindSuggestionsExamples : TacticAnalysis.Config wher
           i.tacI.stx.getKind != ``Lean.Parser.Tactic.grind then
         if let [goal] := i.tacI.goalsBefore then
           -- Test if `grind +suggestions` succeeds
+          -- Use runTacticCodeDeprecatingParent to prevent circular references
+          -- (the theorem using itself as a library suggestion)
           let grindSuggestions ← `(tactic| grind +suggestions)
           let suggestionsGoals ← try
-            i.runTacticCode goal grindSuggestions
+            runTacticCodeDeprecatingParent i goal grindSuggestions
           catch _e =>
             pure [goal]
 
@@ -305,7 +335,7 @@ def Mathlib.TacticAnalysis.grindSuggestionsExamples : TacticAnalysis.Config wher
             -- `grind +suggestions` succeeded, now check if plain `grind` fails
             let grindPlain ← `(tactic| grind)
             let plainGoals ← try
-              i.runTacticCode goal grindPlain
+              runTacticCodeDeprecatingParent i goal grindPlain
             catch _e =>
               pure [goal]
 
