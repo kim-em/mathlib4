@@ -235,8 +235,9 @@ def isolateStep (x : Expr) (P : Expr) : MetaM (List MVarId × Simp.Result) := do
     let key : IsolateLemmaKey := ⟨relName, fnName, idx, !symmetric? && !lhsContains⟩
     let isolateDict := isolateExt.getState (← getEnv)
     let lemmas := isolateDict.getD key #[]
+    -- Loop over the lemmas to see if any apply.
+    -- We commit to the first success, so we can pull `saveState` out of the loop.
     let s ← saveState
-    -- Loop over the lemmas to see if any apply:
     for lem in lemmas do
       try
         trace[Meta.isolate] "trying the lemma {lem} to rewrite the expression {P'}"
