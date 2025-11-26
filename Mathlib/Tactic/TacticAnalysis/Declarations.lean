@@ -276,6 +276,56 @@ def Mathlib.TacticAnalysis.terminalToGrind : TacticAnalysis.Config where
       if oldHeartbeats * 2 < newHeartbeats then
         logWarningAt stx m!"'grind' is slower than the original: {oldHeartbeats} -> {newHeartbeats}"
 
+/-- Identify places where `grind +suggestions` succeeds but `grind` alone fails,
+replacing at least 3 tactics. -/
+register_option linter.tacticAnalysis.grindSuggestionsExamples : Bool := {
+  defValue := false
+}
+
+@[tacticAnalysis linter.tacticAnalysis.grindSuggestionsExamples,
+  inherit_doc linter.tacticAnalysis.grindSuggestionsExamples]
+def Mathlib.TacticAnalysis.grindSuggestionsExamples : TacticAnalysis.Config where
+  run seq := do
+    let threshold := 1
+    let mut replaced : List (TSyntax `tactic) := []
+    let mut success := false
+    -- Iterate in reverse to find terminal sequences
+    for i in seq.reverse do
+      if replaced.length >= threshold - 1 &&
+          i.tacI.stx.getKind != ``Lean.Parser.Tactic.grind then
+        if let [goal] := i.tacI.goalsBefore then
+          -- Test if `grind +suggestions` succeeds
+          let grindSuggestions ← `(tactic| grind +suggestions)
+          let suggestionsGoals ← try
+            i.runTacticCode goal grindSuggestions
+          catch _e =>
+            pure [goal]
+
+          if suggestionsGoals.isEmpty then
+            -- `grind +suggestions` succeeded, now check if plain `grind` fails
+            let grindPlain ← `(tactic| grind)
+            let plainGoals ← try
+              i.runTacticCode goal grindPlain
+            catch _e =>
+              pure [goal]
+
+            if plainGoals.isEmpty then
+              -- Plain grind also succeeded, not interesting
+              break
+            else
+              -- Plain grind failed but +suggestions succeeded!
+              success := true
+          else
+            break
+        else
+          break
+      replaced := ⟨i.tacI.stx⟩ :: replaced
+
+    if h : replaced.length >= threshold ∧ success then
+      let stx := replaced[0]
+      let seq ← `(tactic| $replaced.toArray;*)
+      logWarningAt stx m!"'grind +suggestions' succeeds but 'grind' fails: {seq}"
+
 open Elab.Command
 
 /--

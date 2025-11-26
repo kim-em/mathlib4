@@ -36,6 +36,7 @@ abbrev mathlibOnlyLinters : Array LeanOption := #[
   ⟨`linter.style.longFile, .ofNat 1500⟩,
   -- ⟨`linter.nightlyRegressionSet, true⟩,
   -- `latest_import.yml` uses this comment: if you edit it, make sure that the workflow still works
+  ⟨`linter.tacticAnalysis.grindSuggestionsExamples, true⟩,
 ]
 
 /-- These options are passed as `leanOptions` to building mathlib, as well as the
