@@ -337,6 +337,8 @@ def Mathlib.TacticAnalysis.tryAtEachStepCore
           withOptions (·.setBool `pp.mvars false) do
             return toString (← Meta.ppGoal goal)
         if (hash goalPP) % fraction = 0 then
+          -- Log that we're about to test this location (for verifying consistent sampling)
+          logInfoAt i.tacI.stx m!"`tryAtEachStep` running"
           let tac ← tac i.tacI.stx goal
           let startTime ← IO.monoMsNow
           let goalsAfter ← try
