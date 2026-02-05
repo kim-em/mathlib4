@@ -156,6 +156,7 @@ lemma inf_sq_eq_mul_div_mabs_div (a b : α) : (a ⊓ b) ^ 2 = a * b / |b / a|ₘ
 
 -- See, e.g. Zaanen, Lectures on Riesz Spaces
 -- 3rd lecture
+set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 lemma mabs_div_sup_mul_mabs_div_inf (a b c : α) :
     |(a ⊔ c) / (b ⊔ c)|ₘ * |(a ⊓ c) / (b ⊓ c)|ₘ = |a / b|ₘ := by

@@ -154,6 +154,7 @@ lemma lt_or_le_of_directed [PredOrder α] [IsPredArchimedean α] {r v₁ v₂ : 
   · apply lt_of_le_of_ne h (ne_of_not_le nh).symm
   · contradiction
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 This isn't an instance due to a loop with `LinearOrder`.
 -/
@@ -328,6 +329,7 @@ section OrderIso
 
 variable {X Y : Type*} [PartialOrder X] [PartialOrder Y]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `IsSuccArchimedean` transfers across equivalences between `SuccOrder`s. -/
 protected lemma IsSuccArchimedean.of_orderIso [SuccOrder X] [IsSuccArchimedean X] [SuccOrder Y]
     (f : X ≃o Y) : IsSuccArchimedean Y where
@@ -341,6 +343,7 @@ protected lemma IsSuccArchimedean.of_orderIso [SuccOrder X] [IsSuccArchimedean X
     | zero => simp
     | succ n IH => simp only [Function.iterate_succ', Function.comp_apply, IH, f.map_succ]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `IsPredArchimedean` transfers across equivalences between `PredOrder`s. -/
 protected lemma IsPredArchimedean.of_orderIso [PredOrder X] [IsPredArchimedean X] [PredOrder Y]
     (f : X ≃o Y) : IsPredArchimedean Y where

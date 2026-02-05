@@ -93,6 +93,7 @@ variable {hom}
 
 attribute [local instance] HasForget.instFunLike
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A version of `HasForget₂.mk'` for categories defined using `@BundledHom`. -/
 def mkHasForget₂ {d : Type u → Type u} {hom_d : ∀ ⦃α β : Type u⦄ (_ : d α) (_ : d β), Type u}
     [BundledHom hom_d] (obj : ∀ ⦃α⦄, c α → d α)

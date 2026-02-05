@@ -684,6 +684,7 @@ end
 
 theorem smul_int {a b c : ℤ} (h : (a * b : ℤ) = c) : a • b = c := h
 
+set_option backward.isDefEq.respectTransparency false in
 theorem smul_eq_intCast {R} [CommRing R] {a' b c : R} {a : ℤ} (_ : ((a : ℤ) : R) = a')
     (_ : a' * b = c) : a • b = c := by
   subst_vars; simp
@@ -1069,10 +1070,12 @@ theorem cast_neg {n : ℕ} {R} [Ring R] {a : R} :
     IsInt a (.negOfNat n) → a = (Int.negOfNat n).rawCast + 0
   | ⟨e⟩ => by simp [e]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem cast_nnrat {n : ℕ} {d : ℕ} {R} [DivisionSemiring R] {a : R} :
     IsNNRat a n d → a = NNRat.rawCast n d + 0
   | ⟨_, e⟩ => by simp [e, div_eq_mul_inv]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem cast_rat {n : ℤ} {d : ℕ} {R} [DivisionRing R] {a : R} :
     IsRat a n d → a = Rat.rawCast n d + 0
   | ⟨_, e⟩ => by simp [e, div_eq_mul_inv]
@@ -1239,9 +1242,11 @@ theorem inv_congr {R} [Semifield R] {a a' b : R} (_ : a = a')
 theorem div_congr {R} [Semifield R] {a a' b b' c : R} (_ : a = a') (_ : b = b')
     (_ : a' / b' = c) : (a / b : R) = c := by subst_vars; rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A precomputed `Cache` for `ℕ`. -/
 def Cache.nat : Cache sℕ := { rα := none, dsα := none, czα := some q(inferInstance) }
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A precomputed `Cache` for `ℤ`. -/
 def Cache.int : Cache sℤ :=
   { rα := some q(inferInstance), dsα := none, czα := some q(inferInstance) }

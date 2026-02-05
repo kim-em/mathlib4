@@ -54,6 +54,7 @@ theorem update_eq_updateFinset {i y} :
     exact uniqueElim_default (α := fun j : ({i} : Finset ι) => π j) y
   · simp [hj, updateFinset]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If one replaces the variables indexed by a finite set `t`, then `f` no longer depends on
 those variables. -/
 theorem _root_.DependsOn.updateFinset {α : Type*} {f : (Π i, π i) → α} {s : Set ι}

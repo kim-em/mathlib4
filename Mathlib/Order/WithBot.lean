@@ -540,6 +540,7 @@ theorem monotone_iff {f : WithBot α → β} :
         WithBot.forall.2 ⟨fun h => (not_coe_le_bot _ h).elim,
           fun _ hle => h.1 (coe_le_coe.1 hle)⟩⟩⟩
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual existing]
 theorem _root_.WithTop.monotone_iff {f : WithTop α → β} :
     Monotone f ↔ Monotone (fun (a : α) => f a) ∧ ∀ x : α, f x ≤ f ⊤ :=
@@ -552,6 +553,7 @@ theorem _root_.WithTop.monotone_iff {f : WithTop α → β} :
 theorem monotone_map_iff {f : α → β} : Monotone (WithBot.map f) ↔ Monotone f :=
   monotone_iff.trans <| by simp [Monotone]
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual existing, simp]
 theorem _root_.WithTop.monotone_map_iff {f : α → β} : Monotone (WithTop.map f) ↔ Monotone f :=
   WithTop.monotone_iff.trans <| by simp [Monotone]
@@ -566,6 +568,7 @@ theorem strictMono_iff {f : WithBot α → β} :
       ⟨WithBot.forall.2 ⟨flip absurd (lt_irrefl _), fun x _ => h.2 x⟩, fun _ =>
         WithBot.forall.2 ⟨fun h => (not_lt_bot h).elim, fun _ hle => h.1 (coe_lt_coe.1 hle)⟩⟩⟩
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual existing]
 theorem _root_.WithTop.strictMono_iff {f : WithTop α → β} :
     StrictMono f ↔ StrictMono (fun (a : α) => f a) ∧ ∀ x : α, f x < f ⊤ :=
@@ -588,6 +591,7 @@ theorem strictMono_map_iff {f : α → β} :
     StrictMono (WithBot.map f) ↔ StrictMono f :=
   strictMono_iff.trans <| by simp [StrictMono, bot_lt_coe]
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual existing, simp]
 theorem _root_.WithTop.strictMono_map_iff {f : α → β} : StrictMono (WithTop.map f) ↔ StrictMono f :=
   WithTop.strictMono_iff.trans <| by simp [StrictMono, WithTop.coe_lt_top]
@@ -664,6 +668,7 @@ lemma le_unbotD (hy : b ≤ y) : b ≤ y.unbotD a := by
 @[to_dual untopA_le]
 lemma le_unbotA [Nonempty α] (hy : b ≤ y) : b ≤ y.unbotA := le_unbotD hy
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual eq_bot_iff_forall_le]
 lemma eq_top_iff_forall_ge [Nonempty α] [NoTopOrder α] {x : WithBot (WithTop α)} :
     x = ⊤ ↔ ∀ a : α, a ≤ x := by
@@ -695,6 +700,7 @@ instance semilatticeSup [SemilatticeSup α] : SemilatticeSup (WithBot α) where
   le_sup_right x y := by cases x <;> cases y <;> simp
   sup_le x y z := by cases x <;> cases y <;> cases z <;> simp; simpa using sup_le
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual existing]
 instance _root_.WithTop.semilatticeInf [SemilatticeInf α] : SemilatticeInf (WithTop α) where
   inf
@@ -713,6 +719,7 @@ instance semilatticeInf [SemilatticeInf α] : SemilatticeInf (WithBot α) where
   inf_le_right x y := by cases x <;> cases y <;> simp
   le_inf x y z := by cases x <;> cases y <;> cases z <;> simp; simpa using le_inf
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual existing]
 instance _root_.WithTop.semilatticeSup [SemilatticeSup α] : SemilatticeSup (WithTop α) where
   sup := .map₂ (· ⊔ ·)
@@ -738,6 +745,7 @@ instance distribLattice [DistribLattice α] : DistribLattice (WithBot α) where
     cases x <;> cases y <;> cases z <;> simp [← coe_inf, ← coe_sup]
     simpa [← coe_inf, ← coe_sup] using le_sup_inf
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual existing]
 instance _root_.WithTop.distribLattice [DistribLattice α] : DistribLattice (WithTop α) where
   le_sup_inf x y z := by
@@ -769,6 +777,7 @@ instance _root_.WithTop.total_le [LE α] [@Std.Total α (· ≤ ·)] :
 
 instance linearOrder [LinearOrder α] : LinearOrder (WithBot α) := Lattice.toLinearOrder _
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual existing]
 instance _root_.WithTop.linearOrder [LinearOrder α] : LinearOrder (WithTop α) :=
   Lattice.toLinearOrder _
@@ -819,6 +828,7 @@ instance trichotomous.lt [Preorder α] [IsTrichotomous α (· < ·)] :
     IsTrichotomous (WithBot α) (· < ·) where
   trichotomous x y := by cases x <;> cases y <;> simp [trichotomous]
 
+set_option backward.isDefEq.respectTransparency false in
 instance _root_.WithTop.trichotomous.lt [Preorder α] [IsTrichotomous α (· < ·)] :
     IsTrichotomous (WithTop α) (· < ·) where
   trichotomous x y := by cases x <;> cases y <;> simp [trichotomous]
@@ -826,10 +836,12 @@ instance _root_.WithTop.trichotomous.lt [Preorder α] [IsTrichotomous α (· < �
 -- TODO: the hypotheses are equivalent to `LinearOrder` + `WellFoundedLT`, remove this.
 instance IsWellOrder.lt [Preorder α] [IsWellOrder α (· < ·)] :
   IsWellOrder (WithBot α) (· < ·) where
+  wf := instWellFoundedLT.wf
 
 -- TODO: the hypotheses are equivalent to `LinearOrder` + `WellFoundedLT`, remove this.
 instance _root_.WithTop.IsWellOrder.lt [Preorder α] [IsWellOrder α (· < ·)] :
   IsWellOrder (WithTop α) (· < ·) where
+  wf := WithTop.instWellFoundedLT.wf
 
 instance trichotomous.gt [Preorder α] [IsTrichotomous α (· > ·)] :
     IsTrichotomous (WithBot α) (· > ·) :=
@@ -842,16 +854,21 @@ instance _root_.WithTop.trichotomous.gt [Preorder α] [IsTrichotomous α (· > �
 -- TODO: the hypotheses are equivalent to `LinearOrder` + `WellFoundedGT`, remove this.
 instance IsWellOrder.gt [Preorder α] [IsWellOrder α (· > ·)] :
     IsWellOrder (WithBot α) (· > ·) where
+  wf := instWellFoundedGT.wf
 
 -- TODO: the hypotheses are equivalent to `LinearOrder` + `WellFoundedGT`, remove this.
 instance _root_.WithTop.IsWellOrder.gt [Preorder α] [IsWellOrder α (· > ·)] :
     IsWellOrder (WithTop α) (· > ·) where
+  wf := WithTop.instWellFoundedGT.wf
 
 section LinearOrder
 variable [LinearOrder α] {x y : WithBot α}
 
+-- TODO: lean4#12179 (backward.isDefEq.respectTransparency) - @[to_dual] needs this workaround
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual]
 lemma coe_min (a b : α) : ↑(min a b) = min (a : WithBot α) b := rfl
+set_option backward.isDefEq.respectTransparency false in
 @[to_dual]
 lemma coe_max (a b : α) : ↑(max a b) = max (a : WithBot α) b := rfl
 
