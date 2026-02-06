@@ -100,6 +100,7 @@ protected lemma IsSymmSndFDerivAt.eq
     fderiv 𝕜 (fderiv 𝕜 f) x v w = fderiv 𝕜 (fderiv 𝕜 f) x w v :=
   h v w
 
+set_option backward.isDefEq.respectTransparency false in
 lemma fderivWithin_fderivWithin_eq_of_mem_nhdsWithin (h : t ∈ 𝓝[s] x)
     (hf : ContDiffWithinAt 𝕜 2 f t x) (hs : UniqueDiffOn 𝕜 s) (ht : UniqueDiffOn 𝕜 t) (hx : x ∈ s) :
     fderivWithin 𝕜 (fderivWithin 𝕜 f s) s x = fderivWithin 𝕜 (fderivWithin 𝕜 f t) t x := by
@@ -324,6 +325,7 @@ theorem Convex.taylor_approx_two_segment {v w : E} (hv : x + v ∈ interior s)
   · simp (discharger := positivity) only [Real.norm_eq_abs, abs_of_nonneg]
     ring
 
+set_option backward.isDefEq.respectTransparency false in
 /-- One can get `f'' v w` as the limit of `h ^ (-2)` times the alternate sum of the values of `f`
 along the vertices of a quadrilateral with sides `h v` and `h w` based at `x`.
 In a setting where `f` is not guaranteed to be continuous at `f`, we can still
@@ -459,6 +461,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E F : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] [NormedAddCommGroup F]
   [NormedSpace 𝕜 F] {s : Set E} {f : E → F} {x : E}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem second_derivative_symmetric_of_eventually [IsRCLikeNormedField 𝕜]
     {f' : E → E →L[𝕜] F} {x : E}
     {f'' : E →L[𝕜] E →L[𝕜] F} (hf : ∀ᶠ y in 𝓝 x, HasFDerivAt f (f' y) y)
@@ -507,6 +510,7 @@ noncomputable irreducible_def minSmoothness (n : WithTop ℕ∞) :=
     minSmoothness 𝕜 n = n := by
   simp [minSmoothness, h]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma le_minSmoothness {n : WithTop ℕ∞} : n ≤ minSmoothness 𝕜 n := by
   simp only [minSmoothness]
   split_ifs <;> simp
@@ -539,6 +543,7 @@ lemma exist_minSmoothness_le_ne_infty {n : WithTop ℕ∞} {m : ℕ} (hm : minSm
   · simp only [h, ↓reduceIte, top_le_iff] at hm
     refine ⟨ω, le_rfl, by simp [hm], by simp⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If a function is `C^2` at a point, then its second derivative there is symmetric. Over a field
 different from `ℝ` or `ℂ`, we should require that the function is analytic. -/
 theorem ContDiffAt.isSymmSndFDerivAt {n : WithTop ℕ∞}

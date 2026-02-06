@@ -609,6 +609,7 @@ theorem spectralNorm_neg {y : L} (hy : IsAlgebraic K y) :
     ← spectralAlgNorm_of_finiteDimensional_normal_def]
   exact map_neg_eq_map _ _
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The spectral norm is compatible with the action of `K`. -/
 theorem spectralNorm_smul (k : K) {y : L} (hy : IsAlgebraic K y) :
     spectralNorm K L (k • y) = ‖k‖₊ * spectralNorm K L y := by
@@ -625,6 +626,7 @@ theorem spectralNorm_smul (k : K) {y : L} (hy : IsAlgebraic K y) :
   rw [← spectralAlgNorm_of_finiteDimensional_normal_def]
   apply map_smul_eq_mul
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The spectral norm is submultiplicative. -/
 theorem spectralNorm_mul {x y : L} (hx : IsAlgebraic K x) (hy : IsAlgebraic K y) :
     spectralNorm K L (x * y) ≤ spectralNorm K L x * spectralNorm K L y := by
@@ -644,6 +646,7 @@ section IsAlgebraic
 
 variable [h_alg : Algebra.IsAlgebraic K L]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The spectral norm is power-multiplicative. -/
 theorem isPowMul_spectralNorm : IsPowMul (spectralNorm K L) := by
   intro x n hn
@@ -657,6 +660,7 @@ theorem isPowMul_spectralNorm : IsPowMul (spectralNorm K L) := by
   exact isPowMul_spectralNorm_of_finiteDimensional_normal _ _
     ((algebraMap ↥K⟮x⟯ ↥(normalClosure K (↥K⟮x⟯) (AlgebraicClosure ↥K⟮x⟯))) g) hn
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The spectral norm is nonarchimedean. -/
 theorem isNonarchimedean_spectralNorm : IsNonarchimedean (spectralNorm K L) := by
   intro x y
@@ -707,6 +711,7 @@ universe u v
 variable {K : Type u} [NontriviallyNormedField K] {L : Type v} [Field L] [Algebra K L]
   [Algebra.IsAlgebraic K L] [hu : IsUltrametricDist K]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `K` is a field complete with respect to a nontrivial nonarchimedean multiplicative norm and
   `L/K` is an algebraic extension, then any power-multiplicative `K`-algebra norm on `L` coincides
   with the spectral norm. -/
@@ -900,6 +905,7 @@ def metricSpace : MetricSpace L := (normedField K L).toMetricSpace
 /-- The uniform space structure on `L` induced by the spectral norm. -/
 def uniformSpace : UniformSpace L := (metricSpace K L).toUniformSpace
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `L/K` is finite dimensional, then `L` is a complete space with respect to topology induced
   by the spectral norm. -/
 instance (priority := 100) completeSpace [h_fin : FiniteDimensional K L] :

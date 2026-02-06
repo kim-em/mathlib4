@@ -78,6 +78,7 @@ namespace Sphere
 
 open Real InnerProductSpace InnerProductGeometry
 
+set_option backward.isDefEq.respectTransparency false in
 /-- **Thales' theorem**: The angle inscribed in a semicircle is a right angle. -/
 theorem angle_eq_pi_div_two_iff_mem_sphere_of_isDiameter {p₁ p₂ p₃ : P} {s : Sphere P}
     (hd : s.IsDiameter p₁ p₃) :
@@ -239,6 +240,7 @@ theorem abs_oangle_center_right_toReal_lt_pi_div_two {s : Sphere P} {p₁ p₂ :
   abs_oangle_left_toReal_lt_pi_div_two_of_dist_eq
     (dist_center_eq_dist_center_of_mem_sphere' hp₂ hp₁)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given two points on a circle, the center of that circle may be expressed explicitly as a
 multiple (by half the tangent of the angle between the chord and the radius at one of those
 points) of a `π / 2` rotation of the vector between those points, plus the midpoint of those
@@ -268,6 +270,7 @@ theorem inv_tan_div_two_smul_rotation_pi_div_two_vadd_midpoint_eq_center {s : Sp
   rw [add_comm,
     two_zsmul_oangle_center_add_two_zsmul_oangle_eq_pi hp₁ hp₂ hp₃ hp₁p₂.symm hp₂p₃ hp₁p₃]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given two points on a circle, the radius of that circle may be expressed explicitly as half
 the distance between those two points divided by the cosine of the angle between the chord and
 the radius at one of those points. -/
@@ -425,6 +428,7 @@ theorem mem_circumsphere_of_two_zsmul_oangle_eq {t : Triangle ℝ P} {p : P} {i�
 
 end Oriented
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The circumradius of a triangle may be expressed explicitly as half the length of a side
 divided by the sine of the angle at the third point (a version of the law of sines or sine rule). -/
 theorem dist_div_sin_angle_div_two_eq_circumradius (t : Triangle ℝ P) {i₁ i₂ i₃ : Fin 3}

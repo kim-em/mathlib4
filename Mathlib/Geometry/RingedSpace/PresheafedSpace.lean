@@ -113,6 +113,7 @@ section
 
 attribute [local simp] id comp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The category of PresheafedSpaces. Morphisms are pairs, a continuous map and a presheaf map
 from the presheaf on the target to the pushforward of the presheaf on the source. -/
 instance categoryOfPresheafedSpaces : Category (PresheafedSpace C) where
@@ -196,6 +197,7 @@ section Iso
 
 variable {X Y : PresheafedSpace C}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An isomorphism of `PresheafedSpace`s is a homeomorphism of the underlying space, and a
 natural transformation between the sheaves.
 -/
@@ -217,6 +219,7 @@ def isoOfComponents (H : X.1 ≅ Y.1) (α : H.hom _* X.2 ≅ Y.2) : X ≅ Y wher
     simp only [eqToHom_map, eqToHom_app, eqToHom_trans_assoc, eqToHom_refl, id_comp]
     apply Iso.inv_hom_id_app
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Isomorphic `PresheafedSpace`s have naturally isomorphic presheaves. -/
 @[simps]
 def sheafIsoOfIso (H : X ≅ Y) : Y.2 ≅ H.hom.base _* X.2 where
@@ -262,6 +265,7 @@ def restrict {U : TopCat} (X : PresheafedSpace C) {f : U ⟶ (X : TopCat)}
   carrier := U
   presheaf := h.isOpenMap.functor.op ⋙ X.presheaf
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The map from the restriction of a presheafed space.
 -/
 @[simps]
@@ -275,6 +279,7 @@ def ofRestrict {U : TopCat} (X : PresheafedSpace C) {f : U ⟶ (X : TopCat)}
           rw [← map_comp, ← map_comp]
           rfl }
 
+set_option backward.isDefEq.respectTransparency false in
 instance ofRestrict_mono {U : TopCat} (X : PresheafedSpace C) (f : U ⟶ X.1)
     (hf : IsOpenEmbedding f) : Mono (X.ofRestrict hf) := by
   haveI : Mono f := (TopCat.mono_iff_injective _).mpr hf.injective
@@ -310,6 +315,7 @@ theorem restrict_top_presheaf (X : PresheafedSpace C) :
   rw [Opens.inclusion'_top_functor X.carrier]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ofRestrict_top_c (X : PresheafedSpace C) :
     (X.ofRestrict (Opens.isOpenEmbedding ⊤)).c =
       eqToHom
@@ -380,6 +386,7 @@ variable {D : Type*} [Category* D]
 
 namespace Functor
 
+set_option backward.isDefEq.respectTransparency false in
 /-- We can apply a functor `F : C ⥤ D` to the values of the presheaf in any `PresheafedSpace C`,
 giving a functor `PresheafedSpace C ⥤ PresheafedSpace D` -/
 def mapPresheaf (F : C ⥤ D) : PresheafedSpace C ⥤ PresheafedSpace D where
@@ -417,6 +424,7 @@ end Functor
 
 namespace NatTrans
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A natural transformation induces a natural transformation between the `map_presheaf` functors.
 -/
 def onPresheaf {F G : C ⥤ D} (α : F ⟶ G) : G.mapPresheaf ⟶ F.mapPresheaf where

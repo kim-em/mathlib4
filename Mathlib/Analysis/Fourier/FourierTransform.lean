@@ -96,6 +96,7 @@ theorem norm_fourierIntegral_le_integral_norm (e : AddChar 𝕜 𝕊) (μ : Meas
   refine (norm_integral_le_integral_norm _).trans (le_of_eq ?_)
   simp_rw [Circle.norm_smul]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The Fourier integral converts right-translation into scalar multiplication by a phase factor. -/
 theorem fourierIntegral_comp_add_right [MeasurableAdd V] (e : AddChar 𝕜 𝕊) (μ : Measure V)
     [μ.IsAddRightInvariant] (L : V →ₗ[𝕜] W →ₗ[𝕜] 𝕜) (f : V → E) (v₀ : V) :

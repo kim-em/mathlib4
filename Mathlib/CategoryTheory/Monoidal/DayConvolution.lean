@@ -156,6 +156,7 @@ end map
 
 variable (F G)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The universal property of left Kan extensions characterizes the functor
 corepresented by `F ⊛ G`. -/
 @[simps!]
@@ -195,6 +196,7 @@ instance : ((F ⊛ G) ⊠ H).IsLeftKanExtension <|
   (isPointwiseLeftKanExtensionExtensionUnitLeft _ _ _ <|
     isPointwiseLeftKanExtensionUnit F G).isLeftKanExtension
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The `CorepresentableBy` structure asserting that the Type-valued functor
 `Y ↦ (F ⊠ G ⊠ H ⟶ (𝟭 C).prod (tensor C) ⋙ tensor C ⋙ Y)` is corepresented by
 `F ⊛ G ⊛ H`. -/
@@ -208,6 +210,7 @@ def corepresentableBy₂ :
       Functor.homEquivOfIsLeftKanExtension _ (extensionUnitRight (G ⊛ H) (unit G H) F) _
   homEquiv_comp := by aesop
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The `CorepresentableBy` structure asserting that the Type-valued functor
 `Y ↦ ((F ⊠ G) ⊠ H ⟶ (tensor C).prod (𝟭 C) ⋙ tensor C ⋙ Y)` is corepresented by
 `(F ⊛ G) ⊛ H`. -/
@@ -258,6 +261,7 @@ def associator : (F ⊛ G) ⊛ H ≅ F ⊛ G ⊛ H :=
   corepresentableBy₂' F G H |>.ofIso (associatorCorepresentingIso F G H) |>.uniqueUpToIso <|
     corepresentableBy₂ F G H
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Characterizing the forward direction of the associator isomorphism
 with respect to the unit transformations. -/
 @[reassoc (attr := simp)]
@@ -280,6 +284,7 @@ lemma associator_hom_unit_unit (x y z : C) :
   simp only [Category.assoc, this]
   simp [Functor.FullyFaithful.homEquiv, Equivalence.fullyFaithfulFunctor, prod.associativity]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Characterizing the inverse direction of the associator
 with respect to the unit transformations -/
 @[reassoc (attr := simp)]
@@ -301,6 +306,7 @@ lemma associator_inv_unit_unit (x y z : C) :
   simp only [this]
   simp [Functor.FullyFaithful.homEquiv, Equivalence.fullyFaithfulFunctor, prod.associativity]
 
+set_option backward.isDefEq.respectTransparency false in
 variable {F G H} in
 theorem associator_naturality {F' G' H' : C ⥤ V}
     [DayConvolution F' G'] [DayConvolution G' H']
@@ -330,6 +336,7 @@ section pentagon
 variable [∀ (v : V) (d : C × C),
     Limits.PreservesColimitsOfShape (CostructuredArrow ((tensor C).prod (𝟭 C)) d) (tensorRight v)]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma pentagon (H K : C ⥤ V)
     [DayConvolution G H] [DayConvolution (F ⊛ G) H] [DayConvolution F (G ⊛ H)]
     [DayConvolution H K] [DayConvolution G (H ⊛ K)] [DayConvolution (G ⊛ H) K]

@@ -97,6 +97,7 @@ lemma AnalyticAt.analyticOrderAt_eq_natCast (hf : AnalyticAt 𝕜 f z₀) :
     refine ⟨fun hn ↦ (WithTop.coe_inj.mp hn : h.choose = n) ▸ h.choose_spec, fun h' ↦ ?_⟩
     rw [AnalyticAt.unique_eventuallyEq_pow_smul_nonzero h.choose_spec h']
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The order of an analytic function `f` at `z₀` equals a natural number `n` iff `f` can locally
 be written as `f z = (z - z₀) ^ n • g z`, where `g` is analytic and does not vanish at `z₀`. -/
 lemma AnalyticAt.analyticOrderNatAt_eq_iff (hf : AnalyticAt 𝕜 f z₀) (hf' : analyticOrderAt f z₀ ≠ ⊤)
@@ -194,6 +195,7 @@ lemma analyticOrderAt_congr (hfg : f =ᶠ[𝓝 z₀] g) :
   · rw [analyticOrderAt_of_not_analyticAt hf,
       analyticOrderAt_of_not_analyticAt <| analyticAt_neg.not.2 hf]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The order of a sum is at least the minimum of the orders of the summands. -/
 theorem le_analyticOrderAt_add :
     min (analyticOrderAt f z₀) (analyticOrderAt g z₀) ≤ analyticOrderAt (f + g) z₀ := by
@@ -239,6 +241,7 @@ lemma analyticOrderAt_smul_eq_top_of_right {f : 𝕜 → 𝕜} (hg : analyticOrd
   obtain ⟨t, h₁t, h₂t, h₃t⟩ := hg
   exact ⟨t, fun y hy ↦ by simp [h₁t y hy], h₂t, h₃t⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The order is additive when scalar multiplying analytic functions. -/
 lemma analyticOrderAt_smul {f : 𝕜 → 𝕜} (hf : AnalyticAt 𝕜 f z₀) (hg : AnalyticAt 𝕜 g z₀) :
     analyticOrderAt (f • g) z₀ = analyticOrderAt f z₀ + analyticOrderAt g z₀ := by
@@ -260,6 +263,7 @@ lemma analyticOrderAt_smul {f : 𝕜 → 𝕜} (hf : AnalyticAt 𝕜 f z₀) (hg
     exact eventually_nhds_iff.2
       ⟨t ∩ s, fun y hy ↦ (by simp [h₁t y hy.1, h₁s y hy.2]; module), h₂t.inter h₂s, h₃t, h₃s⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem AnalyticAt.analyticOrderAt_deriv_add_one {x : 𝕜} (hf : AnalyticAt 𝕜 f x)
     [CompleteSpace E] [CharZero 𝕜] :
     analyticOrderAt (deriv f) x + 1 = analyticOrderAt (f · - f x) x := by
@@ -302,6 +306,7 @@ theorem AnalyticAt.analyticOrderAt_deriv_add_one {x : 𝕜} (hf : AnalyticAt �
       ENat.succ_def, ← Nat.cast_add_one, natCast_le_analyticOrderAt (by fun_prop)]
     exact ⟨deriv F, hFa.deriv, by simp⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem AnalyticAt.analyticOrderAt_sub_eq_one_of_deriv_ne_zero {x : 𝕜} (hf : AnalyticAt 𝕜 f x)
     (hf' : deriv f x ≠ 0) : analyticOrderAt (f · - f x) x = 1 := by
   generalize h : analyticOrderAt (f · - f x) x = r
@@ -323,6 +328,7 @@ theorem AnalyticAt.analyticOrderAt_sub_eq_one_of_deriv_ne_zero {x : 𝕜} (hf : 
         deriv_fun_pow (by fun_prop), sub_self, zero_pow (by omega), zero_pow (by omega),
         mul_zero, zero_mul, zero_smul, zero_smul, add_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero [CharZero 𝕜] [CompleteSpace E]
     (hf : AnalyticAt 𝕜 f z₀) :
     n ≤ analyticOrderAt f z₀ ↔ ∀ i < n, iteratedDeriv i f z₀ = 0 := by

@@ -54,6 +54,7 @@ theorem circleTransformDeriv_periodic (f : ℂ → E) :
   congr 2
   simp [this]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem circleTransformDeriv_eq (f : ℂ → E) : circleTransformDeriv R z w f =
     fun θ => (circleMap z R θ - w)⁻¹ • circleTransform R z w f θ := by
   ext
@@ -120,6 +121,7 @@ theorem norm_circleTransformBoundingFunction_le {R r : ℝ} (hr : r < R) (hr' : 
   have := IsCompact.exists_isMaxOn comp none (cts.mono <| prod_mono_right (subset_univ _))
   simpa [isMaxOn_iff] using this
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The derivative of a `circleTransform` is locally bounded. -/
 theorem circleTransformDeriv_bound {R : ℝ} (hR : 0 < R) {z x : ℂ} {f : ℂ → ℂ} (hx : x ∈ ball z R)
     (hf : ContinuousOn f (sphere z R)) : ∃ B ε : ℝ, 0 < ε ∧

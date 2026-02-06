@@ -57,6 +57,7 @@ variable [Algebra K L] [Algebra A L] [IsScalarTower A K L]
 variable [Algebra C L] [IsIntegralClosure C A L] [Algebra A C] [IsScalarTower A C L]
 include K L
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `L` is an algebraic extension of `K = Frac(A)` and `L` has no zero smul divisors by `A`,
 then `L` is the localization of the integral closure `C` of `A` in `L` at `A⁰`. -/
 theorem IsIntegralClosure.isLocalization [IsDomain A] [Algebra.IsAlgebraic K L] :
@@ -98,6 +99,7 @@ theorem IsIntegralClosure.range_le_span_dualBasis [Algebra.IsSeparable K L] {ι 
   refine Submodule.mem_one.mpr <| IsIntegrallyClosed.isIntegral_iff.mp ?_
   exact isIntegral_trace ((IsIntegralClosure.isIntegral A L y).algebraMap.mul (hb_int i))
 
+set_option backward.isDefEq.respectTransparency false in
 theorem integralClosure_le_span_dualBasis [Algebra.IsSeparable K L] {ι : Type*} [Fintype ι]
     [DecidableEq ι] (b : Basis ι K L) (hb_int : ∀ i, IsIntegral A (b i)) [IsIntegrallyClosed A] :
     Subalgebra.toSubmodule (integralClosure A L) ≤
@@ -146,6 +148,7 @@ theorem FiniteDimensional.exists_is_basis_integral :
 
 variable [Algebra.IsSeparable K L]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `L` is a finite separable extension of `K = Frac(A)`, where `A` is
 integrally closed and Noetherian, the integral closure `C` of `A` in `L` is
 Noetherian over `A`. -/
@@ -200,6 +203,7 @@ theorem IsIntegralClosure.rank [IsPrincipalIdealRing A] [IsTorsionFree A L] :
 
 variable {A K}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `L` is a finite separable extension of `K = Frac(A)`, where `A` is
 integrally closed and Noetherian, the integral closure of `A` in `L` is
 Noetherian. -/
@@ -224,6 +228,7 @@ theorem IsIntegralClosure.isDedekindDomain [IsDedekindDomain A] : IsDedekindDoma
       ⟨IsIntegralClosure.mk' C x (isIntegral_trans (R := A) _ hx),
         IsIntegralClosure.algebraMap_mk' _ _ _⟩ with : IsDedekindDomain C }
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `L` is a finite separable extension of `K = Frac(A)`, where `A` is a Dedekind domain,
 the integral closure of `A` in `L` is a Dedekind domain.
 

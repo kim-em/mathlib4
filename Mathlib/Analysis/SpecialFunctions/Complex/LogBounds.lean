@@ -33,11 +33,13 @@ namespace Complex
 ### Integral representation of the complex log
 -/
 
+set_option backward.isDefEq.respectTransparency false in
 lemma continuousOn_one_add_mul_inv {z : ℂ} (hz : 1 + z ∈ slitPlane) :
     ContinuousOn (fun t : ℝ ↦ (1 + t • z)⁻¹) (Set.Icc 0 1) :=
   ContinuousOn.inv₀ (by fun_prop)
     (fun _ ht ↦ slitPlane_ne_zero <| StarConvex.add_smul_mem starConvex_one_slitPlane hz ht.1 ht.2)
 
+set_option backward.isDefEq.respectTransparency false in
 open intervalIntegral in
 /-- Represent `log (1 + z)` as an integral over the unit interval -/
 lemma log_eq_integral {z : ℂ} (hz : 1 + z ∈ slitPlane) :
@@ -47,6 +49,7 @@ lemma log_eq_integral {z : ℂ} (hz : 1 + z ∈ slitPlane) :
       StarConvex.add_smul_mem starConvex_one_slitPlane hz ht.1 ht.2)).symm using 1
   simp only [log_one, sub_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Represent `log (1 - z)⁻¹` as an integral over the unit interval -/
 lemma log_inv_eq_integral {z : ℂ} (hz : 1 - z ∈ slitPlane) :
     log (1 - z)⁻¹ = z * ∫ (t : ℝ) in (0 : ℝ)..1, (1 - t • z)⁻¹ := by
@@ -78,6 +81,7 @@ lemma logTaylor_at_zero (n : ℕ) : logTaylor n 0 = 0 := by
   | zero => simp [logTaylor_zero]
   | succ n ih => simpa [logTaylor_succ, ih] using ne_or_eq n 0
 
+set_option backward.isDefEq.respectTransparency false in
 lemma hasDerivAt_logTaylor (n : ℕ) (z : ℂ) :
     HasDerivAt (logTaylor (n + 1)) (∑ j ∈ Finset.range n, (-1) ^ j * z ^ j) z := by
   induction n with
@@ -132,6 +136,7 @@ lemma integrable_pow_mul_norm_one_add_mul_inv (n : ℕ) {z : ℂ} (hz : ‖z‖ 
   rw [← Set.uIcc_of_le zero_le_one] at this
   exact ContinuousOn.intervalIntegrable (by fun_prop)
 
+set_option backward.isDefEq.respectTransparency false in
 open intervalIntegral in
 /-- The difference of `log (1+z)` and its `(n+1)`st Taylor polynomial can be bounded in
 terms of `‖z‖`. -/
@@ -238,6 +243,7 @@ lemma norm_log_one_sub_inv_sub_self_le {z : ℂ} (hz : ‖z‖ < 1) :
   · simp [logTaylor_succ, logTaylor_zero, sub_eq_add_neg]
   · norm_num
 
+set_option backward.isDefEq.respectTransparency false in
 open Filter Asymptotics in
 /-- The Taylor series of the complex logarithm at `1` converges to the logarithm in the
 open unit disk. -/
@@ -363,6 +369,7 @@ end Complex
 
 namespace Real
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The limit of `x * log (1 + g x)` as `(x : ℝ) → ∞` is `t`,
 where `t : ℝ` is the limit of `x * g x`. -/
 lemma tendsto_mul_log_one_add_of_tendsto {g : ℝ → ℝ} {t : ℝ}
@@ -383,6 +390,7 @@ theorem tendsto_mul_log_one_add_div_atTop (t : ℝ) :
       (EventuallyEq.div_mul_cancel_atTop tendsto_id).symm.trans <|
         .of_eq <| funext fun _ => mul_comm _ _
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The limit of `(1 + g x) ^ x` as `(x : ℝ) → ∞` is `exp t`,
 where `t : ℝ` is the limit of `x * g x`. -/
 lemma tendsto_one_add_rpow_exp_of_tendsto {g : ℝ → ℝ} {t : ℝ}

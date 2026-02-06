@@ -83,6 +83,7 @@ lemma aeStronglyMeasurable_mkD_of_uncurry [CompactSpace Y] [Zero Y] [Topological
   filter_upwards [f_zero] with x zero_x
   rw [mkD_eq_mkD_of_map_zero _ _ zero_x]
 
+set_option backward.isDefEq.respectTransparency false in
 open Set in
 lemma aeStronglyMeasurable_restrict_mkD_of_uncurry [CompactSpace Y] [Zero Y] {s : Set X}
     [TopologicalSpace X] [OpensMeasurableSpace X] [SecondCountableTopologyEither X (C(Y, E))]
@@ -96,6 +97,7 @@ lemma aeStronglyMeasurable_restrict_mkD_of_uncurry [CompactSpace Y] [Zero Y] {s 
   filter_upwards [f_zero] with x zero_x
   rw [mkD_eq_mkD_of_map_zero _ _ zero_x]
 
+set_option backward.isDefEq.respectTransparency false in
 open Set in
 lemma aeStronglyMeasurable_mkD_restrict_of_uncurry {t : Set Y} [CompactSpace t] [Zero t]
     [TopologicalSpace X] [OpensMeasurableSpace X] [SecondCountableTopologyEither X (C(t, E))]
@@ -108,6 +110,7 @@ lemma aeStronglyMeasurable_mkD_restrict_of_uncurry {t : Set Y} [CompactSpace t] 
   filter_upwards [f_zero] with x zero_x
   rw [mkD_eq_mkD_of_map_zero _ _ zero_x]
 
+set_option backward.isDefEq.respectTransparency false in
 open Set in
 lemma aeStronglyMeasurable_restrict_mkD_restrict_of_uncurry {s : Set X} {t : Set Y}
     [CompactSpace t] [Zero t] [TopologicalSpace X] [OpensMeasurableSpace X]

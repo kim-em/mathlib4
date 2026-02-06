@@ -152,6 +152,7 @@ open scoped Manifold Topology ContDiff
 
 /-! ### Models with corners. -/
 
+set_option backward.isDefEq.respectTransparency false in
 open scoped Classical in
 /-- A structure containing information on the way a space `H` embeds in a
 model vector space `E` over the field `𝕜`. This is all that is needed to
@@ -184,6 +185,7 @@ lemma ModelWithCorners.range_eq_target {𝕜 E H : Type*} [NontriviallyNormedFie
     range I.toPartialEquiv = I.target := by
   rw [← I.image_source_eq_target, I.source_eq, image_univ.symm]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If a model with corners has full range, the `convex_range'` condition is satisfied. -/
 def ModelWithCorners.ofTargetUniv (𝕜 : Type*) [NontriviallyNormedField 𝕜]
     {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] {H : Type*} [TopologicalSpace H]
@@ -302,6 +304,7 @@ theorem range_eq_univ_of_not_isRCLikeNormedField (h : ¬ IsRCLikeNormedField �
     range I = univ := by
   simpa [h] using I.convex_range'
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If a set is `ℝ`-convex for some normed space structure, then it is `ℝ`-convex for the
 normed space structure coming from an `IsRCLikeNormedField 𝕜`. Useful when constructing model
 spaces to avoid diamond issues when populating the field `convex_range'`. -/
@@ -337,6 +340,7 @@ def ofConvexRange
 @[deprecated (since := "2025-12-19")] noncomputable alias of_convex_range :=
   ModelWithCorners.ofConvexRange
 
+set_option backward.isDefEq.respectTransparency false in
 theorem convex_range [NormedSpace ℝ E] : Convex ℝ (range I) := by
   by_cases h : IsRCLikeNormedField 𝕜
   · letI : RCLike 𝕜 := h.rclike
@@ -351,6 +355,7 @@ theorem convex_range [NormedSpace ℝ E] : Convex ℝ (range I) := by
       rfl
   · simp [range_eq_univ_of_not_isRCLikeNormedField I h, convex_univ]
 
+set_option backward.isDefEq.respectTransparency false in
 protected theorem uniqueDiffOn : UniqueDiffOn 𝕜 (range I) := by
   by_cases h : IsRCLikeNormedField 𝕜
   · letI := h.rclike 𝕜
@@ -359,6 +364,7 @@ protected theorem uniqueDiffOn : UniqueDiffOn 𝕜 (range I) := by
     simpa [h] using I.convex_range
   · simp [range_eq_univ_of_not_isRCLikeNormedField I h, uniqueDiffOn_univ]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem range_subset_closure_interior : range I ⊆ closure (interior (range I)) := by
   by_cases h : IsRCLikeNormedField 𝕜
   · letI := h.rclike 𝕜
@@ -492,6 +498,7 @@ end
 
 section ModelWithCornersProd
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given two model_with_corners `I` on `(E, H)` and `I'` on `(E', H')`, we define the model with
 corners `I.prod I'` on `(E × E', ModelProd H H')`. This appears in particular for the manifold
 structure on the tangent bundle to a manifold modelled on `(E, H)`: it will be modelled on
@@ -522,6 +529,7 @@ def ModelWithCorners.prod {𝕜 : Type u} [NontriviallyNormedField 𝕜] {E : Ty
     continuous_toFun := I.continuous_toFun.prodMap I'.continuous_toFun
     continuous_invFun := I.continuous_invFun.prodMap I'.continuous_invFun }
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given a finite family of `ModelWithCorners` `I i` on `(E i, H i)`, we define the model with
 corners `pi I` on `(Π i, E i, ModelPi H)`. See note [Manifold type tags] for explanation about
 `ModelPi H`. -/
@@ -837,6 +845,7 @@ class _root_.ENat.LEInfty (m : WithTop ℕ∞) where
 
 open ENat
 
+set_option backward.isDefEq.respectTransparency false in
 instance (n : ℕ∞) : LEInfty (n : WithTop ℕ∞) := ⟨mod_cast le_top⟩
 instance (n : ℕ) : LEInfty (n : WithTop ℕ∞) := ⟨mod_cast le_top⟩
 instance (n : ℕ) [n.AtLeastTwo] : LEInfty (no_index (OfNat.ofNat n) : WithTop ℕ∞) :=

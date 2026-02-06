@@ -967,6 +967,7 @@ section FTC2
 
 variable {g' g φ : ℝ → ℝ} {a b : ℝ}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Hard part of FTC-2 for integrable derivatives, real-valued functions: one has
 `g b - g a ≤ ∫ y in a..b, g' y` when `g'` is integrable.
 Auxiliary lemma in the proof of `integral_eq_sub_of_hasDeriv_right_of_le`.
@@ -1206,6 +1207,7 @@ lemma integral_unitInterval_deriv_eq_sub [RCLike 𝕜] [NormedSpace 𝕜 E] [IsS
 ### Automatic integrability for nonnegative derivatives
 -/
 
+set_option backward.isDefEq.respectTransparency false in
 /-- When the right derivative of a function is nonnegative, then it is automatically integrable. -/
 theorem integrableOn_deriv_right_of_nonneg (hcont : ContinuousOn g (Icc a b))
     (hderiv : ∀ x ∈ Ioo a b, HasDerivWithinAt g (g' x) (Ioi x) x)

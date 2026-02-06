@@ -94,6 +94,7 @@ theorem derivWithin_zpow (hxs : UniqueDiffWithinAt 𝕜 s x) (h : x ≠ 0 ∨ 0 
     derivWithin (fun x => x ^ m) s x = (m : 𝕜) * x ^ (m - 1) :=
   (hasDerivWithinAt_zpow m x h s).derivWithin hxs
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem iter_deriv_zpow' (m : ℤ) (k : ℕ) :
     (deriv^[k] fun x : 𝕜 => x ^ m) =
@@ -139,6 +140,7 @@ theorem iter_deriv_inv' (k : ℕ) :
     deriv^[k] Inv.inv = fun x : 𝕜 => (-1) ^ k * k ! * x ^ (-1 - k : ℤ) :=
   funext (iter_deriv_inv k)
 
+set_option backward.isDefEq.respectTransparency false in
 open Nat Function in
 theorem iter_deriv_inv_linear (k : ℕ) (c d : 𝕜) :
     deriv^[k] (fun x ↦ (c * x + d)⁻¹) =

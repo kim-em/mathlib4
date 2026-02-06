@@ -115,6 +115,7 @@ theorem log_stirlingSeq_diff_le_geo_sum (n : ℕ) :
     exact inv_le_one_of_one_le₀ (le_add_of_nonneg_left <| by positivity)
   exact hasSum_le hab (log_stirlingSeq_diff_hasSum n) g
 
+set_option backward.isDefEq.respectTransparency false in
 /-- We have the bound `log (stirlingSeq n) - log (stirlingSeq (n+1))` ≤ 1/(4 n^2)
 -/
 theorem log_stirlingSeq_sub_log_stirlingSeq_succ (n : ℕ) :
@@ -185,6 +186,7 @@ https://proofwiki.org/wiki/Stirling%27s_Formula#Part_2
 -/
 
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The sequence `n / (2 * n + 1)` tends to `1/2` -/
 theorem tendsto_self_div_two_mul_self_add_one :
     Tendsto (fun n : ℕ => (n : ℝ) / (2 * n + 1)) atTop (𝓝 (1 / 2)) := by
@@ -197,6 +199,7 @@ theorem tendsto_self_div_two_mul_self_add_one :
     ((add_zero (2 : ℝ)).symm ▸ two_ne_zero)).congr' (eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
   rw [add_div' (1 : ℝ) 2 n (cast_ne_zero.mpr (one_le_iff_ne_zero.mp hn)), inv_div]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- For any `n ≠ 0`, we have the identity
 `(stirlingSeq n)^4 / (stirlingSeq (2*n))^2 * (n / (2 * n + 1)) = W n`, where `W n` is the
 `n`-th partial product of Wallis' formula for `π / 2`. -/

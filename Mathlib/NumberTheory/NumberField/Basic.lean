@@ -73,6 +73,7 @@ theorem of_module_finite [NumberField K] [Algebra K L] [Module.Finite K L] : Num
     letI := charZero_of_injective_algebraMap (algebraMap K L).injective
     Module.Finite.trans K L
 
+set_option backward.isDefEq.respectTransparency false in
 variable {K} {L} in
 instance of_intermediateField [NumberField K] [NumberField L] [Algebra K L]
     (E : IntermediateField K L) : NumberField E :=

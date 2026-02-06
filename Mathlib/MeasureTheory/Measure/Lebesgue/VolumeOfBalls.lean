@@ -76,6 +76,7 @@ variable {E : Type*} [AddCommGroup E] [Module ℝ E] [FiniteDimensional ℝ E] [
   (h5 : ∀ r x, g (r • x) ≤ |r| * (g x))
 include h1 h2 h3 h4 h5
 
+set_option backward.isDefEq.respectTransparency false in
 theorem MeasureTheory.measure_lt_one_eq_integral_div_gamma {p : ℝ} (hp : 0 < p) :
     μ {x : E | g x < 1} =
       .ofReal ((∫ (x : E), Real.exp (-(g x) ^ p) ∂μ) / Real.Gamma (finrank ℝ E / p + 1)) := by
@@ -118,6 +119,7 @@ theorem MeasureTheory.measure_lt_one_eq_integral_div_gamma {p : ℝ} (hp : 0 < p
     rw [← this.integral_comp']
     rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem MeasureTheory.measure_le_eq_lt [Nontrivial E] (r : ℝ) :
     μ {x : E | g x ≤ r} = μ {x : E | g x < r} := by
   -- We copy `E` to a new type `F` on which we will put the norm defined by `g`
@@ -239,6 +241,7 @@ theorem MeasureTheory.volume_sum_rpow_le [Nonempty ι] {p : ℝ} (hp : 1 ≤ p) 
   rw [measure_le_eq_lt _ nm_zero (fun x ↦ nm_neg x) (fun x y ↦ nm_add x y) (eq_zero _).mp
     (fun r x => nm_smul r x), volume_sum_rpow_lt _ hp]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem Complex.volume_sum_rpow_lt_one {p : ℝ} (hp : 1 ≤ p) :
     volume {x : ι → ℂ | ∑ i, ‖x i‖ ^ p < 1} =
       .ofReal ((π * Real.Gamma (2 / p + 1)) ^ card ι / Real.Gamma (2 * card ι / p + 1)) := by
@@ -272,6 +275,7 @@ theorem Complex.volume_sum_rpow_lt_one {p : ℝ} (hp : 1 ≤ p) :
   · rw [finrank_pi_fintype, Complex.finrank_real_complex, Finset.sum_const, smul_eq_mul,
       Nat.cast_mul, Nat.cast_ofNat, Fintype.card, mul_comm]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem Complex.volume_sum_rpow_lt [Nonempty ι] {p : ℝ} (hp : 1 ≤ p) (r : ℝ) :
     volume {x : ι → ℂ | (∑ i, ‖x i‖ ^ p) ^ (1 / p) < r} = (.ofReal r) ^ (2 * card ι) *
       .ofReal ((π * Real.Gamma (2 / p + 1)) ^ card ι / Real.Gamma (2 * card ι / p + 1)) := by
@@ -294,6 +298,7 @@ theorem Complex.volume_sum_rpow_lt [Nonempty ι] {p : ℝ} (hp : 1 ≤ p) (r : �
     · simp_rw [finrank_pi_fintype ℝ, Complex.finrank_real_complex, Finset.sum_const, smul_eq_mul,
         mul_comm, Fintype.card]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem Complex.volume_sum_rpow_le [Nonempty ι] {p : ℝ} (hp : 1 ≤ p) (r : ℝ) :
     volume {x : ι → ℂ | (∑ i, ‖x i‖ ^ p) ^ (1 / p) ≤ r} = (.ofReal r) ^ (2 * card ι) *
       .ofReal ((π * Real.Gamma (2 / p + 1)) ^ card ι / Real.Gamma (2 * card ι / p + 1)) := by
@@ -434,12 +439,14 @@ section Complex
 
 open MeasureTheory MeasureTheory.Measure ENNReal
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem Complex.volume_ball (a : ℂ) (r : ℝ) :
     volume (Metric.ball a r) = .ofReal r ^ 2 * NNReal.pi := by
   simp [InnerProductSpace.volume_ball_of_dim_even (k := 1) (by simp) a,
     ← NNReal.coe_real_pi, ofReal_coe_nnreal]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem Complex.volume_closedBall (a : ℂ) (r : ℝ) :
     volume (Metric.closedBall a r) = .ofReal r ^ 2 * NNReal.pi := by

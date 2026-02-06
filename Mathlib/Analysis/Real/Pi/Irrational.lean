@@ -50,6 +50,7 @@ private lemma I_zero : I 0 θ * θ = 2 * sin θ := by
   rw [mul_comm, I]
   simp [mul_integral_comp_mul_right, two_mul]
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 Auxiliary for the proof that `π` is irrational.
 While it is most natural to give the recursive formula for `I (n + 2) θ`, as well as give the second
@@ -119,6 +120,7 @@ private lemma recursion' (n : ℕ) :
     ring!
   all_goals exact Continuous.intervalIntegrable (by fun_prop) _ _
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 Auxiliary for the proof that `π` is irrational.
 The recursive formula for `I (n + 2) θ * θ ^ 2` in terms of `I n θ` and `I (n + 1) θ`.
@@ -160,6 +162,7 @@ private def cosPoly : ℕ → ℤ[X]
   | 1 => monomial 1 (-4)
   | n + 2 => ((2 : ℤ) * (2 * n + 3)) • cosPoly (n + 1) + monomial 2 (-4) * cosPoly n
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 Auxiliary for the proof that `π` is irrational.
 Prove a degree bound for `sinPoly n` by induction. Note this is where we find the value in an
@@ -189,6 +192,7 @@ private lemma cosPoly_natDegree_le : ∀ n : ℕ, (cosPoly n).natDegree ≤ n
       · exact (cosPoly_natDegree_le (n + 1)).trans (by simp)
       exact natDegree_mul_le.trans (by simp [add_comm 2, cosPoly_natDegree_le n])
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 Auxiliary for the proof that `π` is irrational.
 The key lemma: the sequence of integrals `I` can be written as a linear combination of `sin` and

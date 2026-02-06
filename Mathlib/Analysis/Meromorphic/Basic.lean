@@ -84,6 +84,7 @@ lemma add {f g : 𝕜 → E} (hf : MeromorphicAt f x) (hg : MeromorphicAt g x) :
   exact (((analyticAt_id.sub analyticAt_const).pow _).smul hf).add
     (((analyticAt_id.sub analyticAt_const).pow _).smul hg)
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_fun (attr := fun_prop)]
 lemma smul {f : 𝕜 → 𝕜} {g : 𝕜 → E} (hf : MeromorphicAt f x) (hg : MeromorphicAt g x) :
     MeromorphicAt (f • g) x := by
@@ -94,6 +95,7 @@ lemma smul {f : 𝕜 → 𝕜} {g : 𝕜 → E} (hf : MeromorphicAt f x) (hg : M
   simp
   module
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_fun (attr := fun_prop)]
 lemma mul {f g : 𝕜 → 𝕜'} (hf : MeromorphicAt f x) (hg : MeromorphicAt g x) :
     MeromorphicAt (f * g) x := by

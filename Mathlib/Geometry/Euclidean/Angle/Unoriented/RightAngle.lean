@@ -366,6 +366,7 @@ theorem angle_eq_arcsin_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p�
   rw [angle, dist_eq_norm_vsub V p₁ p₂, dist_eq_norm_vsub V p₁ p₃, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, angle_add_eq_arcsin_of_inner_eq_zero h h0]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An angle in a right-angled triangle expressed using `arctan`. -/
 theorem angle_eq_arctan_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2)
     (h0 : p₃ ≠ p₂) : ∠ p₂ p₃ p₁ = Real.arctan (dist p₁ p₂ / dist p₃ p₂) := by
@@ -375,6 +376,7 @@ theorem angle_eq_arctan_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p�
   rw [angle, dist_eq_norm_vsub V p₁ p₂, dist_eq_norm_vsub' V p₃ p₂, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, angle_add_eq_arctan_of_inner_eq_zero h h0]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An angle in a non-degenerate right-angled triangle is positive. -/
 theorem angle_pos_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2)
     (h0 : p₁ ≠ p₂ ∨ p₃ = p₂) : 0 < ∠ p₂ p₃ p₁ := by
@@ -384,6 +386,7 @@ theorem angle_pos_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂
   rw [angle, ← vsub_add_vsub_cancel p₁ p₂ p₃, add_comm]
   exact angle_add_pos_of_inner_eq_zero h h0
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An angle in a right-angled triangle is at most `π / 2`. -/
 theorem angle_le_pi_div_two_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2) :
     ∠ p₂ p₃ p₁ ≤ π / 2 := by
@@ -392,6 +395,7 @@ theorem angle_le_pi_div_two_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠
   rw [angle, ← vsub_add_vsub_cancel p₁ p₂ p₃, add_comm]
   exact angle_add_le_pi_div_two_of_inner_eq_zero h
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An angle in a non-degenerate right-angled triangle is less than `π / 2`. -/
 theorem angle_lt_pi_div_two_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2)
     (h0 : p₃ ≠ p₂) : ∠ p₂ p₃ p₁ < π / 2 := by
@@ -401,6 +405,7 @@ theorem angle_lt_pi_div_two_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠
   rw [angle, ← vsub_add_vsub_cancel p₁ p₂ p₃, add_comm]
   exact angle_add_lt_pi_div_two_of_inner_eq_zero h h0
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The cosine of an angle in a right-angled triangle as a ratio of sides. -/
 theorem cos_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2) :
     Real.cos (∠ p₂ p₃ p₁) = dist p₃ p₂ / dist p₁ p₃ := by
@@ -409,6 +414,7 @@ theorem cos_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂
   rw [angle, dist_eq_norm_vsub' V p₃ p₂, dist_eq_norm_vsub V p₁ p₃, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, cos_angle_add_of_inner_eq_zero h]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The sine of an angle in a right-angled triangle as a ratio of sides. -/
 theorem sin_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2)
     (h0 : p₁ ≠ p₂ ∨ p₃ ≠ p₂) : Real.sin (∠ p₂ p₃ p₁) = dist p₁ p₂ / dist p₁ p₃ := by
@@ -418,6 +424,7 @@ theorem sin_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂
   rw [angle, dist_eq_norm_vsub V p₁ p₂, dist_eq_norm_vsub V p₁ p₃, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, sin_angle_add_of_inner_eq_zero h h0]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The tangent of an angle in a right-angled triangle as a ratio of sides. -/
 theorem tan_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2) :
     Real.tan (∠ p₂ p₃ p₁) = dist p₁ p₂ / dist p₃ p₂ := by
@@ -426,6 +433,7 @@ theorem tan_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂
   rw [angle, dist_eq_norm_vsub V p₁ p₂, dist_eq_norm_vsub' V p₃ p₂, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, tan_angle_add_of_inner_eq_zero h]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The cosine of an angle in a right-angled triangle multiplied by the hypotenuse equals the
 adjacent side. -/
 theorem cos_angle_mul_dist_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2) :
@@ -435,6 +443,7 @@ theorem cos_angle_mul_dist_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ 
   rw [angle, dist_eq_norm_vsub' V p₃ p₂, dist_eq_norm_vsub V p₁ p₃, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, cos_angle_add_mul_norm_of_inner_eq_zero h]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The sine of an angle in a right-angled triangle multiplied by the hypotenuse equals the
 opposite side. -/
 theorem sin_angle_mul_dist_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2) :
@@ -444,6 +453,7 @@ theorem sin_angle_mul_dist_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ 
   rw [angle, dist_eq_norm_vsub V p₁ p₂, dist_eq_norm_vsub V p₁ p₃, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, sin_angle_add_mul_norm_of_inner_eq_zero h]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The tangent of an angle in a right-angled triangle multiplied by the adjacent side equals
 the opposite side. -/
 theorem tan_angle_mul_dist_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2)
@@ -454,6 +464,7 @@ theorem tan_angle_mul_dist_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ 
   rw [angle, dist_eq_norm_vsub V p₁ p₂, dist_eq_norm_vsub' V p₃ p₂, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, tan_angle_add_mul_norm_of_inner_eq_zero h h0]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A side of a right-angled triangle divided by the cosine of the adjacent angle equals the
 hypotenuse. -/
 theorem dist_div_cos_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2)
@@ -464,6 +475,7 @@ theorem dist_div_cos_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ 
   rw [angle, dist_eq_norm_vsub' V p₃ p₂, dist_eq_norm_vsub V p₁ p₃, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, norm_div_cos_angle_add_of_inner_eq_zero h h0]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A side of a right-angled triangle divided by the sine of the opposite angle equals the
 hypotenuse. -/
 theorem dist_div_sin_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2)
@@ -474,6 +486,7 @@ theorem dist_div_sin_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ 
   rw [angle, dist_eq_norm_vsub V p₁ p₂, dist_eq_norm_vsub V p₁ p₃, ← vsub_add_vsub_cancel p₁ p₂ p₃,
     add_comm, norm_div_sin_angle_add_of_inner_eq_zero h h0]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A side of a right-angled triangle divided by the tangent of the opposite angle equals the
 adjacent side. -/
 theorem dist_div_tan_angle_of_angle_eq_pi_div_two {p₁ p₂ p₃ : P} (h : ∠ p₁ p₂ p₃ = π / 2)

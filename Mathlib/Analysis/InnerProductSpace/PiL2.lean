@@ -229,6 +229,7 @@ def DirectSum.IsInternal.isometryL2OfOrthogonalFamily [DecidableEq ι] {V : ι �
   · simp only [sum_inner, hV'.inner_right_fintype, PiLp.inner_apply]
   · congr <;> simp
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem DirectSum.IsInternal.isometryL2OfOrthogonalFamily_symm_apply [DecidableEq ι]
     {V : ι → Submodule 𝕜 E} (hV : DirectSum.IsInternal V)
@@ -506,6 +507,7 @@ theorem sum_sq_inner_left {ι E : Type*} [NormedAddCommGroup E]
     ∑ i : ι, ⟪x, b i⟫ ^ 2 = ‖x‖ ^ 2 := by
   simp_rw [← b.sum_sq_inner_right, real_inner_comm]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma norm_le_card_mul_iSup_norm_inner (b : OrthonormalBasis ι 𝕜 E) (x : E) :
     ‖x‖ ≤ √(Fintype.card ι) * ⨆ i, ‖⟪b i, x⟫‖ := by
   calc ‖x‖
@@ -530,11 +532,13 @@ protected theorem orthogonalProjection_apply_eq_sum {U : Submodule 𝕜 E} [U.Ha
 @[deprecated (since := "2025-12-31")] alias orthogonalProjection_eq_sum :=
   OrthonormalBasis.orthogonalProjection_apply_eq_sum
 
+set_option backward.isDefEq.respectTransparency false in
 protected theorem orthogonalProjection_eq_sum_rankOne {U : Submodule 𝕜 E}
     [U.HasOrthogonalProjection] (b : OrthonormalBasis ι 𝕜 U) :
     U.orthogonalProjection = ∑ i, InnerProductSpace.rankOne 𝕜 (b i) (b i : E) := by
   ext; simp [b.orthogonalProjection_apply_eq_sum]
 
+set_option backward.isDefEq.respectTransparency false in
 protected theorem starProjection_eq_sum_rankOne {U : Submodule 𝕜 E} [U.HasOrthogonalProjection]
     (b : OrthonormalBasis ι 𝕜 U) :
     U.starProjection = ∑ i, InnerProductSpace.rankOne 𝕜 (b i : E) (b i : E) := by
@@ -644,6 +648,7 @@ theorem _root_.Pi.orthonormalBasis.toBasis {η : Type*} [Fintype η] {ι : η �
     (Pi.orthonormalBasis B).toBasis =
       ((Pi.basis fun i : η ↦ (B i).toBasis).map (WithLp.linearEquiv 2 _ _).symm) := by ext; rfl
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem _root_.Pi.orthonormalBasis_apply {η : Type*} [Fintype η] [DecidableEq η] {ι : η → Type*}
     [∀ i, Fintype (ι i)] {𝕜 : Type*} [RCLike 𝕜] {E : η → Type*} [∀ i, NormedAddCommGroup (E i)]
@@ -708,6 +713,7 @@ protected theorem span_apply [DecidableEq E] {v' : ι' → E} (h : Orthonormal �
 
 open Submodule
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A finite orthonormal family of vectors whose span has trivial orthogonal complement is an
 orthonormal basis. -/
 protected def mkOfOrthogonalEqBot (hon : Orthonormal 𝕜 v) (hsp : (span 𝕜 (Set.range v))ᗮ = ⊥) :
@@ -777,6 +783,7 @@ theorem basisFun_repr (x : EuclideanSpace 𝕜 ι) (i : ι) : (basisFun ι 𝕜)
 theorem basisFun_inner (x : EuclideanSpace 𝕜 ι) (i : ι) : ⟪basisFun ι 𝕜 i, x⟫ = x i := by
   simp [← OrthonormalBasis.repr_apply_apply]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem inner_basisFun_real (x : EuclideanSpace ℝ ι) (i : ι) :
     inner ℝ x (basisFun ι ℝ i) = x i := by
@@ -833,6 +840,7 @@ end OrthonormalBasis
 
 section Complex
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `![1, I]` is an orthonormal basis for `ℂ` considered as a real inner product space. -/
 def Complex.orthonormalBasisOneI : OrthonormalBasis (Fin 2) ℝ ℂ :=
   Complex.basisOneI.toOrthonormalBasis
@@ -855,6 +863,7 @@ theorem Complex.toBasis_orthonormalBasisOneI :
     Complex.orthonormalBasisOneI.toBasis = Complex.basisOneI :=
   Basis.toBasis_toOrthonormalBasis _ _
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem Complex.coe_orthonormalBasisOneI :
     (Complex.orthonormalBasisOneI : Fin 2 → ℂ) = ![1, I] := by
@@ -1102,6 +1111,7 @@ variable {S : Submodule 𝕜 V} {L : S →ₗᵢ[𝕜] V}
 
 open Module
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Let `S` be a subspace of a finite-dimensional complex inner product space `V`.  A linear
 isometry mapping `S` into `V` can be extended to a full isometry of `V`.
 
@@ -1155,6 +1165,7 @@ noncomputable def LinearIsometry.extend (L : S →ₗᵢ[𝕜] V) : V →ₗᵢ[
     { toLinearMap := M
       norm_map' := M_norm_map }
 
+set_option backward.isDefEq.respectTransparency false in
 theorem LinearIsometry.extend_apply (L : S →ₗᵢ[𝕜] V) (s : S) : L.extend s = L s := by
   simp only [LinearIsometry.extend, ← LinearIsometry.coe_toLinearMap]
   simp only [add_eq_left, LinearIsometry.coe_toLinearMap,
@@ -1242,6 +1253,7 @@ theorem LinearMap.toMatrix_innerₛₗ_apply [Fintype n] [DecidableEq n] [Fintyp
 
 end Matrix
 
+set_option backward.isDefEq.respectTransparency false in
 open ContinuousLinearMap LinearMap in
 theorem InnerProductSpace.toMatrix_rankOne {𝕜 E F ι ι' : Type*} [RCLike 𝕜]
     [SeminormedAddCommGroup E] [NormedSpace 𝕜 E] [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]

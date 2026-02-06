@@ -284,6 +284,7 @@ lemma isClosed_restrictScalars_separableClosure [Algebra K E] [IsScalarTower F K
     obtain ⟨x, rfl⟩ := (separableClosure.separableClosure_eq_bot K E).le hx
     exact x.2
 
+set_option backward.isDefEq.respectTransparency false in
 lemma separableClosure_le_separableClosure_iff
     [Algebra K E] [IsScalarTower F K E] {L : IntermediateField F E} :
     (separableClosure L E).restrictScalars F ≤ (separableClosure K E).restrictScalars F ↔
@@ -329,6 +330,7 @@ theorem sepDegree_eq_of_equiv (K : Type v) [Field K] [Algebra F K] (i : E ≃ₐ
     sepDegree F E = sepDegree F K :=
   i.separableClosure.toLinearEquiv.rank_eq
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The separable degree multiplied by the inseparable degree is equal
 to the (infinite) field extension degree. -/
 theorem sepDegree_mul_insepDegree : sepDegree F E * insepDegree F E = Module.rank F E :=
@@ -340,12 +342,14 @@ theorem sepDegree_le_rank : sepDegree F E ≤ Module.rank F E :=
 theorem insepDegree_le_rank : insepDegree F E ≤ Module.rank F E :=
   Module.rank_top_le_rank_of_isScalarTower _ _ _
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `E` and `K` are isomorphic as `F`-algebras, then they have the same
 inseparable degree over `F`. -/
 theorem lift_insepDegree_eq_of_equiv (i : E ≃ₐ[F] K) :
     Cardinal.lift.{w} (insepDegree F E) = Cardinal.lift.{v} (insepDegree F K) :=
   Algebra.lift_rank_eq_of_equiv_equiv i.separableClosure i rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The same-universe version of `Field.lift_insepDegree_eq_of_equiv`. -/
 theorem insepDegree_eq_of_equiv (K : Type v) [Field K] [Algebra F K] (i : E ≃ₐ[F] K) :
     insepDegree F E = insepDegree F K :=
@@ -374,6 +378,7 @@ end Field
 
 namespace IntermediateField
 
+set_option backward.isDefEq.respectTransparency false in
 /-- In a finitely generated field extension, there exists a maximal
 separably generated field extension. -/
 lemma exists_finset_maximalFor_isTranscendenceBasis_separableClosure
@@ -462,6 +467,7 @@ theorem sepDegree_bot' : sepDegree F (⊥ : IntermediateField E K) = sepDegree F
 theorem insepDegree_bot' : insepDegree F (⊥ : IntermediateField E K) = insepDegree F E :=
   insepDegree_eq_of_equiv _ _ _ ((botEquiv E K).restrictScalars F)
 
+set_option backward.isDefEq.respectTransparency false in
 variable (F) in
 lemma _root_.Field.insepDegree_top_le_insepDegree_of_isScalarTower :
     insepDegree E K ≤ insepDegree F K := by
@@ -471,6 +477,7 @@ lemma _root_.Field.insepDegree_top_le_insepDegree_of_isScalarTower :
   exact Module.rank_top_le_rank_of_isScalarTower
     (separableClosure F K) ((separableClosure E K).restrictScalars F) K
 
+set_option backward.isDefEq.respectTransparency false in
 variable {K} in
 lemma _root_.Field.insepDegree_le_of_left_le {E₁ E₂ : IntermediateField F K} (H : E₁ ≤ E₂) :
     insepDegree E₂ K ≤ insepDegree E₁ K := by
@@ -478,6 +485,7 @@ lemma _root_.Field.insepDegree_le_of_left_le {E₁ E₂ : IntermediateField F K}
   have : IsScalarTower E₁ E₂ K := .of_algebraMap_eq' rfl
   exact insepDegree_top_le_insepDegree_of_isScalarTower _ _ _
 
+set_option backward.isDefEq.respectTransparency false in
 variable (F) in
 lemma _root_.Field.finInsepDegree_top_le_finInsepDegree_of_isScalarTower [Module.Finite F K] :
     finInsepDegree E K ≤ finInsepDegree F K := by
@@ -487,6 +495,7 @@ lemma _root_.Field.finInsepDegree_top_le_finInsepDegree_of_isScalarTower [Module
   exact Module.finrank_top_le_finrank_of_isScalarTower
     (separableClosure F K) ((separableClosure E K).restrictScalars F) K
 
+set_option backward.isDefEq.respectTransparency false in
 variable {K} in
 lemma finInsepDegree_le_of_left_le {E₁ E₂ : IntermediateField F K} (H : E₁ ≤ E₂)
     [Module.Finite E₁ K] : finInsepDegree E₂ K ≤ finInsepDegree E₁ K := by

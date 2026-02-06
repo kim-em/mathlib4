@@ -563,6 +563,7 @@ variable [CommRing R] [CommRing S] [Algebra R S]
 
 variable {A B : Subalgebra R S}
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 If `A` and `B` are subalgebras in a commutative algebra `S` over `R`, and if they are
 linearly disjoint and such that `A ⊔ B = S`, then `trace` and `algebraMap` commutes.
@@ -575,6 +576,7 @@ theorem trace_algebraMap (H : A.LinearDisjoint B) (H' : A ⊔ B = ⊤) [Module.F
     Matrix.trace, map_sum, leftMulMatrix_basisOfBasisRight_algebraMap, RingHom.mapMatrix_apply,
     Matrix.diag_apply, Matrix.map_apply]
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 If `A` and `B` are subalgebras in a commutative algebra `S` over `R`, and if they are
 linearly disjoint and such that `A ⊔ B = S`, then `norm` and `algebraMap` commutes.
@@ -586,6 +588,7 @@ theorem norm_algebraMap (H : A.LinearDisjoint B) (H' : A ⊔ B = ⊤) [Module.Fr
     Algebra.norm_eq_matrix_det (H.basisOfBasisRight H' (Module.Free.chooseBasis R B)),
     leftMulMatrix_basisOfBasisRight_algebraMap, RingHom.map_det]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- In a commutative ring, if `A` and `B` are linearly disjoint, if `B` is a flat `R`-module,
 then for any family of `R`-linearly independent elements of `A`,
 they are also `B`-linearly independent. -/
@@ -593,6 +596,7 @@ theorem linearIndependent_left_of_flat (H : A.LinearDisjoint B) [Module.Flat R B
     {ι : Type*} {a : ι → A} (ha : LinearIndependent R a) : LinearIndependent B (A.val ∘ a) :=
   H.linearIndependent_left_of_flat_of_commute ha fun _ _ ↦ mul_comm _ _
 
+set_option backward.isDefEq.respectTransparency false in
 variable (A B) in
 /-- In a commutative ring, if a basis of `A` is also `B`-linearly independent,
 then `A` and `B` are linearly disjoint. -/
@@ -620,6 +624,7 @@ theorem exists_field_of_isDomain_of_injective (A : Type v) [CommRing A] (B : Typ
     hi.comp (Algebra.TensorProduct.includeRight_injective ha), by
       simpa only [AlgHom.range_comp] using (include_range R A B).map i hi⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `A ⊗[R] B` is a field, then `A` and `B` are linearly disjoint. -/
 theorem of_isField (H : IsField (A ⊗[R] B)) : A.LinearDisjoint B := by
   nontriviality S
@@ -629,6 +634,7 @@ theorem of_isField (H : IsField (A ⊗[R] B)) : A.LinearDisjoint B := by
   letI : NonAssocRing (A ⊗[R] B) := Ring.toNonAssocRing
   exact RingHom.injective _
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `A ⊗[R] B` is a field, then for any `R`-algebra `S`
 and injections of `A` and `B` into `S`, their images are linearly disjoint. -/
 theorem of_isField' {A : Type v} [Ring A] {B : Type w} [Ring B]
@@ -639,6 +645,7 @@ theorem of_isField' {A : Type v} [Ring A] {B : Type w} [Ring B]
   exact Algebra.TensorProduct.congr (AlgEquiv.ofInjective fa hfa)
     (AlgEquiv.ofInjective fb hfb) |>.symm.toMulEquiv.isField H
 
+set_option backward.isDefEq.respectTransparency false in
 -- need to be in this file since it uses linearly disjoint
 open Cardinal Polynomial in
 variable (R) in
@@ -705,25 +712,30 @@ theorem _root_.Algebra.TensorProduct.isAlgebraic_of_isField
 
 variable (H : A.LinearDisjoint B)
 
+set_option backward.isDefEq.respectTransparency false in
 include H in
 theorem rank_inf_eq_one_of_flat_of_inj (hf : Module.Flat R A ∨ Module.Flat R B)
     (hinj : Function.Injective (algebraMap R S)) : Module.rank R ↥(A ⊓ B) = 1 :=
   H.rank_inf_eq_one_of_commute_of_flat_of_inj hf (fun _ _ ↦ mul_comm _ _) hinj
 
+set_option backward.isDefEq.respectTransparency false in
 include H in
 theorem rank_inf_eq_one_of_flat_left_of_inj [Module.Flat R A]
     (hinj : Function.Injective (algebraMap R S)) : Module.rank R ↥(A ⊓ B) = 1 :=
   H.rank_inf_eq_one_of_commute_of_flat_left_of_inj (fun _ _ ↦ mul_comm _ _) hinj
 
+set_option backward.isDefEq.respectTransparency false in
 include H in
 theorem rank_inf_eq_one_of_flat_right_of_inj [Module.Flat R B]
     (hinj : Function.Injective (algebraMap R S)) : Module.rank R ↥(A ⊓ B) = 1 :=
   H.rank_inf_eq_one_of_commute_of_flat_right_of_inj (fun _ _ ↦ mul_comm _ _) hinj
 
+set_option backward.isDefEq.respectTransparency false in
 theorem rank_eq_one_of_flat_of_self_of_inj (H : A.LinearDisjoint A) [Module.Flat R A]
     (hinj : Function.Injective (algebraMap R S)) : Module.rank R A = 1 :=
   H.rank_eq_one_of_commute_of_flat_of_self_of_inj (fun _ _ ↦ mul_comm _ _) hinj
 
+set_option backward.isDefEq.respectTransparency false in
 include H in
 /-- In a commutative ring, if subalgebras `A` and `B` are linearly disjoint and they are
 free modules, then the rank of `A ⊔ B` is equal to the product of the rank of `A` and `B`. -/
@@ -732,6 +744,7 @@ theorem rank_sup_of_free [Module.Free R A] [Module.Free R B] :
   nontriviality R
   rw [← rank_tensorProduct', H.mulMap.toLinearEquiv.rank_eq]
 
+set_option backward.isDefEq.respectTransparency false in
 include H in
 /-- In a commutative ring, if subalgebras `A` and `B` are linearly disjoint and they are
 free modules, then the rank of `A ⊔ B` is equal to the product of the rank of `A` and `B`. -/
@@ -739,6 +752,7 @@ theorem finrank_sup_of_free [Module.Free R A] [Module.Free R B] :
     Module.finrank R ↥(A ⊔ B) = Module.finrank R A * Module.finrank R B := by
   simpa only [map_mul] using congr(Cardinal.toNat $(H.rank_sup_of_free))
 
+set_option backward.isDefEq.respectTransparency false in
 /-- In a commutative ring, if `A` and `B` are subalgebras which are free modules of finite rank,
 such that rank of `A ⊔ B` is equal to the product of the rank of `A` and `B`,
 then `A` and `B` are linearly disjoint. -/
@@ -758,6 +772,7 @@ theorem of_finrank_sup_of_free [Module.Free R A] [Module.Free R B]
   rw [linearDisjoint_iff, Submodule.linearDisjoint_iff]
   exact Subtype.val_injective.comp (OrzechProperty.injective_of_surjective_of_injective j' _ hj hf)
 
+set_option backward.isDefEq.respectTransparency false in
 include H in
 /-- If `A` and `B` are linearly disjoint, if `A` is free and `B` is flat,
 then `[B[A] : B] = [A : R]`. See also `Subalgebra.adjoin_rank_le`. -/
@@ -770,6 +785,7 @@ theorem adjoin_rank_eq_rank_left [Module.Free R A] [Module.Flat R B]
   have := H.linearIndependent_left_of_flat (Module.Free.chooseBasis R A).linearIndependent
   rw [rank_span this, Cardinal.mk_range_eq _ this.injective]
 
+set_option backward.isDefEq.respectTransparency false in
 include H in
 /-- If `A` and `B` are linearly disjoint, if `B` is free and `A` is flat,
 then `[A[B] : A] = [B : R]`. See also `Subalgebra.adjoin_rank_le`. -/
@@ -778,6 +794,7 @@ theorem adjoin_rank_eq_rank_right [Module.Free R B] [Module.Flat R A]
     Module.rank A (Algebra.adjoin A (B : Set S)) = Module.rank R B :=
   H.symm.adjoin_rank_eq_rank_left
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If the rank of `A` and `B` are coprime, and they satisfy some freeness condition,
 then `A` and `B` are linearly disjoint. -/
 theorem of_finrank_coprime_of_free [Module.Free R A] [Module.Free R B]
@@ -804,6 +821,7 @@ theorem of_finrank_coprime_of_free [Module.Free R A] [Module.Free R B]
 
 variable (A B)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `A/R` is integral, such that `A'` and `B` are linearly disjoint for all subalgebras `A'`
 of `A` which are finitely generated `R`-modules, then `A` and `B` are linearly disjoint. -/
 theorem of_linearDisjoint_finite_left [Algebra.IsIntegral R A]
@@ -833,6 +851,7 @@ theorem of_linearDisjoint_finite_left [Algebra.IsIntegral R A]
   rw [← hx', ← hy']; congr
   exact (H A' hA).injective (by simp [← Submodule.mulMap_comp_rTensor _ hA, hx', hy', hxy])
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `B/R` is integral, such that `A` and `B'` are linearly disjoint for all subalgebras `B'`
 of `B` which are finitely generated `R`-modules, then `A` and `B` are linearly disjoint. -/
 theorem of_linearDisjoint_finite_right [Algebra.IsIntegral R B]
@@ -842,6 +861,7 @@ theorem of_linearDisjoint_finite_right [Algebra.IsIntegral R B]
 
 variable {A B}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `A/R` and `B/R` are integral, such that any finite subalgebras in `A` and `B` are
 linearly disjoint, then `A` and `B` are linearly disjoint. -/
 theorem of_linearDisjoint_finite
@@ -864,6 +884,7 @@ variable [Field R] [Ring S] [Algebra R S]
 
 variable {A B : Subalgebra R S}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem inf_eq_bot_of_commute (H : A.LinearDisjoint B)
     (hc : ∀ (a b : ↥(A ⊓ B)), Commute a.1 b.1) : A ⊓ B = ⊥ :=
   eq_bot_of_rank_le_one (Submodule.LinearDisjoint.rank_inf_le_one_of_commute_of_flat_left H hc)

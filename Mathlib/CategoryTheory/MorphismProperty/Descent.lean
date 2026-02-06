@@ -86,6 +86,7 @@ instance [Q.IsStableUnderBaseChange] [P.HasOfPrecompProperty Q] [P.RespectsRight
     rw [← h.1.1]
     exact RespectsRight.postcomp _ hf _ hfst
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `P` descends along `Q`, then `P.diagonal` descends along `Q`. -/
 instance [HasPullbacks C] (P Q : MorphismProperty C) [P.DescendsAlong Q] [P.RespectsIso]
     [Q.IsStableUnderBaseChange] :

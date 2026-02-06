@@ -579,6 +579,7 @@ lemma Subalgebra.spectrum_sUnion_connectedComponentIn :
   refine inter_subset_inter_right _ ?_ |>.trans <| inter_subset_right
   exact frontier_subset_frontier S x
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Let `S` be a closed subalgebra of a Banach algebra `A`, and let `x : S`. If `z` is in the
 spectrum of `x`, then the connected component of `z` in the complement of the spectrum of `↑x : A`
 is bounded (or else `z` actually belongs to the spectrum of `↑x : A`). -/
@@ -732,6 +733,7 @@ theorem upperHemicontinuous_spectrum_nnreal [NormedRing A] [NormedAlgebra ℝ A]
   obtain ⟨⟨h₁, -⟩, h₂⟩ : IsClosedEmbedding ((↑) : ℝ≥0 → ℝ) := isometry_subtype_coe.isClosedEmbedding
   exact upperHemicontinuous_spectrum ℝ A |>.isInducing_comp h₁ h₂
 
+set_option backward.isDefEq.respectTransparency false in
 open WithLp in
 /-- The map `a ↦ quasispectrum 𝕜 a` is upper hemicontinuous. -/
 theorem upperHemicontinuous_quasispectrum [NontriviallyNormedField 𝕜] [ProperSpace 𝕜]
@@ -745,6 +747,7 @@ theorem upperHemicontinuous_quasispectrum [NontriviallyNormedField 𝕜] [Proper
     ← AlgEquiv.spectrum_eq (unitizationAlgEquiv 𝕜 (𝕜 := 𝕜) (A := A) |>.symm)]
   congr
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The map `a ↦ quasispectrum ℝ≥0 a` is upper hemicontinuous. -/
 theorem upperHemicontinuous_quasispectrum_nnreal [NonUnitalNormedRing A]
     [NormedSpace ℝ A] [SMulCommClass ℝ A A] [IsScalarTower ℝ A A] [CompleteSpace A] :

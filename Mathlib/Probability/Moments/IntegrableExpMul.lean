@@ -456,6 +456,7 @@ lemma aemeasurable_of_mem_interior_integrableExpSet (hv : v ∈ interior (integr
   · exact aemeasurable_of_aemeasurable_exp_mul hvt
       (h_subset (add_half_inf_sub_mem_Ioo hvlu)).aemeasurable
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `v` belongs to the interior of the interval `integrableExpSet X μ`,
 then `|X| ^ p * exp (v * X)` is integrable for all nonnegative `p : ℝ`. -/
 lemma integrable_rpow_abs_mul_exp_of_mem_interior_integrableExpSet
@@ -479,6 +480,7 @@ lemma integrable_pow_abs_mul_exp_of_mem_interior_integrableExpSet
     (by positivity : 0 ≤ (n : ℝ)) with ω
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `v` belongs to the interior of the interval `integrableExpSet X μ`,
 then `X ^ p * exp (v * X)` is integrable for all nonnegative `p : ℝ`. -/
 lemma integrable_rpow_mul_exp_of_mem_interior_integrableExpSet
