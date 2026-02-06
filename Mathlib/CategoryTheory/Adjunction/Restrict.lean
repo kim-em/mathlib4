@@ -33,6 +33,7 @@ variable {iC : C ⥤ C'} {iD : D ⥤ D'}
 
 attribute [local simp] homEquiv_unit homEquiv_counit
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `C` is a full subcategory of `C'` and `D` is a full subcategory of `D'`, then we can restrict
 an adjunction `L' ⊣ R'` where `L' : C' ⥤ D'` and `R' : D' ⥤ C'` to `C` and `D`.
 The construction here is slightly more general, in that `C` is required only to have a full and
@@ -48,7 +49,6 @@ noncomputable def restrictFullyFaithful : L ⊣ R :=
           _ ≃ (iC.obj X ⟶ R'.obj (iD.obj Y)) := adj.homEquiv _ _
           _ ≃ (iC.obj X ⟶ iC.obj (R.obj Y)) := Iso.homCongr (Iso.refl _) (comm2.app Y)
           _ ≃ (X ⟶ R.obj Y) := hiC.homEquiv.symm
-
       homEquiv_naturality_left_symm := fun {X' X Y} f g => by
         apply hiD.map_injective
         simpa [Trans.trans] using (comm1.inv.naturality_assoc f _).symm
@@ -71,6 +71,7 @@ lemma map_restrictFullyFaithful_counit_app (X : D) :
   dsimp [restrictFullyFaithful]
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma restrictFullyFaithful_homEquiv_apply {X : C} {Y : D} (f : L.obj X ⟶ Y) :
     (adj.restrictFullyFaithful hiC hiD comm1 comm2).homEquiv X Y f =
       hiC.preimage (adj.unit.app (iC.obj X) ≫ R'.map (comm1.hom.app X) ≫

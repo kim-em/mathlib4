@@ -47,6 +47,7 @@ def arithGeom [Mul R] [Add R] (a b u₀ : R) : ℕ → R
 lemma arithGeom_succ [Mul R] [Add R] (n : ℕ) :
     arithGeom a b u₀ (n + 1) = a * arithGeom a b u₀ n + b := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 lemma arithGeom_eq_add_sum [CommSemiring R] (n : ℕ) :
     arithGeom a b u₀ n = a ^ n * u₀ + b * ∑ k ∈ Finset.range n, a ^ k := by
   induction n with
@@ -80,6 +81,7 @@ lemma arithGeom_eq' (ha : a ≠ 1) :
   ext
   exact arithGeom_eq ha _
 
+set_option backward.isDefEq.respectTransparency false in
 lemma arithGeom_same_eq_mul_div' (ha : a ≠ 1) (n : ℕ) :
     arithGeom a b b n = b * (1 - a ^ (n + 1)) / (1 - a) := by
   rw [arithGeom_eq ha n]

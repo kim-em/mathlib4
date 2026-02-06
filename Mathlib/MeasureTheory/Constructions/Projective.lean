@@ -50,6 +50,7 @@ namespace IsProjectiveMeasureFamily
 
 variable {I J : Finset ι}
 
+set_option backward.isDefEq.respectTransparency false in
 lemma eq_zero_of_isEmpty [h : IsEmpty (Π i, α i)]
     (hP : IsProjectiveMeasureFamily P) (I : Finset ι) :
     P I = 0 := by
@@ -77,6 +78,7 @@ lemma measure_univ_eq (hP : IsProjectiveMeasureFamily P) (I J : Finset ι) :
   rw [← hP.measure_univ_eq_of_subset I.subset_union_left,
     ← hP.measure_univ_eq_of_subset (I.subset_union_right (s₂ := J))]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma congr_cylinder_of_subset (hP : IsProjectiveMeasureFamily P)
     {S : Set (∀ i : I, α i)} {T : Set (∀ i : J, α i)} (hT : MeasurableSet T)
     (h_eq : cylinder I S = cylinder J T) (hJI : J ⊆ I) :

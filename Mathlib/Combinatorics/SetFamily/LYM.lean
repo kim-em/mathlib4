@@ -229,6 +229,7 @@ theorem lubell_yamamoto_meshalkin_inequality_sum_inv_choose
 
 /-! ### Sperner's theorem -/
 
+set_option backward.isDefEq.respectTransparency false in
 /-- **Sperner's theorem**. The size of an antichain in `Finset α` is bounded by the size of the
 maximal layer in `Finset α`. This precisely means that `Finset α` is a Sperner order. -/
 theorem _root_.IsAntichain.sperner (h𝒜 : IsAntichain (· ⊆ ·) (SetLike.coe 𝒜)) :

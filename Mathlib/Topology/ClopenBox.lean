@@ -53,6 +53,7 @@ theorem exists_prod_subset (W : Clopens (X × Y)) {a : X × Y} (h : a ∈ W) :
 
 variable [CompactSpace X]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Every clopen set in a product of two compact spaces
 is a union of finitely many clopen boxes. -/
 theorem exists_finset_eq_sup_prod (W : Clopens (X × Y)) :

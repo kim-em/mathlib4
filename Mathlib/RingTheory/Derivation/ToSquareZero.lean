@@ -102,6 +102,7 @@ def liftOfDerivationToSquareZero [IsScalarTower R A B] (hI : I ^ 2 = ⊥) (f : D
     map_zero' := ((I.restrictScalars R).subtype.comp f.toLinearMap +
       (IsScalarTower.toAlgHom R A B).toLinearMap).map_zero }
 
+set_option backward.isDefEq.respectTransparency false in
 -- simp normal form is `liftOfDerivationToSquareZero_mk_apply'`
 theorem liftOfDerivationToSquareZero_mk_apply [IsScalarTower R A B] (d : Derivation R A I) (x : A) :
     Ideal.Quotient.mk I (liftOfDerivationToSquareZero I hI d x) = algebraMap A (B ⧸ I) x := by
@@ -109,6 +110,7 @@ theorem liftOfDerivationToSquareZero_mk_apply [IsScalarTower R A B] (d : Derivat
     zero_add]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem liftOfDerivationToSquareZero_mk_apply' (d : Derivation R A I) (x : A) :
     (Ideal.Quotient.mk I) (d x) + (algebraMap A (B ⧸ I)) x = algebraMap A (B ⧸ I) x := by

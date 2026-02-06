@@ -114,6 +114,7 @@ theorem sup_le (K₁ K₂ : Compacts G) : μ (K₁ ⊔ K₂) ≤ μ K₁ + μ K�
 theorem lt_top (K : Compacts G) : μ K < ∞ :=
   ENNReal.coe_lt_top
 
+set_option backward.isDefEq.respectTransparency false in
 theorem empty : μ ⊥ = 0 := by simpa [toNNReal_eq_zero_iff] using μ.sup_disjoint' ⊥ ⊥
 
 /-- Constructing the inner content of a content. From a content defined on the compact sets, we
@@ -159,6 +160,7 @@ theorem innerContent_exists_compact {U : Opens G} (hU : μ.innerContent U ≠ �
   rcases h₂ with ⟨U, h1U, h2U⟩; refine ⟨U, h1U, ?_⟩
   rw [← tsub_le_iff_right]; exact le_of_lt h2U
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The inner content of a supremum of opens is at most the sum of the individual inner contents. -/
 theorem innerContent_iSup_nat [R1Space G] (U : ℕ → Opens G) :
     μ.innerContent (⨆ i : ℕ, U i) ≤ ∑' i : ℕ, μ.innerContent (U i) := by

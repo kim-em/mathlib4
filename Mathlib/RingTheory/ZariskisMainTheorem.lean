@@ -71,6 +71,7 @@ lemma ZariskisMainProperty.restrictScalars [Algebra S T] [IsScalarTower R S T]
   obtain ⟨r, hrp, H⟩ := H
   exact ⟨r, hrp, fun x ↦ ⟨_, isIntegral_trans _ (H x).choose_spec⟩⟩
 
+set_option backward.isDefEq.respectTransparency false in
 lemma ZariskisMainProperty.trans [Algebra S T] [IsScalarTower R S T] (p : Ideal T) [p.IsPrime]
     (h₁ : ZariskisMainProperty R (p.under S))
     (h₂ : ∃ r ∉ p.under S, (⊥ : Subalgebra S T).saturation (.powers (algebraMap _ _ r))

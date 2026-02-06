@@ -34,6 +34,7 @@ section Identities
 
   Maybe use `Data.Nat.Choose` to prove it.
 -/
+set_option backward.isDefEq.respectTransparency false in
 /-- `(x + y)^n` can be expressed as `x^n + n*x^(n-1)*y + k * y^2` for some `k` in the ring.
 -/
 def powAddExpansion {R : Type*} [CommSemiring R] (x y : R) :
@@ -89,6 +90,7 @@ def binomExpansion (f : R[X]) (x y : R) :
     exact (Finset.sum_mul ..).symm
   · exact (Finset.sum_mul ..).symm
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `x^n - y^n` can be expressed as `z * (x - y)` for some `z` in the ring.
 -/
 def powSubPowFactor (x y : R) : ∀ i : ℕ, { z : R // x ^ i - y ^ i = z * (x - y) }

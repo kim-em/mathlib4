@@ -71,6 +71,7 @@ lemma hasFiniteIntegral_mkD_restrict_of_bound {s : Set Y} [CompactSpace s] [Zero
   · simpa [← continuousOn_iff_continuous_restrict]
   · simpa
 
+set_option backward.isDefEq.respectTransparency false in
 lemma aeStronglyMeasurable_mkD_of_uncurry [CompactSpace Y] [Zero Y] [TopologicalSpace X]
     [OpensMeasurableSpace X] [SecondCountableTopologyEither X (C(Y, E))]
     (f : X → Y → E) (g : C(Y, E)₀) (f_cont : Continuous (Function.uncurry f))

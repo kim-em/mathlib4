@@ -25,6 +25,7 @@ namespace Nat
 
 variable {n : ℕ}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ofDigits_eq_sum_mapIdx_aux (b : ℕ) (l : List ℕ) :
     (l.zipWith ((fun a i : ℕ => a * b ^ (i + 1))) (List.range l.length)).sum =
       b * (l.zipWith (fun a i => a * b ^ i) (List.range l.length)).sum := by
@@ -108,6 +109,7 @@ theorem digits_append_digits {b m n : ℕ} (hb : 0 < b) :
     · exact (List.getLast_append_of_right_ne_nil _ _ h) ▸
           (getLast_digit_ne_zero _ <| digits_ne_nil_iff_ne_zero.mp h)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hb : 1 < b) (hm : 0 < m) :
     digits b n ++ List.replicate k 0 ++ digits b m =
     digits b (n + b ^ ((digits b n).length + k) * m) := by
@@ -384,6 +386,7 @@ theorem bijOn_digitsAppend {b : ℕ} (hb : 1 < b) (l : ℕ) :
     Set.BijOn (digitsAppend b l) {n | n < b ^ l} {L : List ℕ | L.length = l ∧ ∀ x ∈ L, x < b} :=
   (bijOn_ofDigits hb l).symm (setInvOn_digitsAppend_ofDigits hb l).symm
 
+set_option backward.isDefEq.respectTransparency false in
 theorem sum_digits_ofDigits_eq_sum {b : ℕ} (hb : 1 < b) {l : ℕ} {L : List ℕ}
     (hL : L ∈ {L : List ℕ | L.length = l ∧ ∀ x ∈ L, x < b}) :
     (b.digits (ofDigits b L)).sum = L.sum := by

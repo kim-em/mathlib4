@@ -94,6 +94,7 @@ theorem induction_on_pi_max [∀ i, LinearOrder (α i)] {p : (∀ i, Finset (α 
   induction_on_pi_of_choice (fun _ x s ↦ ∀ y ∈ s, y < x)
     (fun _ s hs ↦ ⟨s.max' hs, s.max'_mem hs, fun _ ↦ s.lt_max'_of_mem_erase_max' _⟩) f h0 step
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given a predicate on functions `∀ i, Finset (α i)` defined on a finite type, it is true on all
 maps provided that it is true on `fun _ ↦ ∅` and for any function `g : ∀ i, Finset (α i)`, an index
 `i : ι`, and an element `x : α i` that is strictly less than all elements of `g i`, `p g` implies

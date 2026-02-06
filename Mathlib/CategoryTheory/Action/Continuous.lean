@@ -187,6 +187,7 @@ def mapContActionComp {T : Type*} [Category* T] [HasForget T] [HasForget₂ T To
       Functor.mapContAction G F H ⋙ Functor.mapContAction G F' H' :=
   NatIso.ofComponents (fun _ ↦ Iso.refl _)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Continuous version of `Functor.mapActionCongr`. -/
 @[simps! hom inv]
 def mapContActionCongr
@@ -198,6 +199,7 @@ def mapContActionCongr
 
 end Functor
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Continuous version of `Equivalence.mapAction`. -/
 @[simps functor inverse]
 def Equivalence.mapContAction (E : V ≌ W)

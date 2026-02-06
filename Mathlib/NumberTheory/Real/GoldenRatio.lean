@@ -224,6 +224,7 @@ alias geom_goldConj_isSol_fibRec := geom_goldenConj_isSol_fibRec
 
 end Fibrec
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Binet's formula as a function equality. -/
 theorem coe_fib_eq' :
     (fun n => Nat.fib n : ℕ → ℝ) = fun n => (φ ^ n - ψ ^ n) / √5 := by
@@ -258,6 +259,7 @@ theorem coe_intFib_eq (n : ℤ) : (Int.fib n : ℝ) = (φ ^ n - ψ ^ n) / √5 :
       ← neg_one_mul ψ, ← neg_one_mul φ, mul_pow, neg_one_pow_eq_ite]
     grind [coe_fib_eq]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Relationship between the Fibonacci Sequence, the golden ratio, and its conjugate's exponents. -/
 theorem fib_succ_sub_goldenRatio_mul_fib (n : ℕ) : Nat.fib (n + 1) - φ * Nat.fib n = ψ ^ n := by
   repeat rw [coe_fib_eq]
@@ -274,6 +276,7 @@ and its exponents. -/
 lemma goldenConj_mul_fib_succ_add_fib (n : ℕ) : ψ * Nat.fib (n + 1) + Nat.fib n = ψ ^ (n + 1) := by
   grind [fib_succ_sub_goldenRatio_mul_fib]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Relationship between the Fibonacci Sequence, the golden ratio, and its exponents. -/
 lemma goldenRatio_mul_fib_succ_add_fib (n : ℕ) : φ * Nat.fib (n + 1) + Nat.fib n = φ ^ (n + 1) := by
   induction n with

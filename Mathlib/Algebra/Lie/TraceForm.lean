@@ -217,6 +217,7 @@ open TensorProduct
 
 variable [LieRing.IsNilpotent L] [IsDomain R]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma traceForm_eq_sum_genWeightSpaceOf [IsPrincipalIdealRing R]
     [Module.IsTorsionFree R M] [IsNoetherian R M] [IsTriangularizable R L M] (z : L) :
     traceForm R L M =

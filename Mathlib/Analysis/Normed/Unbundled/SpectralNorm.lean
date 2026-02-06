@@ -239,6 +239,7 @@ open Real
 
 variable {K : Type*} [NormedField K] {L : Type*} [Field L] [Algebra K L]
 
+set_option backward.isDefEq.respectTransparency false in
 open Nat in
 /-- The norm of any root of `p` is bounded by the spectral value of `p`. See
 [S. Bosch, U. Güntzer, R. Remmert, *Non-Archimedean Analysis* (Proposition 3.1.2/1(1))]
@@ -293,6 +294,7 @@ theorem norm_root_le_spectralValue {f : AlgebraNorm K L} (hf_pm : IsPowMul f)
 
 open Multiset
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `f` is a nonarchimedean, power-multiplicative `K`-algebra norm on `L`, then the spectral
 value of a polynomial `p : K[X]` that decomposes into linear factors in `L` is equal to the
 maximum of the norms of the roots. See [S. Bosch, U. Güntzer, R. Remmert, *Non-Archimedean Analysis*
@@ -399,6 +401,7 @@ theorem spectralNorm.eq_of_tower {E : Type*} [Field E] [Algebra K E] [Algebra E 
 
 variable (E : IntermediateField K L)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `L/E/K` is a tower of fields, then the spectral norm of `x : E` when regarded as an element
   of the normal closure of `E` equals its spectral norm when regarding `x` as an element of `L`. -/
 theorem spectralNorm.eq_of_normalClosure' (x : E) :
@@ -412,6 +415,7 @@ theorem spectralNorm.eq_of_normalClosure' (x : E) :
       x, ← minpoly.algebraMap_eq (algebraMap (↥E) L).injective x]
   simp_rw [h_min]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `L/E/K` is a tower of fields and `x = algebraMap E L g`, then the spectral norm
   of `g : E` when regarded as an element of the normal closure of `E` equals the spectral norm
   of `x : L`. -/
@@ -591,6 +595,7 @@ theorem spectralNorm_one : spectralNorm K L 1 = 1 := by
 
 variable [IsUltrametricDist K]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `spectralNorm K L (-y) = spectralNorm K L y` . -/
 theorem spectralNorm_neg {y : L} (hy : IsAlgebraic K y) :
     spectralNorm K L (-y) = spectralNorm K L y := by

@@ -790,6 +790,7 @@ theorem prime_C_iff : Prime (C r : MvPolynomial σ R) ↔ Prime r :=
 
 variable {σ}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem prime_rename_iff (s : Set σ) {p : MvPolynomial s R} :
     Prime (rename ((↑) : s → σ) p) ↔ Prime (p : MvPolynomial s R) := by
   classical
@@ -1025,6 +1026,7 @@ See `MvPolynomial.noZeroDivisors` for the general case. -/
 theorem noZeroDivisors_of_finite (R : Type u) (σ : Type v) [CommSemiring R]
     [NoZeroDivisors R] : NoZeroDivisors (MvPolynomial σ R) := inferInstance
 
+set_option backward.isDefEq.respectTransparency false in
 theorem map_mvPolynomial_eq_eval₂ {S : Type*} [CommSemiring S] [Finite σ]
     (ϕ : MvPolynomial σ R →+* S) (p : MvPolynomial σ R) :
     ϕ p = MvPolynomial.eval₂ (ϕ.comp MvPolynomial.C) (fun s => ϕ (MvPolynomial.X s)) p := by

@@ -48,9 +48,11 @@ lemma egirth_eq_top : G.egirth = ⊤ ↔ G.IsAcyclic := by simp [egirth, IsAcycl
 
 protected alias ⟨_, IsAcyclic.egirth_eq_top⟩ := egirth_eq_top
 
+set_option backward.isDefEq.respectTransparency false in
 lemma egirth_anti : Antitone (egirth : SimpleGraph α → ℕ∞) :=
   fun G H h ↦ iInf_mono fun a ↦ iInf₂_mono' fun w hw ↦ ⟨w.mapLe h, hw.mapLe _, by simp⟩
 
+set_option backward.isDefEq.respectTransparency false in
 lemma exists_egirth_eq_length :
     (∃ (a : α) (w : G.Walk a a), w.IsCycle ∧ G.egirth = w.length) ↔ ¬ G.IsAcyclic := by
   refine ⟨?_, fun h ↦ ?_⟩
@@ -60,6 +62,7 @@ lemma exists_egirth_eq_length :
       ← exists_prop, Subtype.exists', Sigma.exists', eq_comm] at h ⊢
     exact ciInf_mem _
 
+set_option backward.isDefEq.respectTransparency false in
 lemma three_le_egirth : 3 ≤ G.egirth := by
   simpa using fun _ _ a ↦ Walk.IsCycle.three_le_length a
 

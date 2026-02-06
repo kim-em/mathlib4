@@ -130,6 +130,7 @@ lemma toENNReal_add_le {x y : EReal} : (x + y).toENNReal ≤ x.toENNReal + y.toE
   induction x <;> induction y <;> try {· simp}
   exact ENNReal.ofReal_add_le
 
+set_option backward.isDefEq.respectTransparency false in
 theorem addLECancellable_coe (x : ℝ) : AddLECancellable (x : EReal)
   | _, ⊤, _ => le_top
   | ⊥, _, _ => bot_le
@@ -152,6 +153,7 @@ theorem add_lt_add {x y z t : EReal} (h1 : x < y) (h2 : z < t) : x + z < y + t :
     calc (x : EReal) + z < x + t := add_lt_add_left_coe h2 _
     _ ≤ y + t := by gcongr
 
+set_option backward.isDefEq.respectTransparency false in
 theorem add_lt_add_of_lt_of_le' {x y z t : EReal} (h : x < y) (h' : z ≤ t) (hbot : t ≠ ⊥)
     (htop : t = ⊤ → z = ⊤ → x = ⊥) : x + z < y + t := by
   rcases h'.eq_or_lt with (rfl | hlt)
@@ -375,16 +377,20 @@ lemma sub_self {x : EReal} (h_top : x ≠ ⊤) (h_bot : x ≠ ⊥) : x - x = 0 :
 lemma sub_self_le_zero {x : EReal} : x - x ≤ 0 := by
   cases x <;> simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma sub_nonneg {x y : EReal} (h_top : x ≠ ⊤ ∨ y ≠ ⊤) (h_bot : x ≠ ⊥ ∨ y ≠ ⊥) :
     0 ≤ x - y ↔ y ≤ x := by
   cases x <;> cases y <;> simp_all [← EReal.coe_sub]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma sub_nonpos {x y : EReal} : x - y ≤ 0 ↔ x ≤ y := by
   cases x <;> cases y <;> simp [← EReal.coe_sub]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma sub_pos {x y : EReal} : 0 < x - y ↔ y < x := by
   cases x <;> cases y <;> simp [← EReal.coe_sub]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma sub_neg {x y : EReal} (h_top : x ≠ ⊤ ∨ y ≠ ⊤) (h_bot : x ≠ ⊥ ∨ y ≠ ⊥) :
     x - y < 0 ↔ x < y := by
   cases x <;> cases y <;> simp_all [← EReal.coe_sub]
@@ -441,6 +447,7 @@ lemma sub_add_cancel_right {a : EReal} {b : Real} : b - (a + b) = -a := by
 lemma sub_add_cancel_left {a : EReal} {b : Real} : b - (b + a) = -a := by
   rw [add_comm, sub_add_cancel_right]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma le_sub_iff_add_le {a b c : EReal} (hb : b ≠ ⊥ ∨ c ≠ ⊥) (ht : b ≠ ⊤ ∨ c ≠ ⊤) :
     a ≤ c - b ↔ a + b ≤ c := by
   induction b with
@@ -495,11 +502,13 @@ lemma sub_lt_of_lt_add' {a b c : EReal} (h : a < b + c) : a - b < c :=
 
 /-! ### Addition and order -/
 
+set_option backward.isDefEq.respectTransparency false in
 lemma le_of_forall_lt_iff_le {x y : EReal} : (∀ z : ℝ, x < z → y ≤ z) ↔ y ≤ x := by
   refine ⟨fun h ↦ WithBot.le_of_forall_lt_iff_le.1 ?_, fun h _ x_z ↦ h.trans x_z.le⟩
   rw [WithTop.forall]
   aesop
 
+set_option backward.isDefEq.respectTransparency false in
 lemma ge_of_forall_gt_iff_ge {x y : EReal} : (∀ z : ℝ, z < y → z ≤ x) ↔ y ≤ x := by
   refine ⟨fun h ↦ WithBot.ge_of_forall_gt_iff_ge.1 ?_, fun h _ x_z ↦ x_z.le.trans h⟩
   rw [WithTop.forall]
@@ -635,6 +644,7 @@ instance : NoZeroDivisors EReal where
     · rcases lt_or_gt_of_ne h.2 with (h | h)
         <;> simp [EReal.top_mul_of_pos, EReal.top_mul_of_neg, h]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mul_pos_iff {a b : EReal} : 0 < a * b ↔ 0 < a ∧ 0 < b ∨ a < 0 ∧ b < 0 := by
   induction a, b using EReal.induction₂_symm with
   | symm h => simp [EReal.mul_comm, h, and_comm]
@@ -721,6 +731,7 @@ lemma mul_nonpos_iff {a b : EReal} : a * b ≤ 0 ↔ 0 ≤ a ∧ b ≤ 0 ∨ a �
   nth_rw 1 [← neg_zero]
   rw [EReal.le_neg, ← mul_neg, mul_nonneg_iff, EReal.neg_le, EReal.le_neg, neg_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mul_eq_top (a b : EReal) :
     a * b = ⊤ ↔ (a = ⊥ ∧ b < 0) ∨ (a < 0 ∧ b = ⊥) ∨ (a = ⊤ ∧ 0 < b) ∨ (0 < a ∧ b = ⊤) := by
   induction a, b using EReal.induction₂_symm with

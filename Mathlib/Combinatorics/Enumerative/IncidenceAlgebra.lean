@@ -504,6 +504,7 @@ end MuEqMu'
 section OrderDual
 variable (𝕜) [Ring 𝕜] [PartialOrder α] [LocallyFiniteOrder α] [DecidableEq α]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma mu_toDual (a b : α) : mu 𝕜 (toDual a) (toDual b) = mu 𝕜 b a := by
   letI : DecidableLE α := Classical.decRel _
@@ -526,8 +527,10 @@ lemma mu_toDual (a b : α) : mu 𝕜 (toDual a) (toDual b) = mu 𝕜 b a := by
     _ = if ofDual b = ofDual a then 1 else 0 := sum_Icc_mu_left ..
     _ = if a = b then 1 else 0 := by simp [eq_comm]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma mu_ofDual (a b : αᵒᵈ) : mu 𝕜 (ofDual a) (ofDual b) = mu 𝕜 b a := (mu_toDual ..).symm
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma eulerChar_orderDual [BoundedOrder α] : eulerChar 𝕜 αᵒᵈ = eulerChar 𝕜 α := by
   simp [eulerChar, ← mu_toDual 𝕜 (α := α)]
@@ -572,6 +575,7 @@ end InversionTop
 section InversionBot
 variable [Ring 𝕜] [PartialOrder α] [OrderBot α] [LocallyFiniteOrder α] [DecidableEq α]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A general form of Möbius inversion. Based on lemma 2.1.3 of Incidence Algebras by Spiegel and
 O'Donnell. -/
 lemma moebius_inversion_bot (f g : α → 𝕜) (h : ∀ x, g x = ∑ y ∈ Iic x, f y) (x : α) :

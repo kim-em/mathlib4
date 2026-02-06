@@ -254,6 +254,7 @@ lemma mapₐ_surjective_of_surjective {f : A →ₐ[R] B} (a : A) [Away a Aₚ] 
 
 end Algebra
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Localizing the localization of `R` at `x` at the image of `y` is the same as localizing
 `R` at `y * x`. See `IsLocalization.Away.mul'` for the `x * y` version. -/
 lemma mul (T : Type*) [CommSemiring T] [Algebra S T]

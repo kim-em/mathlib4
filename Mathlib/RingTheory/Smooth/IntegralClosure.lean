@@ -36,6 +36,7 @@ open Polynomial TensorProduct
 
 variable {R S B : Type*} [CommRing R] [CommRing S] [Algebra R S] [CommRing B] [Algebra R B]
 
+set_option backward.isDefEq.respectTransparency false in
 variable (R S) in
 /-- The comparison map from `S ⊗[R] integralClosure R B` to `integralClosure S (S ⊗[R] B)`.
 This is injective when `S` is `R`-flat, and (TODO) bijective when `S` is `R`-smooth. -/
@@ -51,6 +52,7 @@ def TensorProduct.toIntegralClosure
       (R := R) (A := S))).tower_top (A := S)).smul x
     simp [smul_tmul']
 
+set_option backward.isDefEq.respectTransparency false in
 lemma TensorProduct.toIntegralClosure_injective_of_flat [Module.Flat R S] :
     Function.Injective (toIntegralClosure R S B) := by
   refine Function.Injective.of_comp (f := (integralClosure _ _).val) ?_
@@ -58,6 +60,7 @@ lemma TensorProduct.toIntegralClosure_injective_of_flat [Module.Flat R S] :
   exact Module.Flat.lTensor_preserves_injective_linearMap (M := S)
     (integralClosure R B).val.toLinearMap Subtype.val_injective
 
+set_option backward.isDefEq.respectTransparency false in
 /-- "Base change preserves integral closure" is stable under composition. -/
 lemma TensorProduct.toIntegralClosure_bijective_of_tower
     {T : Type*} [CommRing T] [Algebra R T] [Algebra S T] [IsScalarTower R S T]
@@ -73,6 +76,7 @@ lemma TensorProduct.toIntegralClosure_bijective_of_tower
   congr 1
   ext; simp [e, toIntegralClosure]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- "Base change preserves integral closure" can be checked Zariski-locally. -/
 lemma TensorProduct.toIntegralClosure_bijective_of_isLocalizationAway
     {s : Set S} (hs : Ideal.span s = ⊤) (Sᵣ : s → Type*) [∀ r, CommRing (Sᵣ r)]
@@ -124,6 +128,7 @@ lemma TensorProduct.toIntegralClosure_bijective_of_isLocalizationAway
         (AlgHom.id R (integralClosure R B))).toLinearMap)
       (φ r).toLinearMap (toIntegralClosure R S B).toLinearMap (1 ⊗ₜ x)).1)
 
+set_option backward.isDefEq.respectTransparency false in
 attribute [local instance] MvPolynomial.algebraMvPolynomial in
 /-- Base changing to `MvPolynomial σ R` preserves integral closure. -/
 lemma TensorProduct.toIntegralClosure_mvPolynomial_bijective {σ : Type*} :
@@ -156,6 +161,7 @@ lemma TensorProduct.toIntegralClosure_mvPolynomial_bijective {σ : Type*} :
       MvPolynomial.scalarRTensorAlgEquiv]
   exact congr($this y)
 
+set_option backward.isDefEq.respectTransparency false in
 attribute [local instance] Algebra.TensorProduct.rightAlgebra in
 /-- Localization preserves integral closure. -/
 lemma TensorProduct.toIntegralClosure_bijective_of_isLocalization

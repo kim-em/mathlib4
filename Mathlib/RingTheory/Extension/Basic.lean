@@ -79,6 +79,7 @@ instance {R₀} [CommRing R₀] [Algebra R₀ R] [Algebra R₀ S] [IsScalarTower
   rw [IsScalarTower.algebraMap_eq R₀ R, IsScalarTower.algebraMap_eq R₁ R,
     RingHom.comp_assoc, ← IsScalarTower.algebraMap_eq R₀ R₁ R]
 
+set_option backward.isDefEq.respectTransparency false in
 instance {R₀} [CommRing R₀] [Algebra R₀ R] [Algebra R₀ S] [IsScalarTower R₀ R S] :
     IsScalarTower R₀ P.Ring S := IsScalarTower.of_algebraMap_eq' <| by
   rw [IsScalarTower.algebraMap_eq R₀ R P.Ring, ← RingHom.comp_assoc,
@@ -309,6 +310,7 @@ lemma Cotangent.smul_eq_zero_of_mem (p : P.Ring) (hp : p ∈ P.ker) (m : P.ker.C
 
 attribute [local simp] RingHom.mem_ker
 
+set_option backward.isDefEq.respectTransparency false in
 noncomputable
 instance Cotangent.module : Module S P.Cotangent where
   smul := fun r s ↦ .of (P.σ r • s.val)
@@ -345,12 +347,14 @@ lemma Cotangent.val_smul''' {R₀} [CommRing R₀] [Algebra R₀ S] (r : R₀) (
 @[simp]
 lemma Cotangent.val_smul (r : S) (x : P.Cotangent) : (r • x).val = P.σ r • x.val := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The action of `P` on `P.Cotangent` for an extension `P → S`. -/
 @[simp]
 lemma Cotangent.val_smul' (r : P.Ring) (x : P.Cotangent) : (r • x).val = r • x.val := by
   rw [val_smul''', ← sub_eq_zero, ← sub_smul]
   exact Cotangent.smul_eq_zero_of_mem _ (by simp) _
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The action of `R` on `P.Cotangent` for an `R`-extension `P → S`. -/
 @[simp]
 lemma Cotangent.val_smul'' (r : R) (x : P.Cotangent) : (r • x).val = r • x.val := by
@@ -395,6 +399,7 @@ variable [Algebra R R'] [Algebra R' R''] [Algebra R' S'']
 variable [Algebra S S'] [Algebra S' S''] [Algebra S S'']
 variable [Algebra R S'] [IsScalarTower R R' S']
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A hom between two extensions induces a map between cotangent spaces. -/
 noncomputable
 def Cotangent.map (f : Hom P P') : P.Cotangent →ₗ[S] P'.Cotangent where

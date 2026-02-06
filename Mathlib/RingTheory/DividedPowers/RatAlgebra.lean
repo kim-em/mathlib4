@@ -78,6 +78,7 @@ theorem dpow_mem {m : ℕ} (hm : m ≠ 0) {x : A} (hx : x ∈ I) : dpow I m x �
   rw [dpow_eq_of_mem hx]
   exact Ideal.mul_mem_left I _ (Ideal.pow_mem_of_mem I hx _ (Nat.pos_of_ne_zero hm))
 
+set_option backward.isDefEq.respectTransparency false in
 theorem dpow_add_of_lt {n : ℕ} (hn_fac : IsUnit ((n - 1)! : A)) {m : ℕ} (hmn : m < n)
     {x y : A} (hx : x ∈ I) (hy : y ∈ I) :
     dpow I m (x + y) = (Finset.antidiagonal m).sum (fun k ↦ dpow I k.1 x * dpow I k.2 y) := by
@@ -283,6 +284,7 @@ noncomputable def dividedPowers : DividedPowers I where
 lemma dpow_apply {n : ℕ} {x : R} :
     (dividedPowers I).dpow n x = if x ∈ I then inverse (n.factorial : R) * x ^ n else 0 := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 omit [DecidablePred fun x ↦ x ∈ I] in
 /-- If `I` is an ideal in a `ℚ`-algebra `A`, then the divided power structure on `I` given by
   `dpow n x = x ^ n / n!` is the only possible one. -/

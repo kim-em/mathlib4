@@ -92,6 +92,7 @@ theorem quotientMk_of (i x) : Ideal.Quotient.mk _ (.of ⟨i, x⟩) = of G f i x 
 @[simp] theorem of_f {i j} (hij) (x) : of G f j (f i j hij x) = of G f i x :=
   Ideal.Quotient.eq.2 <| subset_span <| Or.inl ⟨i, j, hij, x, rfl⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Every element of the direct limit corresponds to some element in
 some component of the directed system. -/
 theorem exists_of [Nonempty ι] [IsDirectedOrder ι] (z : DirectLimit G f) :
@@ -180,6 +181,7 @@ theorem lift_unique (F : DirectLimit G f →+* P) (x) :
 theorem lift_of' : lift G f _ (of G f) (fun i j hij x ↦ by simp) = .id _ := by
   ext; simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma lift_injective [Nonempty ι] [IsDirectedOrder ι]
     (injective : ∀ i, Function.Injective <| g i) :
     Function.Injective (lift G f P g Hg) := by
@@ -326,6 +328,7 @@ instance nontrivial [DirectedSystem G (f' · · ·)] :
           rw [(f' i j hij).map_one] at hf
           exact one_ne_zero hf⟩⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exists_inv {p : Ring.DirectLimit G f} : p ≠ 0 → ∃ y, p * y = 1 :=
   Ring.DirectLimit.induction_on p fun i x H ↦
     ⟨Ring.DirectLimit.of G f i x⁻¹, by

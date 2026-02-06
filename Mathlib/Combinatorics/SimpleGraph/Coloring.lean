@@ -180,6 +180,7 @@ This is `⊤` (infinity) iff `G` isn't colorable with finitely many colors.
 If `G` is colorable, then `ENat.toNat G.chromaticNumber` is the `ℕ`-valued chromatic number. -/
 noncomputable def chromaticNumber : ℕ∞ := ⨅ n ∈ setOf G.Colorable, (n : ℕ∞)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma le_chromaticNumber_iff_colorable : n ≤ G.chromaticNumber ↔ ∀ m, G.Colorable m → n ≤ m := by
   simp [chromaticNumber]
 
@@ -300,6 +301,7 @@ theorem colorable_set_nonempty_of_colorable {n : ℕ} (hc : G.Colorable n) :
 theorem chromaticNumber_bddBelow : BddBelow { n : ℕ | G.Colorable n } :=
   ⟨0, fun _ _ => zero_le _⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem Colorable.chromaticNumber_le {n : ℕ} (hc : G.Colorable n) : G.chromaticNumber ≤ n := by
   rw [hc.chromaticNumber_eq_sInf]
   norm_cast
@@ -313,6 +315,7 @@ theorem chromaticNumber_ne_top_iff_exists : G.chromaticNumber ≠ ⊤ ↔ ∃ n,
   rw [← lt_top_iff_ne_top, ENat.iInf_coe_lt_top]
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 theorem chromaticNumber_le_iff_colorable {n : ℕ} : G.chromaticNumber ≤ n ↔ G.Colorable n := by
   refine ⟨fun h ↦ ?_, Colorable.chromaticNumber_le⟩
   have : G.chromaticNumber ≠ ⊤ := (trans h (WithTop.coe_lt_top n)).ne
@@ -350,6 +353,7 @@ theorem chromaticNumber_le_one_of_subsingleton (G : SimpleGraph V) [Subsingleton
   cases Subsingleton.elim v w
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 theorem chromaticNumber_pos [Nonempty V] {n : ℕ} (hc : G.Colorable n) : 0 < G.chromaticNumber := by
   rw [hc.chromaticNumber_eq_sInf, Nat.cast_pos]
   apply le_csInf (colorable_set_nonempty_of_colorable hc)
@@ -366,6 +370,7 @@ theorem colorable_of_chromaticNumber_ne_top (h : G.chromaticNumber ≠ ⊤) :
   obtain ⟨n, hn⟩ := h
   exact colorable_chromaticNumber hn
 
+set_option backward.isDefEq.respectTransparency false in
 theorem chromaticNumber_eq_zero_of_isEmpty [IsEmpty V] : G.chromaticNumber = 0 := by
   rw [← nonpos_iff_eq_zero, ← Nat.cast_zero, chromaticNumber_le_iff_colorable]; exact .of_isEmpty _
 
@@ -404,6 +409,7 @@ theorem chromaticNumber_mono_of_embedding {V' : Type*} {G' : SimpleGraph V'}
     (f : G ↪g G') : G.chromaticNumber ≤ G'.chromaticNumber :=
   chromaticNumber_mono_of_hom f
 
+set_option backward.isDefEq.respectTransparency false in
 lemma card_le_chromaticNumber_iff_forall_surjective [Fintype α] :
     card α ≤ G.chromaticNumber ↔ ∀ C : G.Coloring α, Surjective C := by
   refine ⟨fun h C ↦ ?_, fun h ↦ ?_⟩
@@ -454,6 +460,7 @@ theorem chromaticNumber_top_eq_top_of_infinite (V : Type*) [Infinite V] :
   obtain ⟨n, ⟨hn⟩⟩ := hc
   exact not_injective_infinite_finite _ hn.injective_of_top_hom
 
+set_option backward.isDefEq.respectTransparency false in
 theorem eq_top_of_chromaticNumber_eq_card [Fintype V]
     (h : G.chromaticNumber = Fintype.card V) : G = ⊤ := by
   classical
@@ -481,6 +488,7 @@ theorem two_le_chromaticNumber_of_adj {u v : V} (hadj : G.Adj u v) : 2 ≤ G.chr
   obtain ⟨c⟩ := chromaticNumber_le_iff_colorable.mp (Order.le_of_lt_add_one h)
   exact c.valid hadj (Subsingleton.elim (c u) (c v))
 
+set_option backward.isDefEq.respectTransparency false in
 theorem chromaticNumber_eq_one_iff : G.chromaticNumber = 1 ↔ G = ⊥ ∧ Nonempty V := by
   refine ⟨fun h ↦ ⟨?_, ?_⟩, fun ⟨h₁, _⟩ ↦ h₁ ▸ chromaticNumber_bot⟩
   · contrapose! h
@@ -493,6 +501,7 @@ theorem chromaticNumber_eq_one_iff : G.chromaticNumber = 1 ↔ G = ⊥ ∧ Nonem
     have := G.colorable_zero_iff.mpr h |>.chromaticNumber_le
     simp_all
 
+set_option backward.isDefEq.respectTransparency false in
 theorem two_le_chromaticNumber_iff_ne_bot : 2 ≤ G.chromaticNumber ↔ G ≠ ⊥ := by
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · contrapose! h
@@ -548,6 +557,7 @@ protected theorem Colorable.cliqueFree {n m : ℕ} (hc : G.Colorable n) (hm : n 
   obtain ⟨s, h, rfl⟩ := h
   exact Nat.lt_le_asymm hm (h.card_le_of_colorable hc)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem cliqueFree_of_chromaticNumber_lt {n : ℕ} (hc : G.chromaticNumber < n) :
     G.CliqueFree n := by
   have hne : G.chromaticNumber ≠ ⊤ := hc.ne_top
@@ -558,6 +568,7 @@ theorem cliqueFree_of_chromaticNumber_lt {n : ℕ} (hc : G.chromaticNumber < n) 
   rw [← hne] at hc
   simpa using hc
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 Given a colouring `α` of `G`, and a clique of size at least the number of colours, the clique
 contains a vertex of each colour.

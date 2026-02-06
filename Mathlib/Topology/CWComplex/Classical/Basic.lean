@@ -148,6 +148,7 @@ class CWComplex.{u} {X : Type u} [TopologicalSpace X] (C : Set X) where
   /-- The union of all closed cells equals `C`. Use `CWComplex.union` instead. -/
   protected union' : ⋃ (n : ℕ) (j : cell n), map n j '' closedBall 0 1 = C
 
+set_option backward.isDefEq.respectTransparency false in
 @[simps -isSimp]
 instance (priority := high) CWComplex.instRelCWComplex {X : Type*} [TopologicalSpace X] (C : Set X)
     [CWComplex C] : RelCWComplex C ∅ where
@@ -267,6 +268,7 @@ lemma RelCWComplex.map_zero_mem_closedCell [RelCWComplex C D] (n : ℕ) (i : cel
     map n i 0 ∈ closedCell n i :=
   openCell_subset_closedCell _ _ (map_zero_mem_openCell _ _)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- This is an auxiliary lemma used to prove `RelCWComplex.eq_of_eq_union_iUnion`. -/
 private lemma RelCWComplex.subset_of_eq_union_iUnion [RelCWComplex C D] (I J : Π n, Set (cell C n))
     (hIJ : D ∪ ⋃ (n : ℕ) (j : I n), openCell (C := C) n j =
@@ -419,6 +421,7 @@ lemma RelCWComplex.eq_of_not_disjoint_openCell [RelCWComplex C D] {n : ℕ} {j :
   contrapose! h
   exact disjoint_openCell_of_ne h
 
+set_option backward.isDefEq.respectTransparency false in
 lemma RelCWComplex.disjoint_base_iUnion_openCell [RelCWComplex C D] :
     Disjoint D (⋃ (n : ℕ) (j : cell C n), openCell n j) := by
   simp_rw [disjoint_iff_inter_eq_empty, inter_iUnion, iUnion_eq_empty]
@@ -629,6 +632,7 @@ lemma CWComplex.Subcomplex.union {C : Set X} [CWComplex C] {E : Subcomplex C} :
   rw [empty_union] at this
   exact this
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An alternative version of `Subcomplex.mk`: Instead of requiring that `E` is closed it requires
 that for every cell of the subcomplex the corresponding closed cell is a subset of `E`. -/
 @[simps -isSimp]
@@ -783,6 +787,7 @@ lemma RelCWComplex.skeleton_mono [RelCWComplex C D] {n m : ℕ∞} (h : m ≤ n)
 lemma RelCWComplex.skeleton_monotone [RelCWComplex C D] : Monotone (skeleton C) :=
   fun _ _ h ↦ skeleton_mono h
 
+set_option backward.isDefEq.respectTransparency false in
 lemma RelCWComplex.closedCell_subset_skeletonLT [RelCWComplex C D] (n : ℕ) (j : cell C n) :
     closedCell n j ⊆ skeletonLT C (n + 1) := by
   intro x xmem
@@ -803,6 +808,7 @@ lemma RelCWComplex.openCell_subset_skeleton [RelCWComplex C D] (n : ℕ) (j : ce
     openCell n j ⊆ skeleton C n :=
   (openCell_subset_closedCell _ _).trans (closedCell_subset_skeleton _ _)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma RelCWComplex.cellFrontier_subset_skeletonLT [RelCWComplex C D] (n : ℕ) (j : cell C n) :
     cellFrontier n j ⊆ skeletonLT C n := by
   obtain ⟨I, hI⟩ := cellFrontier_subset_base_union_finite_closedCell n j
@@ -822,10 +828,12 @@ lemma RelCWComplex.iUnion_cellFrontier_subset_skeletonLT [RelCWComplex C D] (l :
     ⋃ (j : cell C l), cellFrontier l j ⊆ skeletonLT C l :=
   iUnion_subset (fun _ ↦ cellFrontier_subset_skeletonLT _ _)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma RelCWComplex.iUnion_cellFrontier_subset_skeleton [RelCWComplex C D] (l : ℕ) :
     ⋃ (j : cell C l), cellFrontier l j ⊆ skeleton C l :=
   (iUnion_cellFrontier_subset_skeletonLT l).trans (skeletonLT_mono le_self_add)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma RelCWComplex.skeletonLT_union_iUnion_closedCell_eq_skeletonLT_succ [RelCWComplex C D]
     (n : ℕ) :
     (skeletonLT C n : Set X) ∪ ⋃ (j : cell C n), closedCell n j = skeletonLT C (n + 1) := by
@@ -877,6 +885,7 @@ lemma CWComplex.mem_skeletonLT_iff [CWComplex C] {n : ℕ∞} {x : X} :
     x ∈ skeletonLT C n ↔ ∃ (m : ℕ) (_ : m < n) (j : cell C m), x ∈ openCell m j := by
   simp [← SetLike.mem_coe, ← iUnion_openCell_eq_skeletonLT]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma RelCWComplex.mem_skeleton_iff [RelCWComplex C D] {n : ℕ∞} {x : X} :
     x ∈ skeleton C n ↔ x ∈ D ∨ ∃ (m : ℕ) (_ : m ≤ n) (j : cell C m), x ∈ openCell m j := by
   rw [skeleton, mem_skeletonLT_iff]
@@ -890,6 +899,7 @@ lemma CWComplex.exists_mem_openCell_of_mem_skeleton [CWComplex C] {n : ℕ∞} {
     x ∈ skeleton C n ↔ ∃ (m : ℕ) (_ : m ≤ n) (j : cell C m), x ∈ openCell m j := by
   rw [RelCWComplex.mem_skeleton_iff, mem_empty_iff_false, false_or]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A skeleton and an open cell of a higher dimension are disjoint. -/
 lemma RelCWComplex.disjoint_skeletonLT_openCell [RelCWComplex C D] {n : ℕ∞} {m : ℕ}
     {j : cell C m} (hnm : n ≤ m) : Disjoint (skeletonLT C n : Set X) (openCell m j) := by
@@ -926,6 +936,7 @@ lemma RelCWComplex.skeleton_inter_closedCell_eq_skeleton_inter_cellFrontier [Rel
 
 end skeleton
 
+set_option backward.isDefEq.respectTransparency false in
 lemma RelCWComplex.disjoint_interior_base_closedCell [T2Space X] [RelCWComplex C D] {n : ℕ}
     {j : cell C n} : Disjoint (interior D) (closedCell n j) := by
   rw [disjoint_iff_inter_eq_empty]
@@ -937,6 +948,7 @@ lemma RelCWComplex.disjoint_interior_base_closedCell [T2Space X] [RelCWComplex C
     rwa [(disjoint_skeletonLT_openCell n.cast_nonneg').inter_eq] at this
   exact ⟨(skeletonLT C 0).base_subset (interior_subset xmemD), xmemcell⟩
 
+set_option backward.isDefEq.respectTransparency false in
 lemma RelCWComplex.disjoint_interior_base_iUnion_closedCell [T2Space X] [RelCWComplex C D] :
     Disjoint (interior D) (⋃ (n : ℕ) (j : cell C n), closedCell n j) := by
   simp_rw [disjoint_iff_inter_eq_empty, inter_iUnion, disjoint_interior_base_closedCell.inter_eq,

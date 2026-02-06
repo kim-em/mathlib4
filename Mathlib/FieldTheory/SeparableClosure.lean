@@ -166,6 +166,7 @@ theorem le_separableClosure_iff (L : IntermediateField F E) :
     L ≤ separableClosure F E ↔ Algebra.IsSeparable F L :=
   Subalgebra.isSeparable_iff.symm
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The separable closure in `E` of the separable closure of `F` in `E` is equal to itself. -/
 theorem separableClosure.separableClosure_eq_bot :
     separableClosure (separableClosure F E) E = ⊥ :=
@@ -199,6 +200,7 @@ theorem IsSepClosed.separableClosure_eq_bot_iff [IsSepClosed E] :
   obtain ⟨x, rfl⟩ := h ▸ mem_separableClosure_iff.2 (hsep.of_dvd <| minpoly.dvd _ x hx)
   exact ⟨x, by simpa [Algebra.ofId_apply] using hx⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `E` is separably closed, then the separable closure of `F` in `E` is an absolute
 separable closure of `F`. -/
 instance separableClosure.isSepClosure [IsSepClosed E] : IsSepClosure F (separableClosure F E) :=
@@ -259,11 +261,13 @@ instance IntermediateField.isSeparable_iSup {ι : Type*} {t : ι → Intermediat
   simp_rw [← le_separableClosure_iff] at h ⊢
   exact iSup_le h
 
+set_option backward.isDefEq.respectTransparency false in
 variable {F E} in
 theorem le_restrictScalars_separableClosure (L : IntermediateField F E) :
     L ≤ (separableClosure L E).restrictScalars F :=
   fun x hx ↦ isSeparable_algebraMap (F := L) ⟨x, hx⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `separableClosure` as a `ClosureOperator`. -/
 abbrev separableClosureOperator : ClosureOperator (IntermediateField F E) := by
   refine .mk' (fun K ↦ (separableClosure K E).restrictScalars F) (fun K L le x hx ↦ ?_)

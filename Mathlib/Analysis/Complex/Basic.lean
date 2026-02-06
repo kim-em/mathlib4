@@ -63,6 +63,7 @@ instance : DenselyNormedField ℂ where
     let ⟨x, h⟩ := exists_between hr
     ⟨x, by rwa [norm_real, Real.norm_of_nonneg (h₀.trans_lt h.1).le]⟩
 
+set_option backward.isDefEq.respectTransparency false in
 instance {R : Type*} [NormedField R] [NormedAlgebra R ℝ] : NormedAlgebra R ℂ where
   norm_smul_le r x := by
     rw [← algebraMap_smul ℝ r x, real_smul, norm_mul, norm_real, norm_algebraMap']
@@ -183,6 +184,7 @@ theorem imCLM_coe : (imCLM : ℂ →ₗ[ℝ] ℝ) = imLm :=
 theorem imCLM_apply (z : ℂ) : (imCLM : ℂ → ℝ) z = z.im :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem restrictScalars_toSpanSingleton' (x : E) :
     ContinuousLinearMap.restrictScalars ℝ (toSpanSingleton ℂ x : ℂ →L[ℂ] E) =
       reCLM.smulRight x + I • imCLM.smulRight x := by
@@ -359,6 +361,7 @@ lemma ofReal_eq_re_of_isSelfAdjoint {x : ℂ} {y : ℝ} (hx : IsSelfAdjoint x) :
   rw [← RCLike.re_eq_complex_re]
   exact RCLike.ofReal_eq_re_of_isSelfAdjoint hx
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The natural isomorphism between `𝕜` satisfying `RCLike 𝕜` and `ℂ` when
 `RCLike.im RCLike.I = 1`. -/
 @[simps]
@@ -386,6 +389,7 @@ open scoped ComplexOrder in
 @[simp] theorem _root_.RCLike.to_complex_nonneg_iff {𝕜 : Type*} [RCLike 𝕜] {a : 𝕜} :
     0 ≤ RCLike.re a + RCLike.im a * Complex.I ↔ 0 ≤ a := RCLike.map_nonneg_iff rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The natural `ℝ`-linear isometry equivalence between `𝕜` satisfying `RCLike 𝕜` and `ℂ` when
 `RCLike.im RCLike.I = 1`. -/
 @[simps]
@@ -611,6 +615,7 @@ def slitPlane : Set ℂ := {z | 0 < z.re ∨ z.im ≠ 0}
 
 lemma mem_slitPlane_iff {z : ℂ} : z ∈ slitPlane ↔ 0 < z.re ∨ z.im ≠ 0 := Set.mem_setOf
 
+set_option backward.isDefEq.respectTransparency false in
 /- If `z` is non-zero, then either `z` or `-z` is in `slitPlane`. -/
 lemma mem_slitPlane_or_neg_mem_slitPlane {z : ℂ} (hz : z ≠ 0) :
     z ∈ slitPlane ∨ -z ∈ slitPlane := by
@@ -629,6 +634,7 @@ lemma isOpen_slitPlane : IsOpen slitPlane :=
 @[simp]
 lemma ofReal_mem_slitPlane {x : ℝ} : ↑x ∈ slitPlane ↔ 0 < x := by simp [mem_slitPlane_iff]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma neg_ofReal_mem_slitPlane {x : ℝ} : -↑x ∈ slitPlane ↔ x < 0 := by
   simpa using ofReal_mem_slitPlane (x := -x)

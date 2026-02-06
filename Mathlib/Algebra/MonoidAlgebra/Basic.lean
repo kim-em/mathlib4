@@ -54,6 +54,7 @@ theorem nonUnitalAlgHom_ext' [DistribMulAction R A] {φ₁ φ₂ : R[M] →ₙ�
     (h : φ₁.toMulHom.comp (ofMagma R M) = φ₂.toMulHom.comp (ofMagma R M)) : φ₁ = φ₂ :=
   nonUnitalAlgHom_ext R <| DFunLike.congr_fun h
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The functor `M ↦ R[M]`, from the category of magmas to the category of non-unital,
 non-associative algebras over `R` is adjoint to the forgetful functor in the other direction. -/
 @[simps apply_apply symm_apply]
@@ -143,6 +144,7 @@ def uniqueAlgEquiv [Unique M] : A[M] ≃ₐ[R] A where
   toRingEquiv := uniqueRingEquiv _
   commutes' r := by simp [Unique.eq_default]
 
+set_option backward.isDefEq.respectTransparency false in
 variable (R) in
 /-- A product monoid algebra is a nested monoid algebra. -/
 @[to_additive (dont_translate := R A)
@@ -230,6 +232,7 @@ theorem lift_unique (F : R[M] →ₐ[R] A) (f : R[M]) :
     rw [lift_unique' F]
     simp [lift_apply]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem lift_mapRangeRingHom_algebraMap [CommSemiring S] [Algebra S A]
     [Algebra R S] [IsScalarTower R S A]
     (f : M →* A) (x : R[M]) :
@@ -300,6 +303,7 @@ lemma domCongr_support (e : M ≃* N) (f : A[M]) : (domCongr R A e f).support = 
 theorem domCongr_single (e : M ≃* N) (m : M) (a : A) :
     domCongr R A e (single m a) = single (e m) a := by simp [domCongr]
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_additive (attr := simp)]
 lemma domCongr_comp_lsingle (e : M ≃* N) (m : M) :
     (domCongr R A e).toLinearMap ∘ₗ lsingle m = lsingle (e m) := by ext; simp
@@ -406,6 +410,7 @@ variable [Monoid M] [CommSemiring R] {V W : Type*} [AddCommMonoid V] [Module R V
   [Module R W] [Module R[M] W] [IsScalarTower R R[M] W]
   (f : V →ₗ[R] W)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Build a `R[M]`-linear map from a `R`-linear map and evidence that it is `M`-equivariant. -/
 def equivariantOfLinearOfComm
     (h : ∀ (g : M) (v : V), f (single g (1 : R) • v) = single g (1 : R) • f v) :
@@ -560,6 +565,7 @@ theorem lift_unique (F : R[M] →ₐ[R] A) (f : R[M]) :
     rw [lift_unique' F]
     simp [lift_apply]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem lift_mapRangeRingHom_algebraMap [CommSemiring S] [Algebra S A]
     [Algebra R S] [IsScalarTower R S A]
     (f : Multiplicative M →* A) (x : R[M]) :

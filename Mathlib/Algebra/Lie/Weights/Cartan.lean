@@ -189,6 +189,7 @@ theorem le_zeroRootSubalgebra : H ≤ zeroRootSubalgebra R L H := by
     coe_zeroRootSubalgebra, LieSubmodule.toSubmodule_le_toSubmodule]
   exact toLieSubmodule_le_rootSpace_zero R L H
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem zeroRootSubalgebra_normalizer_eq_self :
     (zeroRootSubalgebra R L H).normalizer = zeroRootSubalgebra R L H := by
@@ -252,6 +253,7 @@ def corootSpace : LieIdeal R H :=
   rw [← rootSpace_zero_eq]
   exact fun p ↦ (rootSpaceProduct R L H α (-α) 0 (add_neg_cancel α) p).property)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mem_corootSpace {x : H} :
     x ∈ corootSpace α ↔
     (x : L) ∈ Submodule.span R {⁅y, z⁆ | (y ∈ rootSpace H α) (z ∈ rootSpace H (-α))} := by
@@ -268,6 +270,7 @@ lemma mem_corootSpace {x : H} :
     {x | ∃ (a : rootSpace H α) (b : rootSpace H (-α)), ⁅(a : L), (b : L)⁆ = x} ↔ _
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mem_corootSpace' {x : H} :
     x ∈ corootSpace α ↔
     x ∈ Submodule.span R ({⁅y, z⁆ | (y ∈ rootSpace H α) (z ∈ rootSpace H (-α))} : Set H) := by

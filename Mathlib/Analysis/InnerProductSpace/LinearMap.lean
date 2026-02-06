@@ -228,6 +228,7 @@ end ContinuousLinearMap
 
 variable (𝕜)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `innerSL` is an isometry. Note that the associated `LinearIsometry` is defined in
 `InnerProductSpace.Dual` as `toDualMap`. -/
 @[simp]

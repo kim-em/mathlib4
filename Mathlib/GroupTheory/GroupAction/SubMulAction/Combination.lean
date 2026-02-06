@@ -92,6 +92,7 @@ theorem coe_nontrivial_iff {s : Set.powersetCard α n} :
 theorem eq_iff_subset : s = t ↔ (s : Finset α) ⊆ (t : Finset α) := by
   rw [Finset.subset_iff_eq_of_card_le (t.prop.trans_le s.prop.ge), Subtype.ext_iff]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exists_mem_notMem (hn : 1 ≤ n) (hα : n < ENat.card α) {a b : α} (hab : a ≠ b) :
     ∃ s : powersetCard α n, a ∈ s ∧ b ∉ s := by
   have ha' : n ≤ Set.encard {b}ᶜ := by
@@ -220,6 +221,7 @@ end
 
 variable (α n)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem coe_finset [Fintype α] :
     powersetCard α n = Finset.powersetCard n (Finset.univ : Finset α) := by
   ext; simp
@@ -245,6 +247,7 @@ protected theorem card :
 
 variable {α n}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `0 < n < ENat.card α`, then `powersetCard α n` is nontrivial. -/
 theorem nontrivial (h1 : 0 < n) (h2 : n < ENat.card α) :
     Nontrivial (powersetCard α n) := by
@@ -256,6 +259,7 @@ theorem nontrivial (h1 : 0 < n) (h2 : n < ENat.card α) :
   contrapose! h
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A variant of `Set.powersetCard.nontrivial` that uses `Nat.card`. -/
 theorem nontrivial' (h1 : 0 < n) (h2 : n < Nat.card α) :
     Nontrivial (powersetCard α n) := by
@@ -378,6 +382,7 @@ theorem isPreprimitive_perm {n : ℕ} (h_one_le : 1 ≤ n) (hn : n < Nat.card α
   -- `Nat.card α ≠ 2 * s.ncard` because `Nat.card α ≠ 2 * s`.
   · rwa [ncard_eq]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `3 ≤ Nat.card α`, then `alternatingGroup α` acts transitively on `Set.powersetCard α n`.
 
 If `Nat.card α ≤ 2`, then `alternatinGroup α` is trivial, and
@@ -407,6 +412,7 @@ theorem isPretransitive_alternatingGroup [Fintype α] (hα : 3 ≤ Nat.card α) 
   have := alternatingGroup.isMultiplyPretransitive α
   apply isMultiplyPretransitive_of_le (n := Nat.card α - 2) <;> grind
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The action of `alternatingGroup α` on `Set.powersetCard α n` is preprimitive
 provided `1 ≤ n < Nat.card α` and `Nat.card α ≠ 2 * n`. -/
 theorem isPreprimitive_alternatingGroup [Fintype α] {n : ℕ}

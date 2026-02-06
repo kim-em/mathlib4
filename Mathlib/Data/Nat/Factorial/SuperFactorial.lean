@@ -68,6 +68,7 @@ theorem prod_range_succ_factorial : ∀ n : ℕ, ∏ x ∈ range (n + 1), x ! = 
   | n + 1 => by
     rw [prod_range_succ, prod_range_succ_factorial n, mul_comm, superFactorial]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem superFactorial_two_mul : ∀ n : ℕ,
     sf (2 * n) = (∏ i ∈ range n, (2 * i + 1)!) ^ 2 * 2 ^ n * n !
   | 0 => rfl

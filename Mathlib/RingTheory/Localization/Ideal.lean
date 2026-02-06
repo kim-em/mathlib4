@@ -92,6 +92,7 @@ lemma algebraMap_mem_map_algebraMap_iff (I : Ideal R) (x : R) :
       ∃ m ∈ M, m * x ∈ I := by
   rw [← IsLocalization.mk'_one (M := M), mk'_mem_map_algebraMap_iff]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma map_algebraMap_ne_top_iff_disjoint (I : Ideal R) :
     I.map (algebraMap R S) ≠ ⊤ ↔ Disjoint (M : Set R) (I : Set R) := by
   simp only [ne_eq, Ideal.eq_top_iff_one, ← map_one (algebraMap R S), not_iff_comm,
@@ -134,6 +135,7 @@ theorem map_comap (J : Ideal S) :
           (show (algebraMap R S) r ∈ J from
             mk'_spec S r s ▸ J.mul_mem_right ((algebraMap R S) s) hJ))
 
+set_option backward.isDefEq.respectTransparency false in
 theorem comap_map_of_isPrimary_disjoint
     {I : Ideal R} (hI : I.IsPrimary) (hM : Disjoint (M : Set R) I) :
     Ideal.comap (algebraMap R S) (Ideal.map (algebraMap R S) I) = I := by
@@ -207,6 +209,7 @@ theorem isPrime_of_isPrime_disjoint (I : Ideal R) (hp : I.IsPrime) (hd : Disjoin
   rw [isPrime_iff_isPrime_disjoint M S, comap_map_of_isPrime_disjoint M S hp hd]
   exact ⟨hp, hd⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem disjoint_comap_iff (J : Ideal S) :
     Disjoint (M : Set R) (J.comap (algebraMap R S)) ↔ J ≠ ⊤ := by
   rw [← iff_not_comm, Set.not_disjoint_iff]
@@ -238,6 +241,7 @@ prime ideals disjoint from `M`. -/
   (PrimeSpectrum.equivSubtype S).trans <| (orderIsoOfPrime M S).trans
     ⟨⟨fun p ↦ ⟨⟨p, p.2.1⟩, p.2.2⟩, fun p ↦ ⟨p.1.1, p.1.2, p.2⟩, fun _ ↦ rfl, fun _ ↦ rfl⟩, .rfl⟩
 
+set_option backward.isDefEq.respectTransparency false in
 include M in
 lemma map_radical (I : Ideal R) :
     I.radical.map (algebraMap R S) = (I.map (algebraMap R S)).radical := by
@@ -274,6 +278,7 @@ section CommRing
 variable {R : Type*} [CommRing R] (M : Submonoid R) (S : Type*) [CommRing S]
 variable [Algebra R S] [IsLocalization M S]
 
+set_option backward.isDefEq.respectTransparency false in
 include M in
 /-- `quotientMap` applied to maximal ideals of a localization is `surjective`.
   The quotient by a maximal ideal is a field, so inverses to elements already exist,

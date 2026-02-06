@@ -229,6 +229,7 @@ lemma exists_pos_eq_pow_neg : ∃ t : ℝ, 0 < t ∧ f p = p ^ (-t) := by
 
 -- ## Non-archimedean case: end goal
 
+set_option backward.isDefEq.respectTransparency false in
 include hf_nontriv bdd in
 /-- If `f` is bounded and not trivial, then it is equivalent to a p-adic absolute value. -/
 theorem equiv_padic_of_bounded :
@@ -368,6 +369,7 @@ private lemma expr_pos : 0 < m * f m / (f m - 1) := by
     (map_pos_of_ne_zero f (mod_cast ne_zero_of_lt hm)))
   linarith only [one_lt_of_not_bounded notbdd hm]
 
+set_option backward.isDefEq.respectTransparency false in
 include hn hm notbdd in
 private lemma param_upperbound {k : ℕ} (hk : k ≠ 0) :
     f n ≤ (m * f m / (f m - 1)) ^ (k : ℝ)⁻¹ * f m ^ logb m n := by

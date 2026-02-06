@@ -514,6 +514,7 @@ theorem rootMultiplicity_eq_nat_find_of_nonzero [DecidableEq R] {p : R[X]} (p0 :
   cases Subsingleton.elim ‹DecidableEq R› (Classical.decEq R)
   rw [dif_neg p0]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem rootMultiplicity_eq_multiplicity [DecidableEq R]
     (p : R[X]) (a : R) :
     rootMultiplicity a p =

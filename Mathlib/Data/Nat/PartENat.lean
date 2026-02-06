@@ -551,6 +551,7 @@ theorem toWithTop_natCast' (n : ℕ) {_ : Decidable (n : PartENat).Dom} :
 theorem toWithTop_ofNat (n : ℕ) [n.AtLeastTwo] {_ : Decidable (OfNat.ofNat n : PartENat).Dom} :
     toWithTop (ofNat(n) : PartENat) = OfNat.ofNat n := toWithTop_natCast' n
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem toWithTop_le {x y : PartENat} [hx : Decidable x.Dom] [hy : Decidable y.Dom] :
     toWithTop x ≤ toWithTop y ↔ x ≤ y := by
@@ -689,6 +690,7 @@ noncomputable def withTopAddEquiv : PartENat ≃+ ℕ∞ :=
 
 end WithTopEquiv
 
+set_option backward.isDefEq.respectTransparency false in
 theorem lt_wf : @WellFounded PartENat (· < ·) := by
   classical
     change WellFounded fun a b : PartENat => a < b

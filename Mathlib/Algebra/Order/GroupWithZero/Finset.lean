@@ -46,13 +46,16 @@ end MonoidWithZero
 section GroupWithZero
 variable [GroupWithZero G₀] [SemilatticeSup G₀] {s : Finset ι} {a : G₀}
 
+set_option backward.isDefEq.respectTransparency false in
 lemma sup'_mul₀ [MulPosReflectLT G₀] (ha : 0 < a) (f : ι → G₀) (s : Finset ι) (hs) :
     s.sup' hs f * a = s.sup' hs fun i ↦ f i * a := map_finset_sup' (OrderIso.mulRight₀ _ ha) hs f
 
+set_option backward.isDefEq.respectTransparency false in
 set_option linter.docPrime false in
 lemma mul₀_sup' [PosMulReflectLT G₀] (ha : 0 < a) (f : ι → G₀) (s : Finset ι) (hs) :
     a * s.sup' hs f = s.sup' hs fun i ↦ a * f i := map_finset_sup' (OrderIso.mulLeft₀ _ ha) hs f
 
+set_option backward.isDefEq.respectTransparency false in
 lemma sup'_div₀ [MulPosReflectLT G₀] (ha : 0 < a) (f : ι → G₀) (s : Finset ι) (hs) :
     s.sup' hs f / a = s.sup' hs fun i ↦ f i / a :=
   map_finset_sup' (OrderIso.divRight₀ _ ha) hs f

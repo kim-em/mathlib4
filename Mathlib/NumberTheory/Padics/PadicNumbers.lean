@@ -622,6 +622,7 @@ end Completion
 
 end Padic
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The rational-valued `p`-adic norm on `ℚ_[p]` is lifted from the norm on Cauchy sequences. The
 canonical form of this function is the normed space instance, with notation `‖ ‖`. -/
 def padicNormE {p : ℕ} [hp : Fact p.Prime] : AbsoluteValue ℚ_[p] ℚ where
@@ -741,6 +742,7 @@ theorem exi_rat_seq_conv {ε : ℚ} (hε : 0 < ε) :
   · apply le_of_lt
     simpa
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exi_rat_seq_conv_cauchy : IsCauSeq (padicNorm p) (limSeq f) := fun ε hε ↦ by
   have hε3 : 0 < ε / 3 := div_pos hε (by simp)
   let ⟨N, hN⟩ := exi_rat_seq_conv f hε3
@@ -835,6 +837,7 @@ instance isAbsoluteValue : IsAbsoluteValue fun a : ℚ_[p] ↦ ‖a‖ where
   abv_add' := norm_add_le
   abv_mul' := by simp [Norm.norm, map_mul]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem rat_dense (q : ℚ_[p]) {ε : ℝ} (hε : 0 < ε) : ∃ r : ℚ, ‖q - r‖ < ε :=
   let ⟨ε', hε'l, hε'r⟩ := exists_rat_btwn hε
   let ⟨r, hr⟩ := rat_dense' q (ε := ε') (by simpa using hε'l)
@@ -1186,6 +1189,7 @@ theorem AddValuation.map_mul (x y : ℚ_[p]) :
     · rw [if_neg hx, if_neg hy, if_neg (mul_ne_zero hx hy), ← WithTop.coe_add, WithTop.coe_eq_coe,
         valuation_mul hx hy]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem AddValuation.map_add (x y : ℚ_[p]) :
     min (addValuationDef x) (addValuationDef y) ≤ addValuationDef (x + y : ℚ_[p]) := by
   simp only [addValuationDef]

@@ -296,6 +296,7 @@ lemma resultant_C_mul_left (r : R) :
   rw [resultant_comm, resultant_C_mul_right, resultant_comm, mul_left_comm, ← mul_assoc ((-1) ^ _),
     mul_comm n m, ← mul_pow, neg_one_mul, neg_neg, one_pow, one_mul]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma resultant_succ_left_deg (hf : f.natDegree ≤ m) :
     resultant f g (m + 1) n = (-1) ^ n * g.coeff n * resultant f g m n := by
   obtain _ | n := n
@@ -338,12 +339,14 @@ lemma resultant_succ_left_deg (hf : f.natDegree ≤ m) :
       lia
     | right i => simpa [sylvester] using fun _ _ ↦ coeff_eq_zero_of_natDegree_lt (by lia)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma resultant_add_left_deg (hf : f.natDegree ≤ m) :
     resultant f g (m + k) n = (-1) ^ (n * k) * g.coeff n ^ k * resultant f g m n := by
   induction k with
   | zero => simp
   | succ k IH => simp [← add_assoc, resultant_succ_left_deg, hf.trans, IH]; ring
 
+set_option backward.isDefEq.respectTransparency false in
 lemma resultant_add_right_deg (k : ℕ) (hg : g.natDegree ≤ n) :
     resultant f g m (n + k) = f.coeff m ^ k * resultant f g m n := by
   rw [resultant_comm, resultant_add_left_deg _ _ _ _ _ hg, resultant_comm,
@@ -404,6 +407,7 @@ theorem resultant_C_left (r : R) :
     f.resultant (X + C r) m 1 = (-1) ^ m * eval (-r) f := by
   rw [← resultant_X_sub_C_right f m (-r) hf, map_neg, sub_neg_eq_add]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `f` and `g` are monic and splits, then `Res(f, g) = ∏ (α - β)`,
 where `α` and `β` runs through the roots of `f` and `g` respectively. -/
 lemma resultant_eq_prod_roots_sub
@@ -476,6 +480,7 @@ lemma resultant_eq_prod_roots_sub
   · rw [f.modByMonic_add_div hg, natDegree_divByMonic _ hg, Nat.sub_add_cancel hfg]
   · simp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `f` splits with leading coeff `a` and degree `n`,
 then `Res(f, g) = aⁿ * ∏ g(α)` where `α` runs through the roots of `f`. -/
 nonrec lemma resultant_eq_prod_eval [IsDomain R]
@@ -525,6 +530,7 @@ nonrec lemma resultant_eq_prod_eval [IsDomain R]
   simp only [eval_map_algebraMap, Function.comp_apply, Multiset.map_map, L]
   congr; ext; simp [aeval_algebraMap_apply]
 
+set_option backward.isDefEq.respectTransparency false in
 set_option linter.unusedVariables false in
 -- the variable names are used in the code action of `induction`.
 /-- An induction principle useful to prove statements about resultants.
@@ -554,6 +560,7 @@ nonrec lemma induction_of_Splits_of_injective_of_surjective.{u}
   letI inst := hR.toField
   exact Splits _ _ hp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `Res(f, g₁ * g₂) = Res(f, g₁) * Res(f, g₂)`. -/
 nonrec lemma resultant_mul_right (f g₁ g₂ : R[X]) (m : ℕ) (hm : f.natDegree ≤ m) :
     resultant f (g₁ * g₂) m (g₁.natDegree + g₂.natDegree) =
@@ -580,6 +587,7 @@ nonrec lemma resultant_mul_right (f g₁ g₂ : R[X]) (m : ℕ) (hm : f.natDegre
     simp_rw [resultant_map_map, hg₁, hg₂, hf', ← natDegree_eq_natDegree e₁,
       ← natDegree_eq_natDegree e₂, ← natDegree_eq_natDegree e, IH, map_mul]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `Res(f₁ * f₂, g) = Res(f₁, g) * Res(f₂, g)`. -/
 lemma resultant_mul_left (f₁ f₂ g : R[X]) (n : ℕ) (hn : g.natDegree ≤ n) :
     resultant (f₁ * f₂) g (f₁.natDegree + f₂.natDegree) n =
@@ -688,6 +696,7 @@ lemma resultant_X_pow_right (f : R[X]) (m n : ℕ) (hm : f.natDegree ≤ m) :
     f.resultant (X ^ n) m n = (-1) ^ (m * n) * f.coeff 0 ^ n := by
   convert resultant_X_sub_C_pow_right f 0 m n hm <;> simp [coeff_zero_eq_eval_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 nonrec lemma resultant_scaleRoots (f g : R[X]) (r : R) :
     resultant (f.scaleRoots r) (g.scaleRoots r) =
       r ^ (f.natDegree * g.natDegree) * resultant f g := by
@@ -733,6 +742,7 @@ nonrec lemma resultant_scaleRoots (f g : R[X]) (r : R) :
     rw [← hf', ← hg', resultant_map_map]
     simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma resultant_integralNormalization (f g : R[X]) (hg : g.natDegree ≠ 0) :
     resultant (f.scaleRoots g.leadingCoeff) g.integralNormalization =
       g.leadingCoeff ^ (f.natDegree * (g.natDegree - 1)) * resultant f g := by
@@ -952,6 +962,7 @@ lemma discr_of_degree_eq_one {f : R[X]} (hf : f.degree = 1) : discr f = 1 := by
     simp [e, sylvesterDeriv, mul_comm, hf]
   simp [discr, ← Matrix.det_reindex_self e, this, hf]
 
+set_option backward.isDefEq.respectTransparency false in
 set_option linter.style.whitespace false in -- manual alignment is not recognised
 /-- Standard formula for the discriminant of a quadratic polynomial. -/
 lemma discr_of_degree_eq_two {f : R[X]} (hf : f.degree = 2) :
@@ -975,6 +986,7 @@ lemma discr_of_degree_eq_two {f : R[X]} (hf : f.degree = 2) :
 @[deprecated (since := "2025-10-20")] alias disc_of_degree_eq_one := discr_of_degree_eq_one
 @[deprecated (since := "2025-10-20")] alias disc_of_degree_eq_two := discr_of_degree_eq_two
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Relation between the resultant and the discriminant.
 
 (Note this is actually false when `f` is a constant polynomial not equal to 1, so the assumption on
@@ -1015,6 +1027,7 @@ private lemma sylvesterDeriv_of_natDegree_eq_three {f : R[X]} (hf : f.natDegree 
       OfNat.one_ne_ofNat, OfNat.zero_ne_ofNat, ↓reduceIte, zero_add, zero_le, zero_tsub]
     fin_cases hj' <;> simp [mul_comm, one_add_one_eq_two, (by norm_num : (2 : R) + 1 = 3)]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Standard formula for the discriminant of a cubic polynomial. -/
 lemma discr_of_degree_eq_three {f : R[X]} (hf : f.degree = 3) :
     discr f = f.coeff 2 ^ 2 * f.coeff 1 ^ 2

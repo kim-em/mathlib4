@@ -198,6 +198,7 @@ theorem iterate_verschiebung_mul (x y : 𝕎 R) (i j : ℕ) :
   · rw [iterate_add_apply]
   · rw [mul_comm]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem iterate_frobenius_coeff (x : 𝕎 R) (i k : ℕ) :
     (frobenius^[i] x).coeff k = x.coeff k ^ p ^ i := by
   induction i with

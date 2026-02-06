@@ -51,6 +51,7 @@ lemma exists_finite_clopen_cover (hU : IsOpenCover U) : ∃ (n : ℕ) (V : Fin n
   obtain ⟨m, hm, hm'⟩ := mem_iUnion₂.mp (ht hx)
   exact Set.mem_iUnion_of_mem (t.equivFin ⟨m, hm⟩) (by simpa)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Any open cover of a profinite space can be refined to a finite cover by pairwise disjoint
 nonempty clopens. -/
 lemma exists_finite_nonempty_disjoint_clopen_cover (hU : IsOpenCover U) :
@@ -99,6 +100,7 @@ lemma exists_finite_open_cover_prod_subset_of_mem_nhds_diagonal_of_compact
 
 variable [TotallyDisconnectedSpace X] [T2Space X]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `S` is any neighbourhood of the diagonal in a profinite topological space `X`, then there
 exists a finite cover of `X` by disjoint nonempty clopens `U i` with `U i ×ˢ U i ⊆ S` for all `i`.
 -/
@@ -119,6 +121,7 @@ namespace ContinuousMap
 variable {X V : Type*} [TopologicalSpace X] [TopologicalSpace V] [TotallyDisconnectedSpace X]
   [T2Space X] [CompactSpace X] {S : Set (V × V)} (f : C(X, V))
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 For any continuous function `f : X → V`, with `X` profinite, and `S` a neighbourhood of the
 diagonal in `V × V`, there exists a finite cover of `X` by pairwise-disjoint nonempty clopens, on
@@ -133,6 +136,7 @@ lemma exists_disjoint_nonempty_clopen_cover_of_mem_nhds_diagonal (hS : S ∈ nhd
     exact (map_continuous _).continuousAt.preimage_mem_nhds (hS _ rfl)
   exact exists_finite_disjoint_nonempty_clopen_cover_of_mem_nhds_diagonal_of_profinite this
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 For any continuous function `f : X → V`, with `X` profinite, and `S` a neighbourhood of the
 diagonal in `V × V`, the function `f` can be `S`-approximated by a function factoring through

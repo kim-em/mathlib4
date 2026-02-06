@@ -83,6 +83,7 @@ theorem ofDigits_le_one {b : ℕ} (digits : ℕ → Fin b) : ofDigits digits ≤
     refine Summable.mul_left _ (summable_geometric_of_lt_one (by positivity) ?_)
     simp [inv_lt_one_iff₀, hb]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ofDigits_eq_sum_add_ofDigits {b : ℕ} (a : ℕ → Fin b) (n : ℕ) :
     ofDigits a = (∑ i ∈ Finset.range n, ofDigitsTerm a i) +
       ((b : ℝ) ^ n)⁻¹ * ofDigits (fun i ↦ a (i + n)) := by
@@ -124,6 +125,7 @@ theorem ofDigits_digits_sum_eq {x : ℝ} {b : ℕ} [NeZero b] (hx : x ∈ Set.Ic
     rw [← Nat.cast_mul_floor_div_cancel (a := y) (show b ≠ 0 by lia),
       Fin.val_ofNat, Nat.div_add_mod]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem le_sum_ofDigitsTerm_digits {x : ℝ} {b : ℕ} [NeZero b]
     (hx : x ∈ Set.Ico 0 1) (n : ℕ) :
     x - (b⁻¹ : ℝ) ^ n ≤ ∑ i ∈ Finset.range n, ofDigitsTerm (digits x b) i := by
@@ -135,6 +137,7 @@ theorem le_sum_ofDigitsTerm_digits {x : ℝ} {b : ℕ} [NeZero b]
     mul_sub, inv_pow, mul_inv_cancel₀ (by positivity)]
   linarith
 
+set_option backward.isDefEq.respectTransparency false in
 theorem sum_ofDigitsTerm_digits_le {x : ℝ} {b : ℕ} [NeZero b]
     (hx : x ∈ Set.Ico 0 1) (n : ℕ) :
     ∑ i ∈ Finset.range n, ofDigitsTerm (digits x b) i ≤ x := by

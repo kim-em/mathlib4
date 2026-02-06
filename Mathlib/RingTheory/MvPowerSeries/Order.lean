@@ -153,6 +153,7 @@ theorem weightedOrder_eq_top_iff :
     f.weightedOrder w = ⊤ ↔ f = 0 := by
   rw [← not_iff_not, ← ne_eq, ← ne_eq, ne_zero_iff_weightedOrder_finite w, coe_toNat_eq_self]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If the order of a formal power series `f` is finite,
 then some coefficient of weight equal to the order of `f` is nonzero. -/
 theorem exists_coeff_ne_zero_and_weightedOrder
@@ -163,6 +164,7 @@ theorem exists_coeff_ne_zero_and_weightedOrder
   generalize_proofs h1
   exact Nat.find_spec h1
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If the `d`th coefficient of a formal power series is nonzero,
 then the weighted order of the power series is less than or equal to `weight d w`. -/
 theorem weightedOrder_le {d : σ →₀ ℕ} (h : coeff d f ≠ 0) :
@@ -178,6 +180,7 @@ theorem coeff_eq_zero_of_lt_weightedOrder {d : σ →₀ ℕ} (h : (weight w d) 
     coeff d f = 0 := by
   contrapose! h; exact weightedOrder_le w h
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The order of a formal power series is at least `n` if
 the `d`th coefficient is `0` for all `d` such that `weight w d < n`. -/
 theorem nat_le_weightedOrder {n : ℕ} (h : ∀ d, weight w d < n → coeff d f = 0) :
@@ -189,6 +192,7 @@ theorem nat_le_weightedOrder {n : ℕ} (h : ∀ d, weight w d < n → coeff d f 
   rw [← hd, Nat.cast_lt] at H
   exact hfd (h d H)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The order of a formal power series is at least `n` if
 the `d`th coefficient is `0` for all `d` such that `weight w d < n`. -/
 theorem le_weightedOrder {n : ℕ∞} (h : ∀ d : σ →₀ ℕ, weight w d < n → coeff d f = 0) :
@@ -199,6 +203,7 @@ theorem le_weightedOrder {n : ℕ∞} (h : ∀ d : σ →₀ ℕ, weight w d < n
   · apply nat_le_weightedOrder;
     simpa only [ENat.some_eq_coe, Nat.cast_lt] using h
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The order of a formal power series is exactly `n` if and only if some coefficient of weight `n`
 is nonzero, and the `d`th coefficient is `0` for all `d` such that `weight w d < n`. -/
 theorem weightedOrder_eq_nat {n : ℕ} :
@@ -245,6 +250,7 @@ theorem min_weightedOrder_le_add :
     [coeff_eq_zero_of_lt_weightedOrder w, lt_min_iff, map_add, add_zero,
       imp_true_iff]
 
+set_option backward.isDefEq.respectTransparency false in
 private theorem weightedOrder_add_of_weightedOrder_lt.aux
     (H : f.weightedOrder w < g.weightedOrder w) :
     (f + g).weightedOrder w = f.weightedOrder w := by
@@ -292,11 +298,13 @@ theorem le_weightedOrder_mul :
       apply ne_of_lt (lt_of_lt_of_le hd <| add_le_add hi hj)
       rw [← hij, map_add, Nat.cast_add]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem le_weightedOrder_pow (n : ℕ) : n • f.weightedOrder w ≤ (f ^ n).weightedOrder w := by
   induction n with
   | zero => simp
   | succ n hn => grw [succ_nsmul, pow_succ, hn, le_weightedOrder_mul]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem le_weightedOrder_prod {R : Type*} [CommSemiring R] {ι : Type*} (w : σ → ℕ)
     (f : ι → MvPowerSeries σ R) (s : Finset ι) :
     ∑ i ∈ s, (f i).weightedOrder w ≤ (∏ i ∈ s, f i).weightedOrder w := by
@@ -324,6 +332,7 @@ section Ring
 
 variable {R : Type*} [Ring R] {f g : MvPowerSeries σ R}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem coeff_mul_left_one_sub_of_lt_weightedOrder
     {d : σ →₀ ℕ} (h : (weight w d) < g.weightedOrder w) :
     coeff d (f * (1 - g)) = coeff d f := by
@@ -331,6 +340,7 @@ theorem coeff_mul_left_one_sub_of_lt_weightedOrder
   apply coeff_eq_zero_of_lt_weightedOrder w
   exact lt_of_lt_of_le (lt_of_lt_of_le h le_add_self) (le_weightedOrder_mul w)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem coeff_mul_right_one_sub_of_lt_weightedOrder
     {d : σ →₀ ℕ} (h : (weight w d) < g.weightedOrder w) :
     coeff d ((1 - g) * f) = coeff d f := by
@@ -475,6 +485,7 @@ theorem le_order_prod {R : Type*} [CommSemiring R] {ι : Type*}
     (f : ι → MvPowerSeries σ R) (s : Finset ι) : ∑ i ∈ s, (f i).order ≤ (∏ i ∈ s, f i).order :=
   le_weightedOrder_prod _ _ _
 
+set_option backward.isDefEq.respectTransparency false in
 theorem one_le_order_iff_constCoeff_eq_zero :
     1 ≤ f.order ↔ f.constantCoeff = 0 := by
   constructor
@@ -490,6 +501,7 @@ theorem order_ne_zero_iff_constCoeff_eq_zero :
     f.order ≠ 0 ↔ f.constantCoeff = 0 := by
   rw [← ENat.one_le_iff_ne_zero, one_le_order_iff_constCoeff_eq_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem le_order_pow_of_constantCoeff_eq_zero (n : ℕ) (hf : f.constantCoeff = 0) :
     n ≤ (f ^ n).order := by
   refine .trans ?_ (le_order_pow n)
@@ -614,6 +626,7 @@ theorem weightedHomogeneousComponent_of_lt_weightedOrder_eq_zero
     exact hf
   · rw [map_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 variable {w} in
 theorem weightedHomogeneousComponent_of_weightedOrder
     {f : MvPowerSeries σ R} {p : ℕ} (hf : p = f.weightedOrder w) :

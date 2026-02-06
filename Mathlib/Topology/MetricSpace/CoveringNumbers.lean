@@ -98,6 +98,7 @@ lemma packingNumber_empty (ε : ℝ≥0) : packingNumber ε (∅ : Set X) = 0 :=
 lemma externalCoveringNumber_eq_zero :
     externalCoveringNumber ε A = 0 ↔ A = ∅ := by simp [externalCoveringNumber]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma externalCoveringNumber_pos_iff : 0 < externalCoveringNumber ε A ↔ A.Nonempty := by
   rw [← not_iff_not]
@@ -106,6 +107,7 @@ lemma externalCoveringNumber_pos_iff : 0 < externalCoveringNumber ε A ↔ A.Non
 @[simp]
 lemma coveringNumber_eq_zero : coveringNumber ε A = 0 ↔ A = ∅ := by simp [coveringNumber]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma coveringNumber_pos_iff : 0 < coveringNumber ε A ↔ A.Nonempty := by
   rw [← not_iff_not]
@@ -119,6 +121,7 @@ lemma packingNumber_eq_zero : packingNumber ε A = 0 ↔ A = ∅ := by
   obtain ⟨x, hx⟩ := this
   simpa using h {x} (by simp [hx]) (by simp)
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma packingNumber_pos_iff : 0 < packingNumber ε A ↔ A.Nonempty := by
   rw [← not_iff_not]
@@ -202,6 +205,7 @@ lemma externalCoveringNumber_eq_one_of_ediam_le (h_nonempty : A.Nonempty)
       (coveringNumber_eq_one_of_ediam_le h_nonempty hA)
   · simpa [Order.one_le_iff_pos]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma externalCoveringNumber_le_one_of_ediam_le (hA : ediam A ≤ ε) :
     externalCoveringNumber ε A ≤ 1 := by
   rcases eq_empty_or_nonempty A with h_eq_empty | h_nonempty
@@ -209,6 +213,7 @@ lemma externalCoveringNumber_le_one_of_ediam_le (hA : ediam A ≤ ε) :
     simp [h_eq_empty]
   · exact (externalCoveringNumber_eq_one_of_ediam_le h_nonempty hA).le
 
+set_option backward.isDefEq.respectTransparency false in
 lemma coveringNumber_le_one_of_ediam_le (hA : ediam A ≤ ε) : coveringNumber ε A ≤ 1 := by
   rcases eq_empty_or_nonempty A with h_eq_empty | h_nonempty
   · rw [← coveringNumber_eq_zero (ε := ε)] at h_eq_empty
@@ -365,6 +370,7 @@ theorem coveringNumber_two_mul_le_externalCoveringNumber (ε : ℝ≥0) (A : Set
   refine (coveringNumber_le_packingNumber _ A).trans ?_
   exact packingNumber_two_mul_le_externalCoveringNumber ε A
 
+set_option backward.isDefEq.respectTransparency false in
 lemma coveringNumber_subset_le (h : A ⊆ B) :
     coveringNumber ε A ≤ coveringNumber (ε / 2) B := calc
   coveringNumber ε A

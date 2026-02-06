@@ -162,6 +162,7 @@ theorem ofDigits_zero_two_sequence_mem_cantorSet {a : ℕ → Fin 3}
     generalize a 0 = x at h
     fin_cases x <;> simp at ⊢ h
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If two base-3 representations using only digits `0` and `2` define the same number,
 then the sequences must be equal.
 This uniqueness fails for general base-3 representations (e.g. `0.1000... = 0.0222...`). -/
@@ -250,6 +251,7 @@ theorem ofDigits_bool_to_fin_three_mem_cantorSet (f : ℕ → Bool) :
 theorem cantorToTernary_ne_one {x : ℝ} {n : ℕ} : (cantorToTernary x).get n ≠ 1 := by
   grind [cantorToTernary, Stream'.get_map]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem cantorSequence_get_succ (x : ℝ) (n : ℕ) :
     (cantorSequence x).get (n + 1) =
       3 * ((cantorSequence x).get n - 3 ^ n * ofDigitsTerm (cantorToTernary x).get n) := by
@@ -259,6 +261,7 @@ theorem cantorSequence_get_succ (x : ℝ) (n : ℕ) :
   split_ifs <;> simp
   field
 
+set_option backward.isDefEq.respectTransparency false in
 theorem cantorSequence_eq_self_sub_sum_cantorToTernary (x : ℝ) (n : ℕ) :
     (cantorSequence x).get n =
     (x - ∑ i ∈ Finset.range n, ofDigitsTerm (cantorToTernary x).get i) * 3 ^ n := by
@@ -266,6 +269,7 @@ theorem cantorSequence_eq_self_sub_sum_cantorToTernary (x : ℝ) (n : ℕ) :
   | zero => simp [cantorSequence]
   | succ n ih => rw [cantorSequence_get_succ, ih, Finset.sum_range_succ]; ring
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ofDigits_cantorToTernary_sum_le {x : ℝ} (hx : x ∈ cantorSet) {n : ℕ} :
     ∑ i ∈ Finset.range n, ofDigitsTerm (cantorToTernary x) i ≤ x := by
   have h_mem := cantorSequence_mem_cantorSet hx n
@@ -274,6 +278,7 @@ theorem ofDigits_cantorToTernary_sum_le {x : ℝ} (hx : x ∈ cantorSet) {n : �
   simp only [Set.mem_Icc] at h_mem
   simpa using h_mem.left
 
+set_option backward.isDefEq.respectTransparency false in
 theorem le_ofDigits_cantorToTernary_sum {x : ℝ} (hx : x ∈ cantorSet) {n : ℕ} :
     x - (3⁻¹ : ℝ) ^ n ≤ ∑ i ∈ Finset.range n, ofDigitsTerm (cantorToTernary x) i := by
   have h_mem := cantorSequence_mem_cantorSet hx n

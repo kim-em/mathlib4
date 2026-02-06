@@ -259,9 +259,11 @@ lemma Ideal.mul_inf (I J K : Ideal A) : I * (J ⊓ K) = I * J ⊓ I * K := by
 lemma Ideal.inf_mul (I J K : Ideal A) : (I ⊓ J) * K = I * K ⊓ J * K := by
   simp only [Ideal.mul_inf, mul_comm _ K]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma FractionalIdeal.mul_inf (I J K : FractionalIdeal A⁰ K) : I * (J ⊓ K) = I * J ⊓ I * K :=
   mul_inf₀ (zero_le _) _ _
 
+set_option backward.isDefEq.respectTransparency false in
 lemma FractionalIdeal.inf_mul (I J K : FractionalIdeal A⁰ K) : (I ⊓ J) * K = I * K ⊓ J * K :=
   inf_mul₀ (zero_le _) _ _
 
@@ -276,6 +278,7 @@ and the lcm is their infimum, and use this to instantiate `NormalizedGCDMonoid (
 -/
 
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem sup_mul_inf (I J : Ideal A) : (I ⊔ J) * (I ⊓ J) = I * J := by
   letI := UniqueFactorizationMonoid.toNormalizedGCDMonoid (Ideal A)
@@ -328,6 +331,7 @@ theorem factors_span_eq {p : K[X]} : factors (span {p}) = (factors p).map (fun q
   rw [← span_singleton_eq_span_singleton.mpr (factors_prod hp), ← multiset_prod_span_singleton,
     factors_eq_normalizedFactors, normalizedFactors_prod_of_prime this]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma _root_.FractionalIdeal.sup_mul_inf (I J : FractionalIdeal A⁰ K) :
     (I ⊓ J) * (I ⊔ J) = I * J := by
   apply mul_left_injective₀ (b := spanSingleton A⁰ (algebraMap A K
@@ -395,6 +399,7 @@ theorem irreducible_pow_sup [DecidableEq (Ideal T)] (hI : I ≠ ⊥) (hJ : Irred
   rw [sup_eq_prod_inf_factors (pow_ne_zero n hJ.ne_zero) hI, min_comm,
     normalizedFactors_of_irreducible_pow hJ, normalize_eq J, replicate_inter, prod_replicate]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem irreducible_pow_sup_of_le (hJ : Irreducible J) (n : ℕ) (hn : n ≤ emultiplicity J I) :
     J ^ n ⊔ I = J ^ n := by
   classical
@@ -404,6 +409,7 @@ theorem irreducible_pow_sup_of_le (hJ : Irreducible J) (n : ℕ) (hn : n ≤ emu
   rw [emultiplicity_eq_count_normalizedFactors hJ hI, normalize_eq J] at hn
   exact_mod_cast hn
 
+set_option backward.isDefEq.respectTransparency false in
 theorem irreducible_pow_sup_of_ge (hI : I ≠ ⊥) (hJ : Irreducible J) (n : ℕ)
     (hn : emultiplicity J I ≤ n) : J ^ n ⊔ I = J ^ multiplicity J I := by
   classical
@@ -576,6 +582,7 @@ theorem idealFactorsFunOfQuotHom_comp {f : R ⧸ I →+* A ⧸ J} {g : A ⧸ J �
 
 variable [IsDedekindDomain R] (f : R ⧸ I ≃+* A ⧸ J)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The bijection between ideals of `R` dividing `I` and the ideals of `A` dividing `J` induced by
   an isomorphism `f : R/I ≅ A/J`. -/
 def idealFactorsEquivOfQuotEquiv : { p : Ideal R | p ∣ I } ≃o { p : Ideal A | p ∣ J } := by
@@ -618,6 +625,7 @@ theorem idealFactorsEquivOfQuotEquiv_mem_normalizedFactors_of_mem_normalizedFact
   rw [Subtype.coe_mk, Subtype.coe_mk]
   apply idealFactorsEquivOfQuotEquiv_is_dvd_iso f
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The bijection between the sets of normalized factors of I and J induced by a ring
 isomorphism `f : R/I ≅ A/J`. -/
 def normalizedFactorsEquivOfQuotEquiv (hI : I ≠ ⊥) (hJ : J ≠ ⊥) :
@@ -724,6 +732,7 @@ theorem Ideal.count_associates_eq [DecidableEq (Associates (Ideal R))]
   · exact (span_singleton_prime hx0).mpr hx
   · simp only [ne_eq, span_singleton_eq_bot]; exact hx0
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Variant of `UniqueFactorizationMonoid.count_normalizedFactors_eq` for associated Ideals. -/
 theorem Ideal.count_associates_eq' [DecidableEq (Associates (Ideal R))]
     [∀ (p : Associates <| Ideal R), Decidable (Irreducible p)]
@@ -966,6 +975,7 @@ theorem emultiplicity_normalizedFactorsEquivSpanNormalizedFactors_symm_eq_emulti
 
 variable [DecidableEq R] [DecidableEq (Ideal R)]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The bijection between the set of prime factors of the ideal `⟨r⟩` and the set of prime factors
   of `r` preserves `count` of the corresponding multisets. See
   `multiplicity_normalizedFactorsEquivSpanNormalizedFactors_eq_multiplicity` for the version
@@ -1004,6 +1014,7 @@ noncomputable abbrev primesOverFinset {A : Type*} [CommRing A] (p : Ideal A) (B 
 variable {A : Type*} [CommRing A] {p : Ideal A} (hpb : p ≠ ⊥) [hpm : p.IsMaximal]
   (B : Type*) [CommRing B] [IsDedekindDomain B] [Algebra A B] [IsDomain A] [IsTorsionFree A B]
 
+set_option backward.isDefEq.respectTransparency false in
 include hpb in
 theorem coe_primesOverFinset : primesOverFinset p B = primesOver p B := by
   ext

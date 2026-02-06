@@ -74,6 +74,7 @@ def genEigenspace (f : End R M) (μ : R) : ℕ∞ →o Submodule R M where
   toFun k := ⨆ l : ℕ, ⨆ _ : l ≤ k, LinearMap.ker ((f - μ • 1) ^ l)
   monotone' _ _ hkl := biSup_mono fun _ hi ↦ hi.trans hkl
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mem_genEigenspace {f : End R M} {μ : R} {k : ℕ∞} {x : M} :
     x ∈ f.genEigenspace μ k ↔ ∃ l : ℕ, l ≤ k ∧ x ∈ LinearMap.ker ((f - μ • 1) ^ l) := by
   have : Nonempty {l : ℕ // l ≤ k} := ⟨⟨0, zero_le _⟩⟩
@@ -82,11 +83,13 @@ lemma mem_genEigenspace {f : End R M} {μ : R} {k : ℕ∞} {x : M} :
   simp_rw [genEigenspace, OrderHom.coe_mk, LinearMap.mem_ker, iSup_subtype',
     Submodule.mem_iSup_of_directed _ this, LinearMap.mem_ker, Subtype.exists, exists_prop]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma genEigenspace_directed {f : End R M} {μ : R} {k : ℕ∞} :
     Directed (· ≤ ·) (fun l : {l : ℕ // l ≤ k} ↦ f.genEigenspace μ l) := by
   have aux : Monotone ((↑) : {l : ℕ // l ≤ k} → ℕ∞) := fun x y h ↦ by simpa using h
   exact ((genEigenspace f μ).monotone.comp aux).directed_le
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mem_genEigenspace_nat {f : End R M} {μ : R} {k : ℕ} {x : M} :
     x ∈ f.genEigenspace μ k ↔ x ∈ LinearMap.ker ((f - μ • 1) ^ k) := by
   rw [mem_genEigenspace]
@@ -242,6 +245,7 @@ or the infimum of these ranges if `k = ∞`. -/
 def genEigenrange (f : End R M) (μ : R) (k : ℕ∞) : Submodule R M :=
   ⨅ l : ℕ, ⨅ (_ : l ≤ k), LinearMap.range ((f - μ • 1) ^ l)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma genEigenrange_nat {f : End R M} {μ : R} {k : ℕ} :
     f.genEigenrange μ k = LinearMap.range ((f - μ • 1) ^ k) := by
   ext x
@@ -285,6 +289,7 @@ lemma genEigenspace_le_genEigenspace_maxUnifEigenspaceIndex [IsNoetherian R M] (
   rw [← genEigenspace_top_eq_maxUnifEigenspaceIndex]
   exact (f.genEigenspace μ).monotone le_top
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Generalized eigenspaces for exponents at least `finrank K V` are equal to each other. -/
 theorem genEigenspace_eq_genEigenspace_maxUnifEigenspaceIndex_of_le [IsNoetherian R M]
     (f : End R M) (μ : R) {k : ℕ} (hk : maxUnifEigenspaceIndex f μ ≤ k) :
@@ -319,6 +324,7 @@ lemma HasUnifEigenvalue.lt {f : End R M} {μ : R} {k m : ℕ∞}
   rw [Module.End.coe_pow (f - μ • 1) l]
   exact Function.Injective.iterate contra l
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Generalized eigenvalues are actually just eigenvalues. -/
 @[simp]
 lemma hasUnifEigenvalue_iff_hasUnifEigenvalue_one {f : End R M} {μ : R} {k : ℕ∞} (hk : 0 < k) :
@@ -335,6 +341,7 @@ lemma maxUnifEigenspaceIndex_le_finrank [FiniteDimensional K V] (f : End K V) (�
     rw [genEigenspace_nat, genEigenspace_nat]
     apply ker_pow_le_ker_pow_finrank
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Every generalized eigenvector is a generalized eigenvector for exponent `finrank K V`.
 (Lemma 8.11 of [axler2015]) -/
 lemma genEigenspace_le_genEigenspace_finrank [FiniteDimensional K V] (f : End K V)
@@ -345,6 +352,7 @@ lemma genEigenspace_le_genEigenspace_finrank [FiniteDimensional K V] (f : End K 
       rw [genEigenspace_top_eq_maxUnifEigenspaceIndex]
       exact (f.genEigenspace _).monotone <| by simpa using maxUnifEigenspaceIndex_le_finrank f μ
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Generalized eigenspaces for exponents at least `finrank K V` are equal to each other. -/
 theorem genEigenspace_eq_genEigenspace_finrank_of_le [FiniteDimensional K V]
     (f : End K V) (μ : K) {k : ℕ} (hk : finrank K V ≤ k) :
@@ -527,6 +535,7 @@ theorem maxGenEigenspace_eq_maxGenEigenspace_zero (f : End R M) (μ : R) :
     maxGenEigenspace f μ = maxGenEigenspace (f - μ • 1) 0 := by
   ext; simp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A generalized eigenvalue for some exponent `k` is also
 a generalized eigenvalue for exponents larger than `k`. -/
 theorem hasGenEigenvalue_of_hasGenEigenvalue_of_le {f : End R M} {μ : R} {k : ℕ}
@@ -534,6 +543,7 @@ theorem hasGenEigenvalue_of_hasGenEigenvalue_of_le {f : End R M} {μ : R} {k : �
     f.HasGenEigenvalue μ m :=
   hk.le <| by simpa using hm
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The eigenspace is a subspace of the generalized eigenspace. -/
 theorem eigenspace_le_genEigenspace {f : End R M} {μ : R} {k : ℕ} (hk : 0 < k) :
     f.eigenspace μ ≤ f.genEigenspace μ k :=
@@ -548,6 +558,7 @@ theorem hasGenEigenvalue_of_hasEigenvalue {f : End R M} {μ : R} {k : ℕ} (hk :
     (hμ : f.HasEigenvalue μ) : f.HasGenEigenvalue μ k :=
   hμ.lt <| by simpa using hk
 
+set_option backward.isDefEq.respectTransparency false in
 /-- All generalized eigenvalues are eigenvalues. -/
 theorem hasEigenvalue_of_hasGenEigenvalue {f : End R M} {μ : R} {k : ℕ}
     (hμ : f.HasGenEigenvalue μ k) : f.HasEigenvalue μ :=
@@ -587,6 +598,7 @@ lemma isNilpotent_restrict_maxGenEigenspace_sub_algebraMap [IsNoetherian R M] (f
     _ (isNilpotent_restrict_genEigenspace_nat f μ (maxUnifEigenspaceIndex f μ))
   rw [maxGenEigenspace_eq]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma disjoint_genEigenspace [IsDomain R] [IsTorsionFree R M]
     (f : End R M) {μ₁ μ₂ : R} (hμ : μ₁ ≠ μ₂) (k l : ℕ∞) :
     Disjoint (f.genEigenspace μ₁ k) (f.genEigenspace μ₂ l) := by
@@ -698,6 +710,7 @@ theorem eigenvectors_linearIndependent [IsDomain R] [IsTorsionFree R M]
     (h_eigenvec : ∀ μ : μs, f.HasEigenvector μ (xs μ)) : LinearIndependent R xs :=
   f.eigenvectors_linearIndependent' (fun μ : μs ↦ μ) Subtype.coe_injective _ h_eigenvec
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `f` maps a subspace `p` into itself, then the generalized eigenspace of the restriction
 of `f` to `p` is the part of the generalized eigenspace of `f` that lies in `p`. -/
 theorem genEigenspace_restrict (f : End R M) (p : Submodule R M) (k : ℕ∞) (μ : R)
@@ -719,12 +732,14 @@ theorem genEigenspace_restrict (f : End R M) (p : Submodule R M) (k : ℕ∞) (�
     erw [pow_succ, pow_succ, LinearMap.ker_comp, LinearMap.ker_comp, ih, ← LinearMap.ker_comp,
       LinearMap.comp_assoc]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma _root_.Submodule.inf_genEigenspace (f : End R M) (p : Submodule R M) {k : ℕ∞} {μ : R}
     (hfp : ∀ x : M, x ∈ p → f x ∈ p) :
     p ⊓ f.genEigenspace μ k =
       (genEigenspace (LinearMap.restrict f hfp) μ k).map p.subtype := by
   rw [f.genEigenspace_restrict _ _ _ hfp, Submodule.map_comap_eq, Submodule.range_subtype]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mapsTo_restrict_maxGenEigenspace_restrict_of_mapsTo
     {p : Submodule R M} (f g : End R M) (hf : MapsTo f p p) (hg : MapsTo g p p) {μ₁ μ₂ : R}
     (h : MapsTo f (g.maxGenEigenspace μ₁) (g.maxGenEigenspace μ₂)) :
@@ -737,6 +752,7 @@ lemma mapsTo_restrict_maxGenEigenspace_restrict_of_mapsTo
     Submodule.mk_eq_zero, ← mem_maxGenEigenspace] at hx ⊢
   exact h hx
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `p` is an invariant submodule of an endomorphism `f`, then the `μ`-eigenspace of the
 restriction of `f` to `p` is a submodule of the `μ`-eigenspace of `f`. -/
 theorem eigenspace_restrict_le_eigenspace (f : End R M) {p : Submodule R M} (hfp : ∀ x ∈ p, f x ∈ p)
@@ -764,6 +780,7 @@ theorem generalized_eigenvec_disjoint_range_ker [FiniteDimensional K V] (f : End
     Submodule.map_inf_eq_map_inf_comap, top_inf_eq, h, genEigenspace_nat]
   apply Submodule.map_comap_le
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If an invariant subspace `p` of an endomorphism `f` is disjoint from the `μ`-eigenspace of `f`,
 then the restriction of `f` to `p` has trivial `μ`-eigenspace. -/
 theorem eigenspace_restrict_eq_bot {f : End R M} {p : Submodule R M} (hfp : ∀ x ∈ p, f x ∈ p)
@@ -772,6 +789,7 @@ theorem eigenspace_restrict_eq_bot {f : End R M} {p : Submodule R M} (hfp : ∀ 
   intro x hx
   simpa using hμp.le_bot ⟨eigenspace_restrict_le_eigenspace f hfp μ ⟨x, hx, rfl⟩, x.prop⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The generalized eigenspace of an eigenvalue has positive dimension for positive exponents. -/
 theorem pos_finrank_genEigenspace_of_hasEigenvalue [FiniteDimensional K V] {f : End K V}
     {k : ℕ} {μ : K} (hx : f.HasEigenvalue μ) (hk : 0 < k) :

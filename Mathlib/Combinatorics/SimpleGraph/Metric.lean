@@ -57,6 +57,7 @@ variable {G} {u v w : V}
 
 theorem edist_eq_sInf : G.edist u v = sInf (Set.range fun w : G.Walk u v ↦ (w.length : ℕ∞)) := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 protected theorem Reachable.exists_walk_length_eq_edist (hr : G.Reachable u v) :
     ∃ p : G.Walk u v, p.length = G.edist u v :=
   csInf_mem <| Set.range_nonempty_iff_nonempty.mpr hr
@@ -70,6 +71,7 @@ theorem edist_le (p : G.Walk u v) :
   sInf_le ⟨p, rfl⟩
 protected alias Walk.edist_le := edist_le
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem edist_eq_zero_iff :
     G.edist u v = 0 ↔ u = v := by
@@ -79,6 +81,7 @@ theorem edist_eq_zero_iff :
 theorem edist_self : edist G v v = 0 :=
   edist_eq_zero_iff.mpr rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem edist_pos_of_ne (hne : u ≠ v) :
     0 < G.edist u v :=
   pos_iff_ne_zero.mpr <| edist_eq_zero_iff.ne.mpr hne
@@ -112,6 +115,7 @@ theorem edist_comm : G.edist u v = G.edist v u := by
     ← Set.image_comp, Set.image_univ, Function.comp_def]
   simp_rw [Walk.length_reverse, ← edist_eq_sInf]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma exists_walk_of_edist_eq_coe {k : ℕ} (h : G.edist u v = k) :
     ∃ p : G.Walk u v, p.length = k :=
   have : G.edist u v ≠ ⊤ := by rw [h]; exact ENat.coe_ne_top _
@@ -124,6 +128,7 @@ lemma edist_ne_top_iff_reachable : G.edist u v ≠ ⊤ ↔ G.Reachable u v := by
   simp only [edist, iInf_eq_top, ENat.coe_ne_top] at hx
   exact h.elim hx
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 The extended distance between vertices is equal to `1` if and only if these vertices are adjacent.
 -/
@@ -134,6 +139,7 @@ theorem edist_eq_one_iff_adj : G.edist u v = 1 ↔ G.Adj u v := by
     exact w.adj_of_length_eq_one <| Nat.cast_eq_one.mp <| h ▸ hw
   · exact le_antisymm (edist_le h.toWalk) (Order.one_le_iff_pos.mpr <| edist_pos_of_ne h.ne)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma edist_le_one_iff_adj_or_eq : G.edist u v ≤ 1 ↔ G.Adj u v ∨ u = v := by
   by_cases huv : u = v
   · simp [huv]

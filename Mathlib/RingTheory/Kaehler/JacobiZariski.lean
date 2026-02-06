@@ -53,6 +53,7 @@ attribute [local instance] SMulCommClass.of_commMonoid
 
 namespace Generators
 
+set_option backward.isDefEq.respectTransparency false in
 lemma Cotangent.surjective_map_ofComp :
     Function.Surjective (Extension.Cotangent.map (Q.ofComp P).toExtensionHom) := by
   intro x
@@ -69,6 +70,7 @@ we may consider the induced representation `0 → J → R[X, Y] → T → 0`, an
 `T ⊗[S] (I/I²) → J/J² → K/K²` is exact.
 -/
 open Extension.Cotangent in
+set_option backward.isDefEq.respectTransparency false in
 lemma Cotangent.exact :
     Function.Exact
       ((Extension.Cotangent.map (Q.toComp P).toExtensionHom).liftBaseChange T)
@@ -244,6 +246,7 @@ lemma δAux_C (r) :
   rw [← monomial_zero', δAux_monomial, Finsupp.prod_zero_index]
 
 variable {Q} {Q'} in
+set_option backward.isDefEq.respectTransparency false in
 lemma δAux_toAlgHom (f : Hom Q Q') (x) :
     δAux R Q' (f.toAlgHom x) = δAux R Q x + Finsupp.linearCombination _ (δAux R Q' ∘ f.val)
       (Q.cotangentSpaceBasis.repr ((1 : T) ⊗ₜ[Q.Ring] D S Q.Ring x :)) := by
@@ -264,6 +267,7 @@ lemma δAux_toAlgHom (f : Hom Q Q') (x) :
     rw [add_left_comm]
     rfl
 
+set_option backward.isDefEq.respectTransparency false in
 lemma δAux_ofComp (x : (Q.comp P).Ring) :
     δAux R Q ((Q.ofComp P).toAlgHom x) =
       P.toExtension.toKaehler.baseChange T (CotangentSpace.compEquiv Q P
@@ -295,6 +299,7 @@ lemma δAux_ofComp (x : (Q.comp P).Ring) :
         toKaehler_cotangentSpaceBasis, add_left_inj, LinearMap.coe_inl]
       rfl
 
+set_option backward.isDefEq.respectTransparency false in
 lemma map_comp_cotangentComplex_baseChange :
     (Extension.CotangentSpace.map (Q.toComp P).toExtensionHom).liftBaseChange T ∘ₗ
       P.toExtension.cotangentComplex.baseChange T =
@@ -344,6 +349,7 @@ def δ :
     (Cotangent.surjective_map_ofComp Q P)
     (CotangentSpace.map_toComp_injective Q P)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma exact_δ_map :
     Function.Exact (δ Q P) (mapBaseChange R S T) := by
   simp only [δ]
@@ -406,6 +412,7 @@ lemma exact_map_δ :
   · ext x; rfl
   · exact Subtype.val_injective
 
+set_option backward.isDefEq.respectTransparency false in
 lemma δ_map (f : Hom Q' Q) (x) :
     δ Q P (Extension.H1Cotangent.map f.toExtensionHom x) = δ Q' P' x := by
   letI : AddCommGroup (T ⊗[S] Ω[S⁄R]) := inferInstance

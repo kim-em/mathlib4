@@ -173,6 +173,7 @@ private theorem mul_aux (hA : A.Nonempty) (hAB : A ⊆ B)
     (div_le_div_iff₀ hA₀ hA₀').1
       (h _ <| mem_erase_of_ne_of_mem hA'.ne_empty <| mem_powerset.2 <| hAA'.trans hAB)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- **Ruzsa's triangle inequality**. Multiplication version. -/
 @[to_additive /-- **Ruzsa's triangle inequality**. Addition version. -/]
 theorem ruzsa_triangle_inequality_mul_mul_mul (A B C : Finset G) :
@@ -232,6 +233,7 @@ private lemma card_mul_pow_le (hAB : ∀ A' ⊆ A, #(A * B) * #A' ≤ #(A' * B) 
       _ ≤ #(A * B) * ((#(A * B) / #A) ^ n * #A) := by rw [mul_comm _ A]; gcongr
       _ = (#(A * B) / #A) ^ (n + 1) * #A * #A := by simp [field, pow_add]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The **Plünnecke-Ruzsa inequality**. Multiplication version. Note that this is genuinely harder
 than the division version because we cannot use a double counting argument. -/
 @[to_additive /-- The **Plünnecke-Ruzsa inequality**. Addition version. Note that this is genuinely

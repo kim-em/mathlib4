@@ -74,6 +74,7 @@ theorem continuous_exp : Continuous exp :=
 theorem continuousOn_exp {s : Set ℂ} : ContinuousOn exp s :=
   continuous_exp.continuousOn
 
+set_option backward.isDefEq.respectTransparency false in
 lemma exp_sub_sum_range_isBigO_pow (n : ℕ) :
     (fun x ↦ exp x - ∑ i ∈ Finset.range n, x ^ i / i !) =O[𝓝 0] (· ^ n) := by
   rcases (zero_le n).eq_or_lt with rfl | hn
@@ -120,6 +121,7 @@ theorem ContinuousOn.cexp (h : ContinuousOn f s) : ContinuousOn (fun y => exp (f
 theorem Continuous.cexp (h : Continuous f) : Continuous fun y => exp (f y) :=
   continuous_iff_continuousAt.2 fun _ => h.continuousAt.cexp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The complex exponential function is uniformly continuous on left half planes. -/
 lemma UniformContinuousOn.cexp (a : ℝ) : UniformContinuousOn exp {x : ℂ | x.re ≤ a} := by
   have : Continuous (cexp - 1) := Continuous.sub (by fun_prop) continuous_one
@@ -454,6 +456,7 @@ theorem comap_exp_cobounded : comap exp (cobounded ℂ) = comap re atTop :=
       simp only [← comap_norm_atTop, comap_comap, comp_def, norm_exp]
     _ = comap re atTop := by rw [Real.comap_exp_atTop]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem comap_exp_nhds_zero : comap exp (𝓝 0) = comap re atBot :=
   calc

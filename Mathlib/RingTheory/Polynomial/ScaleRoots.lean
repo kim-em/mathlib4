@@ -51,10 +51,12 @@ theorem scaleRoots_ne_zero {p : R[X]} (hp : p ≠ 0) (s : R) : scaleRoots p s �
   rw [coeff_scaleRoots_natDegree] at this
   contradiction
 
+set_option backward.isDefEq.respectTransparency false in
 theorem support_scaleRoots_le (p : R[X]) (s : R) : (scaleRoots p s).support ≤ p.support := by
   intro
   simpa using left_ne_zero_of_mul
 
+set_option backward.isDefEq.respectTransparency false in
 theorem support_scaleRoots_eq (p : R[X]) {s : R} (hs : s ∈ nonZeroDivisors R) :
     (scaleRoots p s).support = p.support :=
   le_antisymm (support_scaleRoots_le p s)
@@ -100,6 +102,7 @@ lemma scaleRoots_C (r c : R) : (C c).scaleRoots r = C c := by
 lemma scaleRoots_one (p : R[X]) :
     p.scaleRoots 1 = p := by ext; simp
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma scaleRoots_zero (p : R[X]) :
     p.scaleRoots 0 = p.leadingCoeff • X ^ p.natDegree := by

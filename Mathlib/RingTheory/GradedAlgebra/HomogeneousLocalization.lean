@@ -496,6 +496,7 @@ lemma mk_eq_zero_of_den (f : NumDenSameDeg 𝒜 x) (h : f.den = 0) : mk f = 0 :=
   have := subsingleton 𝒜 (h ▸ f.den_mem)
   exact Subsingleton.elim _ _
 
+set_option backward.isDefEq.respectTransparency false in
 variable (𝒜 x) in
 /-- The map from `𝒜 0` to the degree `0` part of `𝒜ₓ` sending `f ↦ f/1`. -/
 def fromZeroRingHom : 𝒜 0 →+* HomogeneousLocalization 𝒜 x where
@@ -799,6 +800,7 @@ abbrev Away.isLocalizationElem : Away 𝒜 f :=
 
 variable {x : A} (hx : x = f * g)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Let `t := g ^ d / f ^ e`, then `A_{(fg)} = A_{(f)}[1/t]`. -/
 theorem Away.isLocalization_mul (hd : d ≠ 0) :
     letI := (awayMap 𝒜 hg hx).toAlgebra
@@ -853,6 +855,7 @@ end isLocalization
 
 section span
 
+set_option backward.isDefEq.respectTransparency false in
 variable [AddSubgroupClass σ A] [AddCommMonoid ι] [DecidableEq ι] {𝒜 : ι → σ} [GradedRing 𝒜] in
 /--
 Let `𝒜` be a graded ring, finitely generated (as an algebra) over `𝒜₀` by `{ vᵢ }`,
@@ -911,6 +914,7 @@ theorem Away.span_mk_prod_pow_eq_top {f : A} {d : ι} (hf : f ∈ 𝒜 d)
     simp [Algebra.smul_def, algebraMap_eq, fromZeroRingHom, Localization.mk_mul,
       -decompose_mul, coe_decompose_mul_of_left_mem_zero 𝒜 r.2]
 
+set_option backward.isDefEq.respectTransparency false in
 variable [AddSubgroupClass σ A] {𝒜 : ℕ → σ} [GradedRing 𝒜] in
 /-- This is strictly weaker than `Away.adjoin_mk_prod_pow_eq_top`. -/
 private
@@ -974,6 +978,7 @@ theorem Away.adjoin_mk_prod_pow_eq_top_of_pos {f : A} {d : ℕ} (hf : f ∈ 𝒜
     ext
     simp [Pi.single_apply]
 
+set_option backward.isDefEq.respectTransparency false in
 variable [AddSubgroupClass σ A] {𝒜 : ℕ → σ} [GradedRing 𝒜] in
 /--
 Let `𝒜` be a graded ring, finitely generated (as an algebra) over `𝒜₀` by `{ vᵢ }`,
@@ -1007,6 +1012,7 @@ theorem Away.adjoin_mk_prod_pow_eq_top {f : A} {d : ℕ} (hf : f ∈ 𝒜 d)
     change _ = ∏ x ∈ s.attach, _
     simp [Finset.prod_attach_eq_prod_dite]
 
+set_option backward.isDefEq.respectTransparency false in
 variable [AddSubgroupClass σ A] {𝒜 : ℕ → σ} [GradedRing 𝒜] [Algebra.FiniteType (𝒜 0) A] in
 lemma Away.finiteType (f : A) (d : ℕ) (hf : f ∈ 𝒜 d) :
     Algebra.FiniteType (𝒜 0) (Away 𝒜 f) := by

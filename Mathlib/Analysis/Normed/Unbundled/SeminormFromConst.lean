@@ -127,6 +127,7 @@ theorem seminormFromConst_one : seminormFromConst' c f 1 = 1 := by
   simp only [EventuallyEq, eventually_atTop, ge_iff_le]
   exact ⟨1, seminormFromConst_seq_one hc hpm⟩
 
+set_option backward.isDefEq.respectTransparency false in
 set_option linter.style.whitespace false in -- manual alignment is not recognised
 /-- The function `seminormFromConst` is a `RingSeminorm` on `R`. -/
 def seminormFromConst : RingSeminorm R where
@@ -243,6 +244,7 @@ theorem seminormFromConst_apply_c : seminormFromConst' c f c = f c :=
     exact tendsto_const_nhds
   tendsto_nhds_unique (tendsto_seminormFromConst_seq_atTop hf1 hc hpm c) hlim
 
+set_option backward.isDefEq.respectTransparency false in
 theorem seminormFromConst_const_mul (x : R) :
     seminormFromConst' c f (c * x) =
       seminormFromConst' c f c * seminormFromConst' c f x := by

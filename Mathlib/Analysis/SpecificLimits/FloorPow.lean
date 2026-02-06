@@ -182,6 +182,7 @@ theorem tendsto_div_of_monotone_of_exists_subseq_tendsto_div (u : ℕ → ℝ) (
       _ = (l + ε * (1 + ε + l)) := by field
       _ < d := hε
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If a monotone sequence `u` is such that `u ⌊c^n⌋₊ / ⌊c^n⌋₊` converges to a limit `l` for all
 `c > 1`, then `u n / n` tends to `l`. It is even enough to have the assumption for a sequence of
 `c`s converging to `1`. -/

@@ -69,6 +69,7 @@ variable [Field 𝕜] [Ring R] [AddCommGroup M]
   [TopologicalSpace R] [TopologicalSpace M]
   [IsTopologicalRing R] [IsTopologicalAddGroup M] [ContinuousSMul R M] [ContinuousSMul Rᵐᵒᵖ M]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] theorem fst_expSeries (x : tsze R M) (n : ℕ) :
     fst (expSeries 𝕜 (tsze R M) n fun _ => x) = expSeries 𝕜 R n fun _ => x.fst := by
   simp [expSeries_apply_eq]
@@ -82,6 +83,7 @@ variable [Field 𝕜] [CharZero 𝕜] [Ring R] [AddCommGroup M]
   [TopologicalSpace R] [TopologicalSpace M]
   [IsTopologicalRing R] [IsTopologicalAddGroup M] [ContinuousSMul R M] [ContinuousSMul Rᵐᵒᵖ M]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem snd_expSeries_of_smul_comm
     (x : tsze R M) (hx : MulOpposite.op x.fst • x.snd = x.fst • x.snd) (n : ℕ) :
     snd (expSeries 𝕜 (tsze R M) (n + 1) fun _ => x) = (expSeries 𝕜 R n fun _ => x.fst) • x.snd := by
@@ -90,6 +92,7 @@ theorem snd_expSeries_of_smul_comm
     Nat.cast_mul, mul_inv_rev,
     inv_mul_cancel_right₀ ((Nat.cast_ne_zero (R := 𝕜)).mpr <| Nat.succ_ne_zero n)]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `NormedSpace.exp R x.fst` converges to `e`
 then `(NormedSpace.exp R x).snd` converges to `e • x.snd`. -/
 theorem hasSum_snd_expSeries_of_smul_comm (x : tsze R M)
@@ -103,6 +106,7 @@ theorem hasSum_snd_expSeries_of_smul_comm (x : tsze R M)
     inv_one, one_smul, snd_one, sub_zero]
   exact h.smul_const _
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `NormedSpace.exp R x.fst` converges to `e`
 then `NormedSpace.exp R x` converges to `inl e + inr (e • x.snd)`. -/
 theorem hasSum_expSeries_of_smul_comm

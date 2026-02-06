@@ -148,6 +148,7 @@ lemma universalFactorizationMap_freeMonic :
   simp [universalFactorizationMap]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 lemma universalFactorizationMap_comp_map :
     (universalFactorizationMap S n m k hn).toRingHom.comp (map (algebraMap R S)) =
     .comp (Algebra.TensorProduct.lift (S := R)
@@ -162,6 +163,7 @@ lemma universalFactorizationMap_comp_map :
       Polynomial.map_map, ← map_map_freeMonic (f := algebraMap R S)]
     congr <;> ext <;> simp [← algebraMap_apply]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Lifts along `universalFactorizationMap` corresponds to factorization of `p` into
 monic polynomials with fixed degrees. -/
 def universalFactorizationMapLiftEquiv (p : MonicDegreeEq S n) :
@@ -181,6 +183,7 @@ def universalFactorizationMapLiftEquiv (p : MonicDegreeEq S n) :
   left_inv f := by ext <;> simp
   right_inv q := by ext <;> simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma ker_eval₂Hom_universalFactorizationMap :
     RingHom.ker (eval₂Hom (S₁ := MvPolynomial (Fin m) R ⊗[R] MvPolynomial (Fin k) R)
       (universalFactorizationMap R n m k hn) (Sum.elim (.X · ⊗ₜ 1) (1 ⊗ₜ .X ·))) =
@@ -214,6 +217,7 @@ lemma ker_eval₂Hom_universalFactorizationMap :
     congr 1
     ext <;> simp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The canonical presentation of `universalFactorizationMap`. -/
 @[simps] def universalFactorizationMapPresentation :
     letI := (universalFactorizationMap R n m k hn).toAlgebra
@@ -236,6 +240,7 @@ lemma ker_eval₂Hom_universalFactorizationMap :
     map := finSumFinEquiv.symm ∘ finCongr hn
     map_inj := finSumFinEquiv.symm.injective.comp (finCongr hn).injective }
 
+set_option backward.isDefEq.respectTransparency false in
 lemma pderiv_inl_universalFactorizationMap_X (i j) :
     pderiv (Sum.inl i) (tensorEquivSum R (Fin m) (Fin k) R
       (universalFactorizationMap R n m k hn (X j))) =

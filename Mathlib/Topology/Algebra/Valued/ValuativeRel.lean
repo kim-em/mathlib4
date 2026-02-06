@@ -209,6 +209,7 @@ lemma isOpen_sphere {r : ValueGroupWithZero R} (hr : r ≠ 0) :
 @[deprecated (since := "2025-08-01")]
 alias _root_.ValuativeTopology.isOpen_sphere := isOpen_sphere
 
+set_option backward.isDefEq.respectTransparency false in
 open WithZeroTopology in
 lemma continuous_valuation : Continuous v := by
   simp only [continuous_iff_continuousAt, ContinuousAt]

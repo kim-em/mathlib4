@@ -970,6 +970,7 @@ theorem wbtw_smul_vadd_smul_vadd_of_nonneg_of_nonpos (x : P) (v : V) {r₁ r₂ 
   rw [wbtw_comm]
   exact wbtw_smul_vadd_smul_vadd_of_nonpos_of_nonneg x v hr₂ hr₁
 
+set_option backward.isDefEq.respectTransparency false in
 theorem Wbtw.trans_left_right {w x y z : P} (h₁ : Wbtw R w y z) (h₂ : Wbtw R w x y) :
     Wbtw R x y z := by
   rcases h₁ with ⟨t₁, ht₁, rfl⟩

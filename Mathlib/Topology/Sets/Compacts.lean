@@ -140,6 +140,7 @@ theorem coe_eq_empty {s : Compacts α} : (s : Set α) = ∅ ↔ s = ⊥ :=
 theorem coe_nonempty {s : Compacts α} : (s : Set α).Nonempty ↔ s ≠ ⊥ :=
   nonempty_iff_ne_empty.trans coe_eq_empty.not
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem coe_finset_sup {ι : Type*} {s : Finset ι} {f : ι → Compacts α} :
     (↑(s.sup f) : Set α) = s.sup fun i => ↑(f i) := by
@@ -698,6 +699,7 @@ instance : Bot (CompactOpens α) where bot := ⟨⊥, isOpen_empty⟩
 instance : SemilatticeSup (CompactOpens α) := SetLike.coe_injective.semilatticeSup _ coe_sup
 instance : OrderBot (CompactOpens α) := OrderBot.lift ((↑) : _ → Set α) (fun _ _ => id) coe_bot
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma coe_finsetSup {ι : Type*} {f : ι → CompactOpens α} {s : Finset ι} :
     (↑(s.sup f) : Set α) = ⋃ i ∈ s, f i := by

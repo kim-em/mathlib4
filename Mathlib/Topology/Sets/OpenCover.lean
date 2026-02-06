@@ -69,6 +69,7 @@ section Irreducible
 
 open TopologicalSpace Function
 
+set_option backward.isDefEq.respectTransparency false in
 /-- (Pre)Irreducibility of an open set can be checked on a cover by opens
 with pairwise non-empty intersections. -/
 theorem IsPreirreducible.of_subset_iUnion {X ι : Type*} [TopologicalSpace X]
@@ -95,6 +96,7 @@ theorem IsPreirreducible.of_subset_iUnion {X ι : Type*} [TopologicalSpace X]
         with ⟨x, hx₁, hx₂⟩
       exfalso; exact hx₂ <| hUu hx₁
 
+set_option backward.isDefEq.respectTransparency false in
 /-- (Pre)Irreducibility can be checked on an open cover with pairwise non-empty intersections. -/
 theorem PreirreducibleSpace.of_isOpenCover {X ι : Type*} [TopologicalSpace X]
     {U : ι → Opens X} (hn : Pairwise ((¬ Disjoint · ·) on U)) (hU : IsOpenCover U)

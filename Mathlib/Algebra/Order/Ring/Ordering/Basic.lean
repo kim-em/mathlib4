@@ -131,6 +131,7 @@ theorem neg_smul_mem [P.HasIdealSupport]
 
 end HasIdealSupport
 
+set_option backward.isDefEq.respectTransparency false in
 theorem hasIdealSupport_of_isUnit_two (h : IsUnit (2 : R)) : P.HasIdealSupport := by
   rw [hasIdealSupport_iff]
   intro x a _ _

@@ -23,6 +23,7 @@ public section
 
 variable {𝕜 : Type*} [Field 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜] {s : Set 𝕜} {f : 𝕜 → 𝕜}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `f : 𝕜 → 𝕜` is convex, then for any three points `x < y < z` the slope of the secant line of
 `f` on `[x, y]` is less than the slope of the secant line of `f` on `[y, z]`. -/
 theorem ConvexOn.slope_mono_adjacent (hf : ConvexOn 𝕜 s f) {x y z : 𝕜} (hx : x ∈ s) (hz : z ∈ s)
@@ -45,6 +46,7 @@ theorem ConcaveOn.slope_anti_adjacent (hf : ConcaveOn 𝕜 s f) {x y z : 𝕜} (
   simp only [Pi.neg_apply] at this
   linear_combination this
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `f : 𝕜 → 𝕜` is strictly convex, then for any three points `x < y < z` the slope of the
 secant line of `f` on `[x, y]` is strictly less than the slope of the secant line of `f` on
 `[y, z]`. -/
@@ -169,6 +171,7 @@ theorem strictConcaveOn_iff_slope_strict_anti_adjacent :
   ⟨fun h => ⟨h.1, fun _ _ _ => h.slope_anti_adjacent⟩, fun h =>
     strictConcaveOn_of_slope_strict_anti_adjacent h.1 (@fun _ _ _ hx hy => h.2 hx hy)⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ConvexOn.secant_mono_aux1 (hf : ConvexOn 𝕜 s f) {x y z : 𝕜} (hx : x ∈ s) (hz : z ∈ s)
     (hxy : x < y) (hyz : y < z) : (z - x) * f y ≤ (z - y) * f x + (y - x) * f z := by
   have hxy' : 0 < y - x := by linarith
@@ -211,6 +214,7 @@ theorem ConvexOn.secant_mono (hf : ConvexOn 𝕜 s f) {a x y : 𝕜} (ha : a ∈
       rw [← neg_div_neg_eq]; simp
   · exact hf.secant_mono_aux2 ha hy hxa hxy
 
+set_option backward.isDefEq.respectTransparency false in
 theorem StrictConvexOn.secant_strict_mono_aux1 (hf : StrictConvexOn 𝕜 s f) {x y z : 𝕜} (hx : x ∈ s)
     (hz : z ∈ s) (hxy : x < y) (hyz : y < z) : (z - x) * f y < (z - y) * f x + (y - x) * f z := by
   have hxy' : 0 < y - x := by linarith

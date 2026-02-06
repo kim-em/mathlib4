@@ -259,6 +259,7 @@ theorem expand_contract' [NoZeroDivisors R] {f : R[X]} (hf : Polynomial.derivati
   · rw [expand_one, contract_one]
   · haveI := Fact.mk hchar; exact expand_contract p hf hprime.ne_zero
 
+set_option backward.isDefEq.respectTransparency false in
 theorem map_frobenius_expand (f : R[X]) : map (frobenius R p) (expand R p f) = f ^ p := by
   refine f.induction_on' (fun a b ha hb => ?_) fun n a => ?_
   · rw [map_add, Polynomial.map_add, ha, hb, add_pow_expChar]
@@ -309,6 +310,7 @@ section IsDomain
 
 variable (R : Type u) [CommRing R] [IsDomain R]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isLocalHom_expand {p : ℕ} (hp : 0 < p) : IsLocalHom (expand R p) := by
   refine ⟨fun f hf1 => ?_⟩
   have hf2 := eq_C_of_degree_eq_zero (degree_eq_zero_of_isUnit hf1)

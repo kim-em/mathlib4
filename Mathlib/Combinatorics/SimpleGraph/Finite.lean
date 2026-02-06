@@ -139,6 +139,7 @@ theorem card_edgeFinset_top_eq_card_choose_two [DecidableEq V] :
     #(⊤ : SimpleGraph V).edgeFinset = (Fintype.card V).choose 2 := by
   simp_rw [edgeFinset, Set.toFinset_card, edgeSet_top, ← Sym2.card_diagSet_compl]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Any graph on `n` vertices has at most `n.choose 2` edges. -/
 theorem card_edgeFinset_le_card_choose_two : #G.edgeFinset ≤ (Fintype.card V).choose 2 := by
   classical
@@ -516,6 +517,7 @@ namespace Iso
 
 variable {G} {W : Type*} {G' : SimpleGraph W}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem card_edgeFinset_eq (f : G ≃g G') [Fintype G.edgeSet] [Fintype G'.edgeSet] :
     #G.edgeFinset = #G'.edgeFinset := by
   apply Finset.card_eq_of_equiv
@@ -596,6 +598,7 @@ theorem map_neighborFinset_induce_of_neighborSet_subset {v : s} (h : G.neighborS
   rwa [← Set.toFinset_subset_toFinset, ← neighborFinset_def, ← inter_eq_left,
     ← map_neighborFinset_induce v] at h
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If the neighbor set of a vertex `v` is a subset of `s`, then the degree of the vertex in the
 induced subgraph of `s` is the same as in `G`. -/
 theorem degree_induce_of_neighborSet_subset {v : s} (h : G.neighborSet v ⊆ s) :

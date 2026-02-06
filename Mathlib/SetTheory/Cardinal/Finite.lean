@@ -53,9 +53,11 @@ theorem _root_.Fintype.card_eq_nat_card {_ : Fintype α} : Fintype.card α = Nat
 lemma card_eq_finsetCard (s : Finset α) : Nat.card s = s.card := by
   simp only [Nat.card_eq_fintype_card, Fintype.card_coe]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma card_eq_card_toFinset (s : Set α) [Fintype s] : Nat.card s = s.toFinset.card := by
   simp only [← Nat.card_eq_finsetCard, s.mem_toFinset]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma card_eq_card_finite_toFinset {s : Set α} (hs : s.Finite) : Nat.card s = hs.toFinset.card := by
   simp only [← Nat.card_eq_finsetCard, hs.mem_toFinset]
 
@@ -353,6 +355,7 @@ theorem card_ne_zero_iff_nonempty (α : Type*) : card α ≠ 0 ↔ Nonempty α :
 theorem one_le_card_iff_nonempty (α : Type*) : 1 ≤ card α ↔ Nonempty α := by
   simp [one_le_iff_ne_zero, card_eq_zero_iff_empty]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma card_pos [Nonempty α] : 0 < card α := by
   simpa [pos_iff_ne_zero, card_ne_zero_iff_nonempty]
 

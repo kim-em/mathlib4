@@ -237,6 +237,7 @@ namespace LinearDisjoint
 
 variable (H : A.LinearDisjoint B)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `A` and `B` are subalgebras in a commutative algebra `S` over `R`, and if they are
 linearly disjoint, then there is the natural isomorphism
 `A ⊗[R] B ≃ₐ[R] A ⊔ B` induced by multiplication in `S`. -/
@@ -246,6 +247,7 @@ protected def mulMap :=
 @[simp]
 theorem val_mulMap_tmul (a : A) (b : B) : (H.mulMap (a ⊗ₜ[R] b) : S) = a.1 * b.1 := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 If `A` and `B` are linearly disjoint subalgebras in a commutative algebra `S` over `R`
 such that `A ⊔ B = S`, then this is the natural isomorphism
@@ -263,6 +265,7 @@ noncomputable def mulMapLeftOfSupEqTop (H' : A ⊔ B = ⊤) :
 theorem mulMapLeftOfSupEqTop_tmul (H' : A ⊔ B = ⊤) (a : A) (b : B) :
     H.mulMapLeftOfSupEqTop H' (a ⊗ₜ[R] b) = (a : S) * (b : S) := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 If `A` and `B` are linearly disjoint subalgebras in a commutative algebra `S` over `R`
 such that `A ⊔ B = S`, then any `R`-basis of `B` is also an `A`-basis of `S`.
@@ -271,21 +274,25 @@ noncomputable def basisOfBasisRight (H' : A ⊔ B = ⊤) {ι : Type*} (b : Basis
     Basis ι A S :=
   (b.baseChange A).map (H.mulMapLeftOfSupEqTop H').toLinearEquiv
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem algebraMap_basisOfBasisRight_apply (H' : A ⊔ B = ⊤) {ι : Type*} (b : Basis ι R B) (i : ι) :
     H.basisOfBasisRight H' b i = algebraMap B S (b i) := by
   simp [basisOfBasisRight]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem mulMapLeftOfSupEqTop_symm_apply (H' : A ⊔ B = ⊤) (x : B) :
     (H.mulMapLeftOfSupEqTop H').symm x = 1 ⊗ₜ[R] x :=
   (H.mulMapLeftOfSupEqTop H').symm_apply_eq.mpr (by simp)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem algebraMap_basisOfBasisRight_repr_apply (H' : A ⊔ B = ⊤) {ι : Type*} (b : Basis ι R B)
     (x : B) (i : ι) :
     algebraMap A S ((H.basisOfBasisRight H' b).repr x i) = algebraMap R S (b.repr x i) := by
   simp [basisOfBasisRight, Algebra.algebraMap_eq_smul_one]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem leftMulMatrix_basisOfBasisRight_algebraMap (H' : A ⊔ B = ⊤) {ι : Type*} [Fintype ι]
     [DecidableEq ι] (b : Basis ι R B) (x : B) :
     Algebra.leftMulMatrix (H.basisOfBasisRight H' b) (algebraMap B S x) =
@@ -293,6 +300,7 @@ theorem leftMulMatrix_basisOfBasisRight_algebraMap (H' : A ⊔ B = ⊤) {ι : Ty
   ext
   simp [Algebra.leftMulMatrix_eq_repr_mul, ← H.algebraMap_basisOfBasisRight_repr_apply H']
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 If `A` and `B` are subalgebras in a commutative algebra `S` over `R`, and if they are
 linearly disjoint and such that `A ⊔ B = S`, then any `R`-basis of `A` is also a `B`-basis of `S`.
@@ -311,18 +319,21 @@ theorem basisOfBasisLeft_repr_apply (H' : A ⊔ B = ⊤) {ι : Type*} (b : Basis
     algebraMap B S ((H.basisOfBasisLeft H' b).repr x i) = algebraMap R S (b.repr x i) :=
   H.symm.algebraMap_basisOfBasisRight_repr_apply (by rwa [sup_comm]) b x i
 
+set_option backward.isDefEq.respectTransparency false in
 include H in
 /-- If `A` and `B` are subalgebras in a commutative algebra `S` over `R`, and if they are
 linearly disjoint, and if they are free `R`-modules, then `A ⊔ B` is also a free `R`-module. -/
 theorem sup_free_of_free [Module.Free R A] [Module.Free R B] : Module.Free R ↥(A ⊔ B) :=
   Module.Free.of_equiv H.mulMap.toLinearEquiv
 
+set_option backward.isDefEq.respectTransparency false in
 include H in
 /-- If `A` and `B` are subalgebras in a domain `S` over `R`, and if they are
 linearly disjoint, then `A ⊗[R] B` is also a domain. -/
 theorem isDomain [IsDomain S] : IsDomain (A ⊗[R] B) :=
   H.injective.isDomain (A.mulMap B).toRingHom
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `A` and `B` are `R`-algebras, such that there exists a domain `S` over `R`
 such that `A` and `B` inject into it and their images are linearly disjoint,
 then `A ⊗[R] B` is also a domain. -/
@@ -346,6 +357,7 @@ variable [CommRing R] [Ring S] [Algebra R S]
 
 variable (A B : Subalgebra R S)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mulLeftMap_ker_eq_bot_iff_linearIndependent_op {ι : Type*} (a : ι → A) :
     LinearMap.ker (Submodule.mulLeftMap (M := toSubmodule A) (toSubmodule B) a) = ⊥ ↔
     LinearIndependent B.op (MulOpposite.op ∘ A.val ∘ a) := by
@@ -366,6 +378,7 @@ lemma mulLeftMap_ker_eq_bot_iff_linearIndependent_op {ι : Type*} (a : ι → A)
     MulOpposite.unop_smul, MulOpposite.unop_op, i, j]
   exact Submodule.mulLeftMap_apply_single _ _ _
 
+set_option backward.isDefEq.respectTransparency false in
 variable {A B} in
 /-- If `A` and `B` are linearly disjoint, if `B` is a flat `R`-module, then for any family of
 `R`-linearly independent elements of `A`, they are also `B`-linearly independent
@@ -376,6 +389,7 @@ theorem linearIndependent_left_op_of_flat (H : A.LinearDisjoint B) [Module.Flat 
   have h := Submodule.LinearDisjoint.linearIndependent_left_of_flat H ha
   rwa [mulLeftMap_ker_eq_bot_iff_linearIndependent_op] at h
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If a basis of `A` is also `B`-linearly independent in the opposite ring,
 then `A` and `B` are linearly disjoint. -/
 theorem of_basis_left_op {ι : Type*} (a : Basis ι R A)
@@ -384,6 +398,7 @@ theorem of_basis_left_op {ι : Type*} (a : Basis ι R A)
   rw [← mulLeftMap_ker_eq_bot_iff_linearIndependent_op] at H
   exact Submodule.LinearDisjoint.of_basis_left _ _ a H
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mulRightMap_ker_eq_bot_iff_linearIndependent {ι : Type*} (b : ι → B) :
     LinearMap.ker (Submodule.mulRightMap (toSubmodule A) (N := toSubmodule B) b) = ⊥ ↔
     LinearIndependent A (B.val ∘ b) := by
@@ -396,6 +411,7 @@ lemma mulRightMap_ker_eq_bot_iff_linearIndependent {ι : Type*} (b : ι → B) :
     LinearMap.coe_restrictScalars, Finsupp.linearCombination_single, i, j]
   exact Submodule.mulRightMap_apply_single _ _ _
 
+set_option backward.isDefEq.respectTransparency false in
 variable {A B} in
 /-- If `A` and `B` are linearly disjoint, if `A` is a flat `R`-module, then for any family of
 `R`-linearly independent elements of `B`, they are also `A`-linearly independent. -/
@@ -405,12 +421,14 @@ theorem linearIndependent_right_of_flat (H : A.LinearDisjoint B) [Module.Flat R 
   have h := Submodule.LinearDisjoint.linearIndependent_right_of_flat H hb
   rwa [mulRightMap_ker_eq_bot_iff_linearIndependent] at h
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If a basis of `B` is also `A`-linearly independent, then `A` and `B` are linearly disjoint. -/
 theorem of_basis_right {ι : Type*} (b : Basis ι R B)
     (H : LinearIndependent A (B.val ∘ b)) : A.LinearDisjoint B := by
   rw [← mulRightMap_ker_eq_bot_iff_linearIndependent] at H
   exact Submodule.LinearDisjoint.of_basis_right _ _ b H
 
+set_option backward.isDefEq.respectTransparency false in
 variable {A B} in
 /-- If `A` and `B` are linearly disjoint and their elements commute, if `B` is a flat `R`-module,
 then for any family of `R`-linearly independent elements of `A`,
@@ -420,6 +438,7 @@ theorem linearIndependent_left_of_flat_of_commute (H : A.LinearDisjoint B) [Modu
     (hc : ∀ (a : A) (b : B), Commute a.1 b.1) : LinearIndependent B (A.val ∘ a) :=
   (H.symm_of_commute hc).linearIndependent_right_of_flat ha
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If a basis of `A` is also `B`-linearly independent, if elements in `A` and `B` commute,
 then `A` and `B` are linearly disjoint. -/
 theorem of_basis_left_of_commute {ι : Type*} (a : Basis ι R A)
@@ -427,6 +446,7 @@ theorem of_basis_left_of_commute {ι : Type*} (a : Basis ι R A)
     A.LinearDisjoint B :=
   (of_basis_right B A a H).symm_of_commute fun _ _ ↦ (hc _ _).symm
 
+set_option backward.isDefEq.respectTransparency false in
 variable {A B} in
 /-- If `A` and `B` are linearly disjoint, if `A` is flat, then for any family of
 `R`-linearly independent elements `{ a_i }` of `A`, and any family of
@@ -437,6 +457,7 @@ theorem linearIndependent_mul_of_flat_left (H : A.LinearDisjoint B) [Module.Flat
     (hb : LinearIndependent R b) : LinearIndependent R fun (i : κ × ι) ↦ (a i.1).1 * (b i.2).1 :=
   Submodule.LinearDisjoint.linearIndependent_mul_of_flat_left H ha hb
 
+set_option backward.isDefEq.respectTransparency false in
 variable {A B} in
 /-- If `A` and `B` are linearly disjoint, if `B` is flat, then for any family of
 `R`-linearly independent elements `{ a_i }` of `A`, and any family of
@@ -447,6 +468,7 @@ theorem linearIndependent_mul_of_flat_right (H : A.LinearDisjoint B) [Module.Fla
     (hb : LinearIndependent R b) : LinearIndependent R fun (i : κ × ι) ↦ (a i.1).1 * (b i.2).1 :=
   Submodule.LinearDisjoint.linearIndependent_mul_of_flat_right H ha hb
 
+set_option backward.isDefEq.respectTransparency false in
 variable {A B} in
 /-- If `A` and `B` are linearly disjoint, if one of `A` and `B` is flat, then for any family of
 `R`-linearly independent elements `{ a_i }` of `A`, and any family of
@@ -458,6 +480,7 @@ theorem linearIndependent_mul_of_flat (H : A.LinearDisjoint B)
     (hb : LinearIndependent R b) : LinearIndependent R fun (i : κ × ι) ↦ (a i.1).1 * (b i.2).1 :=
   Submodule.LinearDisjoint.linearIndependent_mul_of_flat H hf ha hb
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `{ a_i }` is an `R`-basis of `A`, if `{ b_j }` is an `R`-basis of `B`,
 such that the family `{ a_i * b_j }` in `S` is `R`-linearly independent,
 then `A` and `B` are linearly disjoint. -/
@@ -472,22 +495,27 @@ section
 variable (H : A.LinearDisjoint B)
 include H
 
+set_option backward.isDefEq.respectTransparency false in
 theorem of_le_left_of_flat {A' : Subalgebra R S}
     (h : A' ≤ A) [Module.Flat R B] : A'.LinearDisjoint B :=
   Submodule.LinearDisjoint.of_le_left_of_flat H h
 
+set_option backward.isDefEq.respectTransparency false in
 theorem of_le_right_of_flat {B' : Subalgebra R S}
     (h : B' ≤ B) [Module.Flat R A] : A.LinearDisjoint B' :=
   Submodule.LinearDisjoint.of_le_right_of_flat H h
 
+set_option backward.isDefEq.respectTransparency false in
 theorem of_le_of_flat_right {A' B' : Subalgebra R S}
     (ha : A' ≤ A) (hb : B' ≤ B) [Module.Flat R B] [Module.Flat R A'] :
     A'.LinearDisjoint B' := (H.of_le_left_of_flat ha).of_le_right_of_flat hb
 
+set_option backward.isDefEq.respectTransparency false in
 theorem of_le_of_flat_left {A' B' : Subalgebra R S}
     (ha : A' ≤ A) (hb : B' ≤ B) [Module.Flat R A] [Module.Flat R B'] :
     A'.LinearDisjoint B' := (H.of_le_right_of_flat hb).of_le_left_of_flat ha
 
+set_option backward.isDefEq.respectTransparency false in
 theorem rank_inf_eq_one_of_commute_of_flat_of_inj (hf : Module.Flat R A ∨ Module.Flat R B)
     (hc : ∀ (a b : ↥(A ⊓ B)), Commute a.1 b.1)
     (hinj : Function.Injective (algebraMap R S)) : Module.rank R ↥(A ⊓ B) = 1 := by
@@ -502,11 +530,13 @@ theorem rank_inf_eq_one_of_commute_of_flat_of_inj (hf : Module.Flat R A ∨ Modu
     Module.rank R (toSubmodule (A ⊓ B))
   exact Submodule.rank_mono (bot_le : (⊥ : Subalgebra R S) ≤ A ⊓ B)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem rank_inf_eq_one_of_commute_of_flat_left_of_inj [Module.Flat R A]
     (hc : ∀ (a b : ↥(A ⊓ B)), Commute a.1 b.1)
     (hinj : Function.Injective (algebraMap R S)) : Module.rank R ↥(A ⊓ B) = 1 :=
   H.rank_inf_eq_one_of_commute_of_flat_of_inj (Or.inl ‹_›) hc hinj
 
+set_option backward.isDefEq.respectTransparency false in
 theorem rank_inf_eq_one_of_commute_of_flat_right_of_inj [Module.Flat R B]
     (hc : ∀ (a b : ↥(A ⊓ B)), Commute a.1 b.1)
     (hinj : Function.Injective (algebraMap R S)) : Module.rank R ↥(A ⊓ B) = 1 :=
@@ -514,6 +544,7 @@ theorem rank_inf_eq_one_of_commute_of_flat_right_of_inj [Module.Flat R B]
 
 end
 
+set_option backward.isDefEq.respectTransparency false in
 theorem rank_eq_one_of_commute_of_flat_of_self_of_inj (H : A.LinearDisjoint A) [Module.Flat R A]
     (hc : ∀ (a b : A), Commute a.1 b.1)
     (hinj : Function.Injective (algebraMap R S)) : Module.rank R A = 1 := by

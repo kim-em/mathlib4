@@ -187,6 +187,7 @@ end Sum
 section Prod
 variable [CommSemiring R] {ι : Type*} [LinearOrder ι] [LocallyFiniteOrderBot ι] {f : ι → R⟦X⟧}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If the order of a family of `PowerSeries` tends to infinity, the collection of all
 possible products over `Finset` is summable. -/
 theorem summable_prod_of_tendsto_order_atTop_nhds_top
@@ -216,6 +217,7 @@ end Prod
 section ProdOneSubPow
 variable (R : Type*) [CommRing R] [TopologicalSpace R]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem multipliable_one_sub_X_pow : Multipliable fun n ↦ (1 : R⟦X⟧) - X ^ (n + 1) := by
   nontriviality R
   simp_rw [sub_eq_add_neg]

@@ -50,11 +50,13 @@ variable (R₀ R : Type*) (M : Type u) (N S : Type*) [CommSemiring R₀]
   [Ring R] [Algebra R₀ R] [AddCommGroup M] [AddCommGroup N]
   [AddCommGroup S] [Module R M] [Module R N] [Module R S]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An `R`-module `M` is isotypic of type `S` if all simple submodules of `M` are isomorphic
 to `S`. If `M` is semisimple, it is equivalent to requiring that all simple quotients of `M` are
 isomorphic to `S`. -/
 def IsIsotypicOfType : Prop := ∀ (m : Submodule R M) [IsSimpleModule R m], Nonempty (m ≃ₗ[R] S)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An `R`-module `M` is isotypic if all its simple submodules are isomorphic. -/
 def IsIsotypic : Prop := ∀ (m : Submodule R M) [IsSimpleModule R m], IsIsotypicOfType R M m
 
@@ -62,11 +64,13 @@ variable {R M S} in
 theorem IsIsotypicOfType.isIsotypic (h : IsIsotypicOfType R M S) : IsIsotypic R M :=
   fun m _ m' _ ↦ ⟨(h m').some.trans (h m).some.symm⟩
 
+set_option backward.isDefEq.respectTransparency false in
 @[nontriviality]
 theorem IsIsotypicOfType.of_subsingleton [Subsingleton M] : IsIsotypicOfType R M S :=
   fun S ↦ have := IsSimpleModule.nontrivial R S
     (not_subsingleton _ S.subtype_injective.subsingleton).elim
 
+set_option backward.isDefEq.respectTransparency false in
 @[nontriviality] theorem IsIsotypic.of_subsingleton [Subsingleton M] : IsIsotypic R M :=
   fun S ↦ (IsIsotypicOfType.of_subsingleton R M S).isIsotypic S
 
@@ -77,6 +81,7 @@ theorem IsIsotypicOfType.of_isSimpleModule [IsSimpleModule R M] : IsIsotypicOfTy
 
 variable {R}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem IsIsotypic.of_self [IsSemisimpleRing R] (h : IsIsotypic R R) : IsIsotypic R M :=
   fun m _ m' _ ↦
     have ⟨_, ⟨e⟩⟩ := IsSemisimpleRing.exists_linearEquiv_ideal_of_isSimpleModule R m
@@ -90,12 +95,14 @@ variable {M N S}
 theorem IsIsotypicOfType.of_linearEquiv_type (h : IsIsotypicOfType R M S) (e : S ≃ₗ[R] N) :
     IsIsotypicOfType R M N := fun m _ ↦ ⟨(h m).some.trans e⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem IsIsotypicOfType.of_injective (h : IsIsotypicOfType R N S) (f : M →ₗ[R] N)
     (inj : Function.Injective f) : IsIsotypicOfType R M S := fun m ↦
   have em := m.equivMapOfInjective f inj
   have := IsSimpleModule.congr em.symm
   ⟨em.trans (h (m.map f)).some⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem IsIsotypic.of_injective (h : IsIsotypic R N) (f : M →ₗ[R] N) (inj : Function.Injective f) :
     IsIsotypic R M := fun m _ ↦
   have em := (m.equivMapOfInjective f inj).symm
@@ -113,6 +120,7 @@ theorem LinearEquiv.isIsotypicOfType_iff_type (e : N ≃ₗ[R] S) :
 theorem LinearEquiv.isIsotypic_iff (e : M ≃ₗ[R] N) : IsIsotypic R M ↔ IsIsotypic R N :=
   ⟨(·.of_injective _ e.symm.injective), (·.of_injective _ e.injective)⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isIsotypicOfType_submodule_iff {N : Submodule R M} :
     IsIsotypicOfType R N S ↔ ∀ m ≤ N, [IsSimpleModule R m] → Nonempty (m ≃ₗ[R] S) := by
   rw [Subtype.forall', ← (Submodule.MapSubtype.orderIso N).forall_congr_right]
@@ -120,6 +128,7 @@ theorem isIsotypicOfType_submodule_iff {N : Submodule R M} :
   simp_rw [Submodule.MapSubtype.orderIso, Equiv.coe_fn_mk, ← (e _).isSimpleModule_iff]
   exact forall₂_congr fun m _ ↦ ⟨fun ⟨e'⟩ ↦ ⟨(e m).symm.trans e'⟩, fun ⟨e'⟩ ↦ ⟨(e m).trans e'⟩⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isIsotypic_submodule_iff {N : Submodule R M} :
     IsIsotypic R N ↔ ∀ m ≤ N, [IsSimpleModule R m] → IsIsotypicOfType R N m := by
   rw [Subtype.forall', ← (Submodule.MapSubtype.orderIso N).forall_congr_right]
@@ -137,6 +146,7 @@ theorem IsIsotypicOfType.linearEquiv_finsupp (h : IsIsotypicOfType R M S) :
   classical exact ⟨s, ⟨e.trans (DFinsupp.mapRange.linearEquiv fun m : s ↦ (h m.1).some)
     |>.trans (finsuppLequivDFinsupp R).symm⟩⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem IsIsotypic.linearEquiv_finsupp [Nontrivial M] (h : IsIsotypic R M) :
     ∃ (ι : Type u) (_ : Nonempty ι) (S : Submodule R M),
       IsSimpleModule R S ∧ Nonempty (M ≃ₗ[R] ι →₀ S) := by
@@ -152,6 +162,7 @@ theorem IsIsotypicOfType.linearEquiv_fun [Module.Finite R M] (h : IsIsotypicOfTy
   classical exact ⟨n, ⟨e.trans (DFinsupp.mapRange.linearEquiv fun i ↦ (h (S i)).some)
     |>.trans (finsuppLequivDFinsupp R).symm |>.trans (Finsupp.linearEquivFunOnFinite ..)⟩⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem IsIsotypic.linearEquiv_fun [Module.Finite R M] [Nontrivial M] (h : IsIsotypic R M) :
     ∃ (n : ℕ) (_ : NeZero n) (S : Submodule R M),
       IsSimpleModule R S ∧ Nonempty (M ≃ₗ[R] Fin n → S) := by
@@ -160,6 +171,7 @@ theorem IsIsotypic.linearEquiv_fun [Module.Finite R M] [Nontrivial M] (h : IsIso
   have ⟨n, e⟩ := (h S).linearEquiv_fun
   exact ⟨n, neZero_iff.2 <| by rintro rfl; exact not_subsingleton _ (e.some.subsingleton), S, hS, e⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem IsIsotypic.submodule_linearEquiv_fun {m : Submodule R M} [Module.Finite R m] [Nontrivial m]
     (h : IsIsotypic R m) : ∃ (n : ℕ) (_ : NeZero n) (S : Submodule R M),
       S ≤ m ∧ IsSimpleModule R S ∧ Nonempty (m ≃ₗ[R] Fin n → S) :=
@@ -175,15 +187,18 @@ variable (R M S)
 all submodules of `M` isomorphic to `S`. -/
 def isotypicComponent : Submodule R M := sSup {m | Nonempty (m ≃ₗ[R] S)}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The set of all (nontrivial) isotypic components of a module. -/
 def isotypicComponents : Set (Submodule R M) :=
   { m | ∃ S : Submodule R M, IsSimpleModule R S ∧ m = isotypicComponent R M S }
 
 variable {R M}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem Submodule.le_isotypicComponent (m : Submodule R M) : m ≤ isotypicComponent R M m :=
   le_sSup ⟨.refl ..⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem bot_lt_isotypicComponent (S : Submodule R M) [IsSimpleModule R S] :
     ⊥ < isotypicComponent R M S :=
   (bot_lt_iff_ne_bot.mpr <| (S.nontrivial_iff_ne_bot).mp <| IsSimpleModule.nontrivial R S).trans_le
@@ -195,12 +210,14 @@ theorem bot_lt_isotypicComponents {m : Submodule R M} (h : m ∈ isotypicCompone
 instance (c : isotypicComponents R M) : Nontrivial c :=
   Submodule.nontrivial_iff_ne_bot.mpr (bot_lt_isotypicComponents c.2).ne'
 
+set_option backward.isDefEq.respectTransparency false in
 instance [IsSemisimpleModule R S] : IsSemisimpleModule R (isotypicComponent R M S) := by
   rw [isotypicComponent, sSup_eq_iSup]
   refine isSemisimpleModule_biSup_of_isSemisimpleModule_submodule fun m ⟨e⟩ ↦ ?_
   have := IsSemisimpleModule.congr e
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 instance (c : isotypicComponents R M) : IsSemisimpleModule R c := by
   obtain ⟨c, S, _, rfl⟩ := c; infer_instance
 
@@ -210,6 +227,8 @@ theorem LinearEquiv.isotypicComponent_eq (e : N ≃ₗ[R] S) :
   congr_arg sSup <| Set.ext fun _ ↦ Nonempty.congr (·.trans e) (·.trans e.symm)
 
 section SimpleSubmodule
+
+set_option backward.isDefEq.respectTransparency false
 
 variable (N : Submodule R M) [IsSimpleModule R N] (s : Set (Submodule R M))
 
@@ -259,23 +278,28 @@ section IsSimpleModule
 
 variable (R M) [IsSimpleModule R S]
 
+set_option backward.isDefEq.respectTransparency false in
 local instance (m : {m : Submodule R M | Nonempty (m ≃ₗ[R] S)}) : IsSimpleModule R m :=
   .congr m.2.some
 
+set_option backward.isDefEq.respectTransparency false in
 protected theorem IsIsotypicOfType.isotypicComponent :
     IsIsotypicOfType R (isotypicComponent R M S) S :=
   isIsotypicOfType_submodule_iff.mpr fun m h _ ↦
     have ⟨_, ⟨e⟩, ⟨e'⟩⟩ := m.linearEquiv_of_le_sSup _ h
     ⟨e'.trans e⟩
 
+set_option backward.isDefEq.respectTransparency false in
 protected theorem IsIsotypic.isotypicComponent : IsIsotypic R (isotypicComponent R M S) :=
   (IsIsotypicOfType.isotypicComponent R M S).isIsotypic
 
+set_option backward.isDefEq.respectTransparency false in
 variable {R M} in
 protected theorem IsIsotypic.isotypicComponents {m : Submodule R M}
     (h : m ∈ isotypicComponents R M) : IsIsotypic R m := by
   obtain ⟨_, _, rfl⟩ := h; exact .isotypicComponent R M _
 
+set_option backward.isDefEq.respectTransparency false in
 variable {R M} in
 theorem eq_isotypicComponent_of_le {S c : Submodule R M} (hc : c ∈ isotypicComponents R M)
     [IsSimpleModule R S] (le : S ≤ c) : c = isotypicComponent R M S := by
@@ -283,6 +307,7 @@ theorem eq_isotypicComponent_of_le {S c : Submodule R M} (hc : c ∈ isotypicCom
   have ⟨e⟩ := isIsotypicOfType_submodule_iff.mp (.isotypicComponent R M S') _ le
   exact e.symm.isotypicComponent_eq
 
+set_option backward.isDefEq.respectTransparency false in
 theorem sSupIndep_isotypicComponents : sSupIndep (isotypicComponents R M) :=
   fun c hc ↦ disjoint_iff.mpr <| of_not_not fun ne ↦ by
     set s := isotypicComponents R M \ {c}
@@ -306,6 +331,7 @@ theorem IsIsotypicOfType.of_isotypicComponent_eq_top (h : isotypicComponent R M 
     IsIsotypicOfType R M S :=
   fun m _ ↦ have ⟨_, ⟨e⟩, ⟨e'⟩⟩ := m.linearEquiv_of_sSup_eq_top _ h; ⟨e'.trans e⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem Submodule.map_le_isotypicComponent (S : Submodule R M) [IsSimpleModule R S]
     (f : M →ₗ[R] N) : S.map f ≤ isotypicComponent R N S := by
   conv_lhs => rw [← S.range_subtype, ← LinearMap.range_comp]
@@ -313,6 +339,7 @@ theorem Submodule.map_le_isotypicComponent (S : Submodule R M) [IsSimpleModule R
   · exact le_sSup ⟨.symm <| .ofInjective _ inj⟩
   · simp_rw [eq, LinearMap.range_zero, bot_le]
 
+set_option backward.isDefEq.respectTransparency false in
 variable (S) in
 theorem LinearMap.le_comap_isotypicComponent (f : M →ₗ[R] N) :
     isotypicComponent R M S ≤ (isotypicComponent R N S).comap f :=
@@ -382,6 +409,7 @@ protected theorem Submodule.IsFullyInvariant.isotypicComponent :
     (isotypicComponent R M S).IsFullyInvariant :=
   LinearMap.le_comap_isotypicComponent S
 
+set_option backward.isDefEq.respectTransparency false in
 theorem Submodule.IsFullyInvariant.of_mem_isotypicComponents {m : Submodule R M}
     (h : m ∈ isotypicComponents R M) : m.IsFullyInvariant := by
   obtain ⟨_, _, rfl⟩ := h; exact .isotypicComponent R M _
@@ -397,16 +425,19 @@ def GaloisCoinsertion.setIsotypicComponents :
       simp_rw [CompleteSublattice.coe_iSup, iSup₂_le_iff]
       exact fun c hc ↦ le_sSup ⟨c.2, Subtype.coe_ne_coe.mpr (ne_of_mem_of_not_mem hc hcs)⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem le_isotypicComponent_iff [IsSemisimpleModule R M] {m : Submodule R M} :
     m ≤ isotypicComponent R M S ↔ IsIsotypicOfType R m S where
   mp h := .of_injective (.isotypicComponent R M S) _ (Submodule.inclusion_injective h)
   mpr h := (IsSemisimpleModule.sSup_simples_le m).ge.trans
     (sSup_le_sSup fun S ⟨_, le⟩ ↦ isIsotypicOfType_submodule_iff.mp h S le)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isotypicComponent_eq_top_iff [IsSemisimpleModule R M] :
     isotypicComponent R M S = ⊤ ↔ IsIsotypicOfType R M S := by
   rw [← top_le_iff, le_isotypicComponent_iff, Submodule.topEquiv.isIsotypicOfType_iff]
 
+set_option backward.isDefEq.respectTransparency false in
 open IsSemisimpleModule in
 theorem isFullyInvariant_iff_le_imp_isotypicComponent_le [IsSemisimpleModule R M]
     {m : Submodule R M} :
@@ -418,6 +449,7 @@ theorem isFullyInvariant_iff_le_imp_isotypicComponent_le [IsSemisimpleModule R M
   mpr h f := (sSup_simples_le m).ge.trans <| sSup_le fun S ⟨_, le⟩ ↦
     Submodule.map_le_iff_le_comap.mp ((S.map_le_isotypicComponent f).trans (h S le))
 
+set_option backward.isDefEq.respectTransparency false in
 theorem eq_isotypicComponent_iff [IsSemisimpleModule R M] {m : Submodule R M} (ne : m ≠ ⊥) :
     m = isotypicComponent R M S ↔ IsIsotypicOfType R m S ∧ m.IsFullyInvariant where
   mp := by rintro rfl; exact ⟨.isotypicComponent R M S, .isotypicComponent R M S⟩
@@ -432,6 +464,7 @@ variable [IsSemisimpleModule R M]
 
 open IsSemisimpleModule
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isIsotypic_iff_isFullyInvariant_imp_bot_or_top :
     IsIsotypic R M ↔ ∀ N : Submodule R M, N.IsFullyInvariant → N = ⊥ ∨ N = ⊤ where
   mp h N hN := (eq_bot_or_exists_simple_le N).imp_right fun ⟨S, le, _⟩ ↦ top_unique <|
@@ -440,6 +473,7 @@ theorem isIsotypic_iff_isFullyInvariant_imp_bot_or_top :
   mpr h S _ := isotypicComponent_eq_top_iff.mp <|
     (h _ (.isotypicComponent R M S)).resolve_left (bot_lt_isotypicComponent S).ne'
 
+set_option backward.isDefEq.respectTransparency false in
 theorem mem_isotypicComponents_iff {m : Submodule R M} :
     m ∈ isotypicComponents R M ↔ IsIsotypic R m ∧ m.IsFullyInvariant ∧ m ≠ ⊥ where
   mp := by rintro ⟨S, _, rfl⟩; exact ⟨.isotypicComponent R M S,
@@ -448,6 +482,7 @@ theorem mem_isotypicComponents_iff {m : Submodule R M} :
     have ⟨S, le, simple⟩ := (eq_bot_or_exists_simple_le m).resolve_left ne
     ⟨S, simple, (eq_isotypicComponent_iff ne).mpr ⟨isIsotypic_submodule_iff.mp iso S le, invar⟩⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Sets of isotypic components in a semisimple module are in order-preserving 1-1
 correspondence with fully invariant submodules. Consequently, the fully invariant submodules
 form a complete atomic Boolean algebra. -/
@@ -463,6 +498,7 @@ form a complete atomic Boolean algebra. -/
     exact le_biSup _ (isFullyInvariant_iff_le_imp_isotypicComponent_le.mp m.2 _ le)
   map_rel_iff' := (GaloisCoinsertion.setIsotypicComponents R M).l_le_l_iff
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isFullyInvariant_iff_sSup_isotypicComponents {m : Submodule R M} :
     m.IsFullyInvariant ↔ ∃ s ⊆ isotypicComponents R M, m = sSup s := by
   refine ⟨fun h ↦ ⟨OrderIso.setIsotypicComponents.symm ⟨m, h⟩, ⟨?_, ?_⟩⟩, ?_⟩

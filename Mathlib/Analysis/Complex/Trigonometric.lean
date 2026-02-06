@@ -293,8 +293,10 @@ theorem cosh_mul_I : cosh (x * I) = cos x := by
 theorem tanh_mul_I : tanh (x * I) = tan x * I := by
   rw [tanh_eq_sinh_div_cosh, cosh_mul_I, sinh_mul_I, mul_div_right_comm, tan]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem cos_mul_I : cos (x * I) = cosh x := by rw [← cosh_mul_I]; ring_nf; simp
 
+set_option backward.isDefEq.respectTransparency false in
 theorem sin_mul_I : sin (x * I) = sinh x * I := by
   have h : I * sin (x * I) = -sinh x := by
     rw [mul_comm, ← sinh_mul_I]

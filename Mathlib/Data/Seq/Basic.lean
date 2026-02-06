@@ -62,11 +62,13 @@ theorem length_eq_zero {s : Seq α} {h : s.Terminates} :
     s.length h = 0 ↔ s = nil := by
   simp [length, TerminatedAt]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem length'_eq_zero_iff_nil (s : Seq α) :
     s.length' = 0 ↔ s = nil := by
   cases s <;> simp
 
+set_option backward.isDefEq.respectTransparency false in
 theorem length'_ne_zero_iff_cons (s : Seq α) :
     s.length' ≠ 0 ↔ ∃ x s', s = cons x s' := by
   cases s <;> simp
@@ -88,6 +90,7 @@ theorem length_le_iff {s : Seq α} {n : ℕ} {h : s.Terminates} :
     s.length h ≤ n ↔ s.TerminatedAt n := by
   rw [← length_le_iff']; simp [h]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem length'_le_iff {s : Seq α} {n : ℕ} :
     s.length' ≤ n ↔ s.TerminatedAt n := by
   by_cases h : s.Terminates
@@ -112,6 +115,7 @@ theorem lt_length_iff {s : Seq α} {n : ℕ} {h : s.Terminates} :
     n < s.length h ↔ ∃ a, a ∈ s.get? n := by
   rw [← lt_length_iff']; simp [h]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem lt_length'_iff {s : Seq α} {n : ℕ} :
     n < s.length' ↔ ∃ a, a ∈ s.get? n := by
   by_cases h : s.Terminates
@@ -306,6 +310,7 @@ theorem append_assoc (s t u : Seq α) : append (append s t) u = append s (append
         case cons _ s => exact ⟨s, t, u, rfl, rfl⟩
   · exact ⟨s, t, u, rfl, rfl⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem of_mem_append {s₁ s₂ : Seq α} {a : α} (h : a ∈ append s₁ s₂) : a ∈ s₁ ∨ a ∈ s₂ := by
   have := h; revert this
   generalize e : append s₁ s₂ = ss; intro h; revert s₁
@@ -524,6 +529,7 @@ theorem drop_nil {n : ℕ} : (@nil α).drop n = nil := by
   | zero => simp [drop]
   | succ m ih => simp [← dropn_tail, ih]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem drop_length' {n : ℕ} {s : Seq α} :
     (s.drop n).length' = s.length' - n := by
@@ -902,6 +908,7 @@ theorem Pairwise_drop {R : α → α → Prop} {s : Seq α} (h : s.Pairwise R) {
 
 end Pairwise
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Coinductive principle for proving `b.length' ≤ a.length'` for two sequences `a` and `b`. -/
 theorem at_least_as_long_as_coind {a : Seq α} {b : Seq β}
     (motive : Seq α → Seq β → Prop) (base : motive a b)

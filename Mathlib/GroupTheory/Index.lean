@@ -296,6 +296,7 @@ theorem relIndex_top_left : (⊤ : Subgroup G).relIndex H = 1 :=
 
 @[deprecated (since := "2025-08-12")] alias relindex_top_left := relIndex_top_left
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_additive (attr := simp)]
 theorem relIndex_top_right : H.relIndex ⊤ = H.index := by
   rw [← relIndex_mul_index (show H ≤ ⊤ from le_top), index_top, mul_one]
@@ -328,6 +329,7 @@ theorem relIndex_ker (f : G →* G') : f.ker.relIndex K = Nat.card (K.map f) := 
 
 @[deprecated (since := "2025-08-12")] alias relindex_ker := relIndex_ker
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_additive (attr := simp) card_mul_index]
 theorem card_mul_index : Nat.card H * H.index = Nat.card G := by
   rw [← relIndex_bot_left, ← index_bot]
@@ -368,6 +370,7 @@ theorem dvd_index_map {f : G →* G'} (hf : f.ker ≤ H) :
 theorem index_map_eq (hf1 : Surjective f) (hf2 : f.ker ≤ H) : (H.map f).index = H.index :=
   Nat.dvd_antisymm (H.index_map_dvd hf1) (H.dvd_index_map hf2)
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 lemma index_map_of_bijective (hf : Bijective f) (H : Subgroup G) : (H.map f).index = H.index :=
   index_map_eq _ hf.2 (by rw [f.ker_eq_bot_iff.2 hf.1]; exact bot_le)
@@ -430,6 +433,7 @@ lemma relIndex_comap_ne_zero (f : G →* G') {J K : Subgroup G'} (hJK : J.relInd
 
 @[deprecated (since := "2025-08-12")] alias relindex_comap_ne_zero := relIndex_comap_ne_zero
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem index_eq_zero_of_relIndex_eq_zero (h : H.relIndex K = 0) : H.index = 0 :=
   H.relIndex_top_right.symm.trans (relIndex_eq_zero_of_le_right le_top h)
@@ -542,6 +546,7 @@ theorem relIndex_eq_one : H.relIndex K = 1 ↔ K ≤ H :=
 
 @[deprecated (since := "2025-08-12")] alias relindex_eq_one := relIndex_eq_one
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_additive (attr := simp) card_eq_one]
 theorem card_eq_one : Nat.card H = 1 ↔ H = ⊥ :=
   H.relIndex_bot_left ▸ relIndex_eq_one.trans le_bot_iff
@@ -815,6 +820,7 @@ theorem finiteIndex_iInf {ι : Type*} [Finite ι] {f : ι → Subgroup G}
     (hf : ∀ i, (f i).FiniteIndex) : (⨅ i, f i).FiniteIndex :=
   ⟨index_iInf_ne_zero fun i => (hf i).index_ne_zero⟩
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem finiteIndex_iInf' {ι : Type*} {s : Finset ι}
     (f : ι → Subgroup G) (hs : ∀ i ∈ s, (f i).FiniteIndex) :

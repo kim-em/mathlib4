@@ -79,6 +79,7 @@ scoped[ConvolutionProduct] attribute [instance] LinearMap.convNonUnitalNonAssocS
 @[simp] lemma toSpanSingleton_convMul_toSpanSingleton (x y : A) :
     toSpanSingleton R A x * toSpanSingleton R A y = toSpanSingleton R A (x * y) := by ext; simp
 
+set_option backward.isDefEq.respectTransparency false in
 theorem _root_.TensorProduct.map_convMul_map {D : Type*} [AddCommMonoid B] [Module R B]
     [CoalgebraStruct R B] [NonUnitalNonAssocSemiring D] [Module R D] [SMulCommClass R D D]
     [IsScalarTower R D D] {f h : C →ₗ[R] A} {g k : B →ₗ[R] D} :

@@ -133,6 +133,7 @@ section polarization
 
 variable {R : Type*} [Field R] [NeZero (2 : R)] [Module R M] {B C : BilinForm R M}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Polarization identity: a symmetric bilinear form can be expressed through the values
 it takes on the diagonal. -/
 lemma IsSymm.polarization (x y : M) (hB : B.IsSymm) :

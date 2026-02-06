@@ -158,6 +158,7 @@ theorem map_le_iff_le_comap (f : V ↪ W) (G : SimpleGraph V) (G' : SimpleGraph 
     rintro h _ _ ⟨u, v, ha, rfl, rfl⟩
     exact h ha⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem map_comap_le (f : V ↪ W) (G : SimpleGraph W) : (G.comap f).map f ≤ G := by
   rw [map_le_iff_le_comap]
 

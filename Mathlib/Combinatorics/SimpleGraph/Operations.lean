@@ -160,6 +160,7 @@ lemma sup_edge_self : G ⊔ edge s s = G := by simp
 lemma lt_sup_edge (hne : s ≠ t) (hn : ¬ G.Adj s t) : G < G ⊔ edge s t :=
   left_lt_sup.2 fun h ↦ hn <| h <| (edge_adj ..).mpr ⟨Or.inl ⟨rfl, rfl⟩, hne⟩
 
+set_option backward.isDefEq.respectTransparency false in
 lemma edge_le_iff {v w : V} : edge v w ≤ G ↔ v = w ∨ G.Adj v w := by
   obtain h | h := eq_or_ne v w
   · simp [h]
@@ -168,12 +169,15 @@ lemma edge_le_iff {v w : V} : edge v w ≤ G ↔ v = w ∨ G.Adj v w := by
 
 variable {s t}
 
+set_option backward.isDefEq.respectTransparency false in
 lemma edge_edgeSet_of_ne (h : s ≠ t) : (edge s t).edgeSet = {s(s, t)} := by simpa [edge]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma sup_edge_of_adj (h : G.Adj s t) : G ⊔ edge s t = G := by
   rwa [sup_eq_left, ← edgeSet_subset_edgeSet, edge_edgeSet_of_ne h.ne, Set.singleton_subset_iff,
     mem_edgeSet]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma disjoint_edge {u v : V} : Disjoint G (edge u v) ↔ ¬G.Adj u v := by
   by_cases h : u = v
   · subst h

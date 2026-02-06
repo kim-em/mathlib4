@@ -91,6 +91,7 @@ section Divisibility
 
 variable {R : Type*} [CommSemiring R] {u v : R} {p : ℕ}
 
+set_option backward.isDefEq.respectTransparency false in
 lemma exists_one_add_mul_pow_prime_eq
     (hp : p.Prime) (hvu : v ∣ u) (hpuv : p * u * v ∣ u ^ p) (x : R) :
     ∃ y, (1 + u * x) ^ p = 1 + p * u * (x + v * y) := by
@@ -129,6 +130,7 @@ lemma exists_one_add_mul_pow_prime_eq
     _ = p * u * v * b * x ^ p := by rw [hb]
     _ = p * u * (v * (b * x ^ p)) := by ring_nf
 
+set_option backward.isDefEq.respectTransparency false in
 lemma exists_one_add_mul_pow_prime_pow_eq {u v : R}
     (hp : p.Prime) (hvu : v ∣ u) (hpuv : p * u * v ∣ u ^ p) (x : R) (m : ℕ) :
     ∃ y, (1 + u * x) ^ (p ^ m) = 1 + p ^ m * u * (x + v * y) :=

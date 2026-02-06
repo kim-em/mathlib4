@@ -28,6 +28,7 @@ open Ideal IsLocalRing
 
 namespace PrimeSpectrum
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exist_mem_one_of_mem_maximal_ideal [IsLocalRing R] {p₁ p₀ : PrimeSpectrum R}
     (h₀ : p₀ < p₁) (h₁ : p₁ < closedPoint R) {x : R} (hx : x ∈ 𝔪) :
     ∃ q : PrimeSpectrum R, x ∈ q.asIdeal ∧ p₀ < q ∧ q.asIdeal < 𝔪 := by
@@ -70,6 +71,7 @@ theorem exist_mem_one_of_mem_two {p₁ p₀ p₂ : PrimeSpectrum R}
   exact Exists.intro (e q).1
     ⟨(p₂.1.under_map_of_isLocalizationAtPrime hq.le).le hxq, e.symm.lt_iff_lt.mp h₀, hq⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Let $R$ be a Noetherian ring, $\mathfrak{p}_0 < \dots < \mathfrak{p}_n$ be a
   chain of primes, $x \in \mathfrak{p}_n$. Then we can find another chain of primes
   $\mathfrak{q}_0 < \dots < \mathfrak{q}_n$ such that $x \in \mathfrak{q}_1$,

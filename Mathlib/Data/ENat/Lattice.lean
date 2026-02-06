@@ -106,6 +106,7 @@ lemma exists_eq_iSup_of_lt_top [Nonempty ι] (h : ⨆ i, f i < ⊤) :
     ∃ i, f i = ⨆ i, f i :=
   sSup_mem_of_nonempty_of_lt_top h
 
+set_option backward.isDefEq.respectTransparency false in
 lemma exists_eq_iInf [Nonempty ι] (f : ι → ℕ∞) : ∃ a, f a = ⨅ x, f x :=
   csInf_mem (range_nonempty fun i ↦ f i)
 
@@ -119,6 +120,7 @@ variable {ι κ : Sort*} {f g : ι → ℕ∞} {s : Set ℕ∞} {a : ℕ∞}
 lemma iSup_natCast : ⨆ n : ℕ, (n : ℕ∞) = ⊤ :=
   (iSup_eq_top _).2 fun _b hb ↦ ENat.exists_nat_gt (lt_top_iff_ne_top.1 hb)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mul_iSup (a : ℕ∞) (f : ι → ℕ∞) : a * ⨆ i, f i = ⨆ i, a * f i := by
   refine (iSup_le fun i ↦ mul_le_mul' rfl.le <| le_iSup_iff.2 fun _ a ↦ a i).antisymm' <|
     le_iSup_iff.2 fun d h ↦ ?_
@@ -147,6 +149,7 @@ lemma mul_sSup : a * sSup s = ⨆ b ∈ s, a * b := by
 lemma sSup_mul : sSup s * a = ⨆ b ∈ s, b * a := by
   simp_rw [mul_comm, mul_sSup]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mul_iInf [Nonempty ι] : a * ⨅ i, f i = ⨅ i, a * f i := by
   refine (le_iInf fun x ↦ by grw [iInf_le]).antisymm ?_
   obtain ⟨b, hb⟩ := ENat.exists_eq_iInf f
@@ -177,6 +180,7 @@ See also `ENat.iInf_mul` that assumes `[Nonempty ι]` but does not require `a �
 lemma iInf_mul_of_ne (ha₀ : a ≠ 0) : (⨅ i, f i) * a = ⨅ i, f i * a :=
   iInf_mul' <| by simp [ha₀]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma add_iSup [Nonempty ι] (f : ι → ℕ∞) : a + ⨆ i, f i = ⨆ i, a + f i := by
   obtain rfl | ha := eq_or_ne a ⊤
   · simp
@@ -220,6 +224,7 @@ lemma biSup_add_biSup_le {ι κ : Type*} {s : Set ι} {t : Set κ} (hs : s.Nonem
     {f : ι → ℕ∞} {g : κ → ℕ∞} {a : ℕ∞} (h : ∀ i ∈ s, ∀ j ∈ t, f i + g j ≤ a) :
     (⨆ i ∈ s, f i) + ⨆ j ∈ t, g j ≤ a := biSup_add_biSup_le' hs ht h
 
+set_option backward.isDefEq.respectTransparency false in
 lemma iSup_add_iSup (h : ∀ i j, ∃ k, f i + g j ≤ f k + g k) : iSup f + iSup g = ⨆ i, f i + g i := by
   cases isEmpty_or_nonempty ι
   · simp only [iSup_of_empty, bot_eq_zero, zero_add]
@@ -240,6 +245,7 @@ lemma smul_sSup {R} [SMul R ℕ∞] [IsScalarTower R ℕ∞ ℕ∞] (s : Set ℕ
     c • sSup s = ⨆ a ∈ s, c • a := by
   simp_rw [sSup_eq_iSup, smul_iSup]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma sub_iSup [Nonempty ι] (ha : a ≠ ⊤) : a - ⨆ i, f i = ⨅ i, a - f i := by
   obtain ⟨i, hi⟩ | h := em (∃ i, a < f i)
   · rw [tsub_eq_zero_iff_le.2 <| le_iSup_of_le _ hi.le, (iInf_eq_bot _).2, bot_eq_zero]

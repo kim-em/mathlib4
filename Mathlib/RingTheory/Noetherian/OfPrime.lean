@@ -30,6 +30,7 @@ namespace Ideal
 
 open Set Finset
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `Ideal.FG` is an Oka predicate. -/
 theorem isOka_fg : IsOka (FG (R := R)) where
   top := ⟨{1}, by simp⟩
