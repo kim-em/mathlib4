@@ -374,12 +374,10 @@ namespace Subgroup
 
 variable {N : Type*} [Group N] (H : Subgroup G)
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem map_eq_bot_iff {f : G →* N} : H.map f = ⊥ ↔ H ≤ f.ker :=
   (gc_map_comap f).l_eq_bot
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem map_eq_bot_iff_of_injective {f : G →* N} (hf : Function.Injective f) :
     H.map f = ⊥ ↔ H = ⊥ := by rw [map_eq_bot_iff, f.ker_eq_bot_iff.mpr hf, le_bot_iff]
@@ -388,7 +386,6 @@ open MonoidHom
 
 variable (f : G →* N)
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem map_le_range (H : Subgroup G) : map f H ≤ f.range :=
   (range_eq_map f).symm ▸ map_mono le_top
@@ -430,7 +427,6 @@ theorem comap_le_comap_of_le_range {f : G →* N} {K L : Subgroup N} (hf : K ≤
     K.comap f ≤ L.comap f ↔ K ≤ L :=
   ⟨(map_comap_eq_self hf).ge.trans ∘ map_le_iff_le_comap.mpr, comap_mono⟩
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem comap_le_comap_of_surjective {f : G →* N} {K L : Subgroup N} (hf : Function.Surjective f) :
     K.comap f ≤ L.comap f ↔ K ≤ L :=
@@ -449,7 +445,6 @@ theorem comap_map_eq_self {f : G →* N} {H : Subgroup G} (h : f.ker ≤ H) :
     comap f (map f H) = H := by
   rwa [comap_map_eq, sup_eq_left]
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem comap_map_eq_self_of_injective {f : G →* N} (h : Function.Injective f) (H : Subgroup G) :
     comap f (map f H) = H :=
@@ -459,7 +454,6 @@ theorem comap_map_eq_self_of_injective {f : G →* N} (h : Function.Injective f)
 theorem map_le_map_iff {f : G →* N} {H K : Subgroup G} : H.map f ≤ K.map f ↔ H ≤ K ⊔ f.ker := by
   rw [map_le_iff_le_comap, comap_map_eq]
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem map_le_map_iff' {f : G →* N} {H K : Subgroup G} :
     H.map f ≤ K.map f ↔ H ⊔ f.ker ≤ K ⊔ f.ker := by
@@ -469,7 +463,6 @@ theorem map_le_map_iff' {f : G →* N} {H K : Subgroup G} :
 theorem map_eq_map_iff {f : G →* N} {H K : Subgroup G} :
     H.map f = K.map f ↔ H ⊔ f.ker = K ⊔ f.ker := by simp only [le_antisymm_iff, map_le_map_iff']
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem map_eq_range_iff {f : G →* N} {H : Subgroup G} :
     H.map f = f.range ↔ Codisjoint H f.ker := by
@@ -542,7 +535,6 @@ theorem comap_sup_eq_of_le_range {H K : Subgroup N} (hH : H ≤ f.range) (hK : K
       rw [map_comap_eq, map_sup, map_comap_eq, map_comap_eq, inf_eq_right.mpr hH,
         inf_eq_right.mpr hK, inf_eq_right.mpr (sup_le hH hK)])
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem comap_sup_eq (H K : Subgroup N) (hf : Function.Surjective f) :
     comap f H ⊔ comap f K = comap f (H ⊔ K) :=
@@ -560,7 +552,6 @@ theorem subgroupOf_sup {A A' B : Subgroup G} (hA : A ≤ B) (hA' : A' ≤ B) :
 @[deprecated "Use in reverse direction." (since := "2025-11-03")] alias sup_subgroupOf_eq :=
   subgroupOf_sup
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem codisjoint_subgroupOf_sup (H K : Subgroup G) :
     Codisjoint (H.subgroupOf (H ⊔ K)) (K.subgroupOf (H ⊔ K)) := by
