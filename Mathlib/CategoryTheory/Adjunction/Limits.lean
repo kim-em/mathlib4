@@ -51,7 +51,7 @@ variable {J : Type u} [Category.{v} J] (K : J ⥤ C)
 
 /-- The right adjoint of `Cocones.functoriality K F : Cocone K ⥤ Cocone (K ⋙ F)`.
 
-Auxiliary definition for `functorialityIsLeftAdjoint`.
+Auxiliary definition for `functorialityAdjunction`.
 -/
 def functorialityRightAdjoint : Cocone (K ⋙ F) ⥤ Cocone K :=
   Cocones.functoriality _ G ⋙
@@ -62,7 +62,7 @@ attribute [local simp] functorialityRightAdjoint
 set_option backward.isDefEq.respectTransparency false in
 /-- The unit for the adjunction for `Cocones.functoriality K F : Cocone K ⥤ Cocone (K ⋙ F)`.
 
-Auxiliary definition for `functorialityIsLeftAdjoint`.
+Auxiliary definition for `functorialityAdjunction`.
 -/
 @[simps]
 def functorialityUnit :
@@ -72,7 +72,7 @@ def functorialityUnit :
 set_option backward.isDefEq.respectTransparency false in
 /-- The counit for the adjunction for `Cocones.functoriality K F : Cocone K ⥤ Cocone (K ⋙ F)`.
 
-Auxiliary definition for `functorialityIsLeftAdjoint`.
+Auxiliary definition for `functorialityAdjunction`.
 -/
 @[simps]
 def functorialityCounit :
@@ -164,7 +164,7 @@ variable {J : Type u} [Category.{v} J] (K : J ⥤ D)
 
 /-- The left adjoint of `Cones.functoriality K G : Cone K ⥤ Cone (K ⋙ G)`.
 
-Auxiliary definition for `functorialityIsRightAdjoint`.
+Auxiliary definition for `functorialityAdjunction'`.
 -/
 def functorialityLeftAdjoint : Cone (K ⋙ G) ⥤ Cone K :=
   Cones.functoriality _ F ⋙
@@ -175,7 +175,7 @@ attribute [local simp] functorialityLeftAdjoint
 set_option backward.isDefEq.respectTransparency false in
 /-- The unit for the adjunction for `Cones.functoriality K G : Cone K ⥤ Cone (K ⋙ G)`.
 
-Auxiliary definition for `functorialityIsRightAdjoint`.
+Auxiliary definition for `functorialityAdjunction'`.
 -/
 @[simps]
 def functorialityUnit' :
@@ -185,7 +185,7 @@ def functorialityUnit' :
 set_option backward.isDefEq.respectTransparency false in
 /-- The counit for the adjunction for `Cones.functoriality K G : Cone K ⥤ Cone (K ⋙ G)`.
 
-Auxiliary definition for `functorialityIsRightAdjoint`.
+Auxiliary definition for `functorialityAdjunction'`.
 -/
 @[simps]
 def functorialityCounit' :
