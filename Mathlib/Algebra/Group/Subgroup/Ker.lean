@@ -397,7 +397,6 @@ theorem map_le_range (H : Subgroup G) : map f H ≤ f.range :=
 theorem map_subtype_le {H : Subgroup G} (K : Subgroup H) : K.map H.subtype ≤ H :=
   (K.map_le_range H.subtype).trans_eq H.range_subtype
 
-set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 theorem ker_le_comap (H : Subgroup N) : f.ker ≤ comap f H :=
   comap_bot f ▸ comap_mono bot_le

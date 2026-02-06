@@ -185,6 +185,7 @@ instance : CompleteLattice my_T where
   __ := completeLatticeOfInf my_T _
 ```
 -/
+@[instance_reducible]
 def completeLatticeOfInf (α : Type*) [H1 : PartialOrder α] [H2 : InfSet α]
     (isGLB_sInf : ∀ s : Set α, IsGLB s (sInf s)) : CompleteLattice α where
   __ := H1; __ := H2
