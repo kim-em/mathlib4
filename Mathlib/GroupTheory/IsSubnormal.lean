@@ -121,11 +121,8 @@ lemma eq_bot_or_top_of_isSimpleGroup (hG : IsSimpleGroup G) (hN : IsSubnormal H)
     H = ⊥ ∨ H = ⊤ :=
   (hN.normal_of_isSimpleGroup hG).eq_bot_or_eq_top
 
-<<<<<<< HEAD
 set_option backward.isDefEq.respectTransparency false in
-=======
 @[to_additive]
->>>>>>> nightly-testing
 lemma iff_eq_top_or_exists :
     IsSubnormal H ↔ H = ⊤ ∨ ∃ K, H < K ∧ IsSubnormal K ∧ (H.subgroupOf K).Normal where
   mp h := by

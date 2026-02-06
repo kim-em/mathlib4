@@ -145,10 +145,8 @@ lemma RetractArrow.leftLiftingProperty
     exact
       ⟨⟨{ l := h.i.right ≫ sq'.lift
           fac_left := by
-            -- FIXME broken by https://github.com/leanprover/lean4/pull/12179
-            sorry
-            -- simp only [← h.i_w_assoc, sq'.fac_left, h.retract_left_assoc,
-            --   Arrow.mk_left, Category.id_comp]
+            simp only [← h.i_w_assoc, sq'.fac_left, h.retract_left_assoc,
+              Arrow.mk_left, Category.id_comp]
         }⟩⟩
 
 set_option backward.isDefEq.respectTransparency false in
