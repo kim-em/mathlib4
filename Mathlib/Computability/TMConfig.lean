@@ -258,7 +258,7 @@ theorem exists_code.comp {m n} {f : List.Vector ℕ n →. ℕ} {g : Fin n → L
     obtain ⟨cl, hl⟩ := IH fun i => hg i.succ
     exact
       ⟨cons cg cl, fun v => by
-        simp [Vector.mOfFn, hg₁, map_bind, hl]
+        simp [Vector.mOfFn, hg₁, hl]
         rfl⟩
 
 set_option backward.isDefEq.respectTransparency false in

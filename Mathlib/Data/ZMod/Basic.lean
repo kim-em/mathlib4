@@ -112,7 +112,7 @@ instance charP (n : ℕ) : CharP (ZMod n) n where
   cast_eq_zero_iff := by
     intro k
     rcases n with - | n
-    · simp [zero_dvd_iff]
+    · simp
     · exact Fin.natCast_eq_zero
 
 -- Verify that `grind` can see that `ZMod n` has characteristic `n`.
