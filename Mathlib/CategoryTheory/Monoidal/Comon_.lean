@@ -228,6 +228,7 @@ def mkIso {M N : Comon C} (f : M.X ≅ N.X) (f_counit : f.hom ≫ ε[N.X] = ε[M
   have : IsComonHom f.hom := ⟨f_counit, f_comul⟩
   ⟨⟨f.hom⟩, ⟨f.inv⟩, by cat_disch, by cat_disch⟩
 
+set_option backward.isDefEq.respectTransparency false in
 @[simps]
 instance uniqueHomToTrivial (A : Comon C) : Unique (A ⟶ trivial C) where
   default.hom := ε[A.X]
@@ -245,6 +246,7 @@ instance : HasTerminal (Comon C) :=
 
 open Opposite
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Auxiliary definition for `ComonToMonOpOpObj`. -/
 abbrev ComonToMonOpOpObjMon (A : Comon C) : MonObj (op A.X) where
   one := ε[A.X].op
@@ -271,6 +273,7 @@ Turn a comonoid object into a monoid object in the opposite category.
 
 @[deprecated (since := "2025-09-15")] alias Comon_ToMon_OpOpObj := ComonToMonOpOpObj
 
+set_option backward.isDefEq.respectTransparency false in
 variable (C) in
 /--
 The contravariant functor turning comonoid objects into monoid objects in the opposite category.
@@ -284,6 +287,7 @@ The contravariant functor turning comonoid objects into monoid objects in the op
 
 @[deprecated (since := "2025-09-15")] alias Comon_ToMon_OpOp := ComonToMonOpOp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Auxiliary definition for `MonOpOpToComonObj`. -/
 abbrev MonOpOpToComonObjComon (A : Mon Cᵒᵖ) : ComonObj (unop A.X) where
   counit := η[A.X].unop
@@ -308,6 +312,7 @@ Turn a monoid object in the opposite category into a comonoid object.
 
 variable (C)
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 The contravariant functor turning monoid objects in the opposite category into comonoid objects.
 -/
@@ -321,6 +326,7 @@ def MonOpOpToComon : (Mon Cᵒᵖ)ᵒᵖ ⥤ Comon C where
 
 @[deprecated (since := "2025-09-15")] alias Mon_OpOpToComon_ := MonOpOpToComon
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 Comonoid objects are contravariantly equivalent to monoid objects in the opposite category.
 -/
@@ -362,6 +368,7 @@ theorem tensorObj_comul' (A B : C) [ComonObj A] [ComonObj B] :
       (Δ[A] ⊗ₘ Δ[B]) ≫ (tensorμ (op A) (op B) (op A) (op B)).unop := by
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 The comultiplication on the tensor product of two comonoids is
 the tensor product of the comultiplications followed by the tensor strength
@@ -377,6 +384,7 @@ theorem tensorObj_comul (A B : C) [ComonObj A] [ComonObj B] :
   dsimp [op_tensorObj, op_associator]
   rw [Category.assoc, Category.assoc, Category.assoc]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The forgetful functor from `Comon C` to `C` is monoidal when `C` is monoidal. -/
 instance : (forget C).Monoidal :=
   Functor.CoreMonoidal.toMonoidal

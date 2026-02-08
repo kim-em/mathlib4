@@ -215,6 +215,7 @@ variable {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
   (H₂ : φ.val ≫ F.op.whiskerLeft ψ.val ≫
     Functor.whiskerRight (NatTrans.op adj.unit) S.val = 𝟙 S.val)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `F ⊣ G`, then the pushforwards along `F` and `G` are also adjoint. -/
 noncomputable
 def pushforwardPushforwardAdj : pushforward.{v} φ ⊣ pushforward.{v} ψ where

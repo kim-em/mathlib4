@@ -372,6 +372,7 @@ lemma πFunctorObj_eq (j : κ.ord.ToType) :
     NatTrans.comp_app, Arrow.comp_right,
     iterationFunctorMapSuccAppArrowIso_hom_right_right_comp_assoc]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma hasRightLiftingProperty_πObj {A B : C} (i : A ⟶ B) (hi : I i) (f : X ⟶ Y) :
     HasLiftingProperty i (πObj I κ f) := ⟨by
   haveI := hasColimitsOfShape_discrete I κ
@@ -424,6 +425,7 @@ lemma ιObj_naturality {f g : Arrow C} (φ : f ⟶ g) :
     ιObj I κ f.hom ≫ objMap I κ φ = φ.left ≫ ιObj I κ g.hom :=
   Arrow.leftFunc.congr_map ((ιIteration I κ).naturality φ).symm
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp)]
 lemma πObj_naturality {f g : Arrow C} (φ : f ⟶ g) :
     objMap I κ φ ≫ πObj I κ g.hom = πObj I κ f.hom ≫ φ.right := by
@@ -440,6 +442,7 @@ lemma πObj_naturality {f g : Arrow C} (φ : f ⟶ g) :
   rw [← assoc]
   apply comp_id
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The functorial factorization `ιObj I κ f ≫ πObj I κ f.hom = f`
 with `ιObj I κ f` in `I.rlp.llp` and `πObj I κ f.hom` in `I.rlp`. -/
 @[simps]

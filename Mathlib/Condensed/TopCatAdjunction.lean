@@ -129,6 +129,7 @@ noncomputable def topCatAdjunctionUnit (X : CondensedSet.{u}) : X ⟶ X.toTopCat
         ← FunctorToTypes.map_comp_apply]
       rfl }
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The adjunction `condensedSetToTopCat ⊣ topCatToCondensedSet` -/
 noncomputable def topCatAdjunction : condensedSetToTopCat.{u} ⊣ topCatToCondensedSet where
   unit.app := topCatAdjunctionUnit

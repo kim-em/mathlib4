@@ -141,6 +141,7 @@ theorem stalkFunctor_map_germ {F G : X.Presheaf C} (U : Opens X) (x : X) (hx : x
     F.germ U x hx ≫ (stalkFunctor C x).map f = f.app (op U) ≫ G.germ U x hx :=
   colimit.ι_map (whiskerLeft (OpenNhds.inclusion x).op f) (op ⟨U, hx⟩)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem stalkFunctor_map_germ_apply [ConcreteCategory C FC]
     {F G : X.Presheaf C} (U : Opens X) (x : X) (hx : x ∈ U) (f : F ⟶ G) (s) :
     (stalkFunctor C x).map f (F.germ U x hx s) = G.germ U x hx (f.app (op U) s) := by
@@ -166,6 +167,7 @@ def stalkPushforward (f : X ⟶ Y) (F : X.Presheaf C) (x : X) : (f _* F).stalk (
   refine ?_ ≫ colimit.pre _ (OpenNhds.map f x).op
   exact colim.map (whiskerRight (NatTrans.op (OpenNhds.inclusionMapIso f x).inv) F)
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp), elementwise (attr := simp)]
 theorem stalkPushforward_germ (f : X ⟶ Y) (F : X.Presheaf C) (U : Opens Y)
     (x : X) (hx : f x ∈ U) :
@@ -188,6 +190,7 @@ theorem stalkPushforward_germ (f : X ⟶ Y) (F : X.Presheaf C) (U : Opens Y)
 
 namespace stalkPushforward
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem id (ℱ : X.Presheaf C) (x : X) :
     ℱ.stalkPushforward C (𝟙 X) x = (stalkFunctor C x).map (Pushforward.id ℱ).hom := by
@@ -196,6 +199,7 @@ theorem id (ℱ : X.Presheaf C) (x : X) :
   erw [CategoryTheory.Functor.map_id]
   simp [stalkFunctor]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem comp (ℱ : X.Presheaf C) (f : X ⟶ Y) (g : Y ⟶ Z) (x : X) :
     ℱ.stalkPushforward C (f ≫ g) x =
@@ -221,6 +225,7 @@ def stalkPullbackHom (f : X ⟶ Y) (F : Y.Presheaf C) (x : X) :
   (stalkFunctor _ (f x)).map ((pushforwardPullbackAdjunction C f).unit.app F) ≫
     stalkPushforward _ _ _ x
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp)]
 lemma germ_stalkPullbackHom
     (f : X ⟶ Y) (F : Y.Presheaf C) (x : X) (U : Opens Y) (hU : f x ∈ U) :
@@ -263,6 +268,7 @@ lemma pushforwardPullbackAdjunction_unit_pullback_map_germToPullbackStalk
     ((Opens.map f).op.isPointwiseLeftKanExtensionLeftKanExtensionUnit F (op U)).fac _
       (CostructuredArrow.mk (homOfLE hV).op)
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp)]
 lemma germToPullbackStalk_stalkPullbackHom
     (f : X ⟶ Y) (F : Y.Presheaf C) (U : Opens X) (x : X) (hx : x ∈ U) :
@@ -281,6 +287,7 @@ lemma pushforwardPullbackAdjunction_unit_app_app_germToPullbackStalk
   simpa using pushforwardPullbackAdjunction_unit_pullback_map_germToPullbackStalk
     C f F ((Opens.map f).obj V.unop) x hx V.unop (by rfl)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The morphism `(f⁻¹ℱ)ₓ ⟶ ℱ_{f(x)}`. -/
 def stalkPullbackInv (f : X ⟶ Y) (F : Y.Presheaf C) (x : X) :
     ((pullback C f).obj F).stalk x ⟶ F.stalk (f x) :=
@@ -302,6 +309,7 @@ lemma germ_stalkPullbackInv (f : X ⟶ Y) (F : Y.Presheaf C) (x : X) (V : Opens 
     F.germToPullbackStalk _ f V x hV := by
   apply colimit.ι_desc
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The isomorphism `ℱ_{f(x)} ≅ (f⁻¹ℱ)ₓ`. -/
 def stalkPullbackIso (f : X ⟶ Y) (F : Y.Presheaf C) (x : X) :
     F.stalk (f x) ≅ ((pullback C f).obj F).stalk x where
@@ -356,6 +364,7 @@ theorem stalkSpecializes_comp {C : Type*} [Category* C] [Limits.HasColimits C] {
   ext
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp), elementwise (attr := simp)]
 theorem stalkSpecializes_stalkFunctor_map {F G : X.Presheaf C} (f : F ⟶ G) {x y : X} (h : x ⤳ y) :
     F.stalkSpecializes h ≫ (stalkFunctor C x).map f =
@@ -363,6 +372,7 @@ theorem stalkSpecializes_stalkFunctor_map {F G : X.Presheaf C} (f : F ⟶ G) {x 
   ext
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp), elementwise (attr := simp)]
 theorem stalkSpecializes_stalkPushforward (f : X ⟶ Y) (F : X.Presheaf C) {x y : X} (h : x ⤳ y) :
     (f _* F).stalkSpecializes (f.hom.map_specializes h) ≫ F.stalkPushforward _ f x =
@@ -503,6 +513,7 @@ theorem app_injective_iff_stalkFunctor_map_injective {F : Sheaf C X} {G : Preshe
   ⟨fun h U => app_injective_of_stalkFunctor_map_injective f U fun x _ => h x,
     stalkFunctor_map_injective_of_app_injective⟩
 
+set_option backward.isDefEq.respectTransparency false in
 instance stalkFunctor_preserves_mono (x : X) :
     Functor.PreservesMonomorphisms (Sheaf.forget.{v} C X ⋙ stalkFunctor C x) :=
   ⟨@fun _𝓐 _𝓑 f _ =>

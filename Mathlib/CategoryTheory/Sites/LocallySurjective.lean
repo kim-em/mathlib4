@@ -96,6 +96,7 @@ instance {F G : Cᵒᵖ ⥤ A} (f : F ⟶ G) [IsLocallySurjective J f] :
     IsLocallySurjective J (whiskerRight f (forget A)) where
   imageSieve_mem s := imageSieve_mem J f s
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isLocallySurjective_iff_range_sheafify_eq_top {F G : Cᵒᵖ ⥤ A} (f : F ⟶ G) :
     IsLocallySurjective J f ↔ (Subfunctor.range (whiskerRight f (forget A))).sheafify J = ⊤ := by
   simp only [Subfunctor.ext_iff, funext_iff, Set.ext_iff, Subfunctor.top_obj,
@@ -297,6 +298,7 @@ instance isLocallySurjective_toPlus (P : Cᵒᵖ ⥤ Type max u v) :
     ext ⟨Z, g, hg⟩
     simpa using x.2 { fst.hf := hf, snd.hf := S.1.downward_closed hf g, r.g₁ := g, r.g₂ := 𝟙 Z, .. }
 
+set_option backward.isDefEq.respectTransparency false in
 attribute [local instance] Types.instFunLike Types.instConcreteCategory in
 instance isLocallySurjective_toSheafify (P : Cᵒᵖ ⥤ Type max u v) :
     IsLocallySurjective J (J.toSheafify P) := by
@@ -339,6 +341,7 @@ instance isLocallySurjective_of_iso [IsIso φ] : IsLocallySurjective φ := by
   have : IsIso φ.val := (inferInstance : IsIso ((sheafToPresheaf J A).map φ))
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 attribute [local instance] Types.instFunLike Types.instConcreteCategory in
 instance {F G : Sheaf J (Type w)} (f : F ⟶ G) :
     IsLocallySurjective (Sheaf.toImage f) := by

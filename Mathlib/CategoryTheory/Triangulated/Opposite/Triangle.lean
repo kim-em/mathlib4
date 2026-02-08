@@ -35,6 +35,7 @@ variable (C : Type*) [Category* C] [HasShift C ℤ]
 
 namespace TriangleOpEquivalence
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The functor which sends a triangle `X ⟶ Y ⟶ Z ⟶ X⟦1⟧` in `C` to the triangle
 `op Z ⟶ op Y ⟶ op X ⟶ (op Z)⟦1⟧` in `Cᵒᵖ` (without introducing signs). -/
 @[simps]
