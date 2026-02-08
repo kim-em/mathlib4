@@ -106,6 +106,7 @@ lemma sections_smul_localizations_def
     r • m = (by exact r.1 x : Localization.AtPrime x.1.asIdeal) • m :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 For any `R`-module `M` and any open subset `U ⊆ Spec R`, `M^~(U)` is an `𝒪_{Spec R}(U)`-submodule
 of `∏_{𝔭 ∈ U} M_𝔭`. -/
@@ -161,6 +162,7 @@ noncomputable instance (U : (Opens (PrimeSpectrum.Top R))ᵒᵖ) :
     AddCommGroup (M.tildeInType.1.obj U) :=
   inferInstanceAs <| AddCommGroup (Tilde.sectionsSubmodule M U)
 
+set_option backward.isDefEq.respectTransparency false in
 noncomputable instance (U : (Opens (PrimeSpectrum.Top R))ᵒᵖ) :
     Module ((Spec <| .of R).ringCatSheaf.1.obj U) (M.tildeInType.1.obj U) :=
   inferInstanceAs <| Module _ (Tilde.sectionsSubmodule M U)
@@ -182,6 +184,7 @@ noncomputable def tilde : (Spec <| .of R).Modules where
   isSheaf := (TopCat.Presheaf.isSheaf_iff_isSheaf_comp (forget AddCommGrpCat) _).2
     M.tildeInType.2
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 This is `M^~` as a sheaf of `R`-modules.
 -/
@@ -212,6 +215,7 @@ lemma smul_stalk_no_nonzero_divisor {x : PrimeSpectrum R}
     LocalizedModule.eq_zero_of_smul_eq_zero _ (i.unop pt).2 _
     (by simpa [← smul_section_apply] using congr(($hs).1 pt))⟩ _ hst
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 If `U` is an open subset of `Spec R`, this is the morphism of `R`-modules from `M` to
 `M^~(U)`.
@@ -244,6 +248,7 @@ noncomputable def toStalk (x : PrimeSpectrum.Top R) :
     ModuleCat.of R M ⟶ TopCat.Presheaf.stalk (tildeInModuleCat M) x :=
   (toOpen M ⊤ ≫ TopCat.Presheaf.germ (tildeInModuleCat M) ⊤ x (by trivial))
 
+set_option backward.isDefEq.respectTransparency false in
 open LocalizedModule TopCat.Presheaf in
 lemma isUnit_toStalk (x : PrimeSpectrum.Top R) (r : x.asIdeal.primeCompl) :
     IsUnit ((algebraMap R (Module.End R ((tildeInModuleCat M).stalk x))) r) := by
@@ -278,6 +283,7 @@ noncomputable def localizationToStalk (x : PrimeSpectrum.Top R) :
   ModuleCat.ofHom <| LocalizedModule.lift _ (toStalk M x).hom <| isUnit_toStalk M x
 
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The ring homomorphism that takes a section of the structure sheaf of `R` on the open set `U`,
 implemented as a subtype of dependent functions to localizations at prime ideals, and evaluates
 the section on the point corresponding to a given prime ideal. -/
@@ -319,6 +325,7 @@ theorem stalkToFiberLinearMap_germ (U : Opens (PrimeSpectrum.Top R)) (x : PrimeS
       (TopCat.Presheaf.germ (tildeInModuleCat M) U x hx s) = (s.1 ⟨x, hx⟩ :) :=
   DFunLike.ext_iff.1 (ModuleCat.hom_ext_iff.mp (germ_comp_stalkToFiberLinearMap M U x hx)) s
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp), elementwise (attr := simp)]
 theorem toOpen_germ (U : Opens (PrimeSpectrum.Top R)) (x) (hx : x ∈ U) :
     toOpen M U ≫ M.tildeInModuleCat.germ U x hx = toStalk M x := by
@@ -335,6 +342,7 @@ theorem stalkToFiberLinearMap_toStalk (x : PrimeSpectrum.Top R) (m : M) :
     LocalizedModule.mk m 1 :=
   LinearMap.ext_iff.1 (ModuleCat.hom_ext_iff.mp (toStalk_comp_stalkToFiberLinearMap M x)) _
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 If `U` is an open subset of `Spec R`, `m` is an element of `M` and `r` is an element of `R`
 that is invertible on `U` (i.e. does not belong to any prime ideal corresponding to a point
@@ -354,6 +362,7 @@ theorem const_apply (m : M) (r : R) (U : Opens (PrimeSpectrum.Top R))
     (const M m r U hu).1 x = LocalizedModule.mk m ⟨r, hu x x.2⟩ :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exists_const (U) (s : (tildeInModuleCat M).obj (op U)) (x : PrimeSpectrum.Top R)
     (hx : x ∈ U) :
     ∃ (V : Opens (PrimeSpectrum.Top R)) (_ : x ∈ V) (i : V ⟶ U) (f : M) (g : R) (hg : _),
@@ -374,6 +383,7 @@ theorem res_const (f : M) (g : R) (U hu V hv i) :
     (tildeInModuleCat M).map i (const M f g U hu) = const M f g V hv :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem localizationToStalk_mk (x : PrimeSpectrum.Top R) (f : M) (s : x.asIdeal.primeCompl) :
     (localizationToStalk M x).hom (LocalizedModule.mk f s) =

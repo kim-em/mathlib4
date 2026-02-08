@@ -79,6 +79,7 @@ namespace ExtraDegeneracy
 attribute [reassoc] s₀_comp_δ₁ s_comp_δ s_comp_σ
 attribute [reassoc (attr := simp)] s'_comp_ε s_comp_δ₀
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If `ed` is an extra degeneracy for `X : SimplicialObject.Augmented C` and
 `F : C ⥤ D` is a functor, then `ed.map F` is an extra degeneracy for the
 augmented simplicial object in `D` obtained by applying `F` to `X`. -/

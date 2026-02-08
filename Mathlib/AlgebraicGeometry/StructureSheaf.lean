@@ -102,6 +102,7 @@ variable {R}
 def IsFraction {U : Opens (PrimeSpectrum.Top R)} (f : ∀ x : U, Localizations R x) : Prop :=
   ∃ r s : R, ∀ x : U, s ∉ x.1.asIdeal ∧ f x * algebraMap _ _ s = algebraMap _ _ r
 
+set_option backward.isDefEq.respectTransparency false in
 theorem IsFraction.eq_mk' {U : Opens (PrimeSpectrum.Top R)} {f : ∀ x : U, Localizations R x}
     (hf : IsFraction f) :
     ∃ r s : R,
@@ -153,6 +154,7 @@ theorem isLocallyFraction_pred {U : Opens (PrimeSpectrum.Top R)} (f : ∀ x : U,
             ∀ y : V, s ∉ y.1.asIdeal ∧ f (i y : U) * algebraMap _ _ s = algebraMap _ _ r :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The functions satisfying `isLocallyFraction` form a subring.
 -/
 def sectionsSubring (U : (Opens (PrimeSpectrum.Top R))ᵒᵖ) :
@@ -402,6 +404,7 @@ the stalk of `structureSheaf R` at `x`. -/
 def toStalk (x : PrimeSpectrum.Top R) : CommRingCat.of R ⟶ (structureSheaf R).presheaf.stalk x :=
   (toOpen R ⊤ ≫ (structureSheaf R).presheaf.germ _ x (by trivial))
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem toOpen_germ (U : Opens (PrimeSpectrum.Top R)) (x : PrimeSpectrum.Top R) (hx : x ∈ U) :
     toOpen R U ≫ (structureSheaf R).presheaf.germ U x hx = toStalk R x := by
@@ -581,6 +584,7 @@ theorem toBasicOpen_to_map (s f : R) :
       const R f 1 (PrimeSpectrum.basicOpen s) fun _ _ => Submonoid.one_mem _ :=
   (IsLocalization.lift_eq _ _).trans <| toOpen_eq_const _ _ _
 
+set_option backward.isDefEq.respectTransparency false in
 -- The proof here follows the argument in Hartshorne's Algebraic Geometry, Proposition II.2.2.
 theorem toBasicOpen_injective (f : R) : Function.Injective (toBasicOpen R f) := by
   intro s t h_eq
@@ -611,6 +615,7 @@ theorem toBasicOpen_injective (f : R) : Function.Injective (toBasicOpen R f) := 
   obtain ⟨r, hr⟩ := this
   exact ⟨r.1, hr, r.2⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-
 Auxiliary lemma for surjectivity of `toBasicOpen`.
 Every section can locally be represented on basic opens `basicOpen g` as a fraction `f/g`
@@ -650,6 +655,7 @@ theorem locally_const_basicOpen (U : Opens (PrimeSpectrum.Top R))
   apply const_ext
   rw [mul_assoc f c g, hc]
 
+set_option backward.isDefEq.respectTransparency false in
 /-
 Auxiliary lemma for surjectivity of `toBasicOpen`.
 A local representation of a section `s` as fractions `a i / h i` on finitely many basic opens
@@ -738,6 +744,7 @@ theorem normalize_finite_fraction_representation (U : Opens (PrimeSpectrum.Top R
   rw [pow_succ]
   ring
 
+set_option backward.isDefEq.respectTransparency false in
 -- The proof here follows the argument in Hartshorne's Algebraic Geometry, Proposition II.2.2.
 theorem toBasicOpen_surjective (f : R) : Function.Surjective (toBasicOpen R f) := by
   intro s
@@ -890,6 +897,7 @@ theorem to_global_factors :
     (structureSheaf R).1.map (eqToHom _).op
   rw [localization_toBasicOpen R, CommRingCat.ofHom_hom, toOpen_res]
 
+set_option backward.isDefEq.respectTransparency false in
 instance isIso_to_global : IsIso (toOpen R ⊤) := by
   let hom := CommRingCat.ofHom (algebraMap R (Localization.Away (1 : R)))
   haveI : IsIso hom :=
@@ -911,6 +919,7 @@ theorem toStalk_stalkSpecializes {R : Type*} [CommRing R] {x y : PrimeSpectrum R
     toStalk R y ≫ (structureSheaf R).presheaf.stalkSpecializes h = toStalk R x := by
   dsimp [toStalk]; simp [-toOpen_germ]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp, reassoc, elementwise nosimp]
 theorem localizationToStalk_stalkSpecializes {R : Type*} [CommRing R] {x y : PrimeSpectrum R}
     (h : x ⤳ y) :
@@ -975,6 +984,7 @@ theorem comapFunIsLocallyFraction (f : R →+* S) (U : Opens (PrimeSpectrum.Top 
     ← map_mul, h_frac.2, Localization.localRingHom_to_map]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- For a ring homomorphism `f : R →+* S` and open sets `U` and `V` of the prime spectra of `R` and
 `S` such that `V ⊆ (comap f) ⁻¹ U`, the induced ring homomorphism from the structure sheaf of `R`
 at `U` to the structure sheaf of `S` at `V`.
@@ -1068,6 +1078,7 @@ theorem comap_id' (U : Opens (PrimeSpectrum.Top R)) :
     (comap (RingHom.id R) U U fun p hpU => by rwa [PrimeSpectrum.comap_id]) = RingHom.id _ := by
   rw [comap_id rfl]; rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem comap_comp (f : R →+* S) (g : S →+* P) (U : Opens (PrimeSpectrum.Top R))
     (V : Opens (PrimeSpectrum.Top S)) (W : Opens (PrimeSpectrum.Top P))
     (hUV : ∀ p ∈ V, PrimeSpectrum.comap f p ∈ U) (hVW : ∀ p ∈ W, PrimeSpectrum.comap g p ∈ V) :

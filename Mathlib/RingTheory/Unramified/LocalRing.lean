@@ -42,6 +42,7 @@ instance [FormallyUnramified R S] :
 
 variable [EssFiniteType R S]
 
+set_option backward.isDefEq.respectTransparency false in
 @[stacks 00UW "(2)"]
 instance [FormallyUnramified R S] :
     Module.Finite (ResidueField R) (ResidueField S) :=
@@ -49,11 +50,13 @@ instance [FormallyUnramified R S] :
   have : EssFiniteType (ResidueField R) (ResidueField S) := .of_comp R _ _
   FormallyUnramified.finite_of_free _ _
 
+set_option backward.isDefEq.respectTransparency false in
 @[stacks 00UW "(2)"]
 instance [FormallyUnramified R S] :
     Algebra.IsSeparable (ResidueField R) (ResidueField S) :=
   FormallyUnramified.isSeparable _ _
 
+set_option backward.isDefEq.respectTransparency false in
 lemma FormallyUnramified.isField_quotient_map_maximalIdeal [FormallyUnramified R S] :
     IsField (S ⧸ (maximalIdeal R).map (algebraMap R S)) := by
   let mR := (maximalIdeal R).map (algebraMap R S)

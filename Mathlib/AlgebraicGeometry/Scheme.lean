@@ -395,10 +395,12 @@ instance isIso_toPshHom {X Y : Scheme} (f : X ⟶ Y) [IsIso f] : IsIso f.toPshHo
 instance isIso_base {X Y : Scheme.{u}} (f : X ⟶ Y) [IsIso f] : IsIso f.base :=
   Scheme.forgetToTop.map_isIso f
 
+set_option backward.isDefEq.respectTransparency false in
 instance {X Y : Scheme} (f : X ⟶ Y) [IsIso f] (U) : IsIso (f.app U) :=
   haveI := PresheafedSpace.c_isIso_of_iso f.toPshHom
   NatIso.isIso_app_of_isIso f.c _
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem inv_app {X Y : Scheme} (f : X ⟶ Y) [IsIso f] (U : X.Opens) :
     (inv f).app U =
@@ -406,9 +408,11 @@ theorem inv_app {X Y : Scheme} (f : X ⟶ Y) [IsIso f] (U : X.Opens) :
         inv (f.app ((inv f) ⁻¹ᵁ U)) := by
   rw [IsIso.eq_comp_inv, ← comp_app, congr_app (IsIso.hom_inv_id f), id_app, Category.id_comp]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem inv_appTop {X Y : Scheme} (f : X ⟶ Y) [IsIso f] :
     (inv f).appTop = inv f.appTop := by simp
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Copies a morphism with a different underlying map -/
 def copyBase {X Y : Scheme} (f : X.Hom Y) (g : X → Y) (h : f.base = g) : X ⟶ Y where
   base := TopCat.ofHom ⟨g, h ▸ f.base.1.2⟩
@@ -418,6 +422,7 @@ def copyBase {X Y : Scheme} (f : X.Hom Y) (g : X → Y) (h : f.base = g) : X ⟶
     convert f.prop x using 4
     cat_disch
 
+set_option backward.isDefEq.respectTransparency false in
 lemma copyBase_eq {X Y : Scheme} (f : X.Hom Y) (g : X → Y) (h : f.base = g) :
     f.copyBase g h = f := by
   subst h
@@ -585,6 +590,7 @@ theorem Γ_map {X Y : Schemeᵒᵖ} (f : X ⟶ Y) : Γ.map f = f.unop.appTop :=
 theorem Γ_map_op {X Y : Scheme} (f : X ⟶ Y) : Γ.map f.op = f.appTop :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 The counit (`SpecΓIdentity.inv.op`) of the adjunction `Γ ⊣ Spec` as a natural isomorphism.
 This is almost never needed in practical use cases. Use `ΓSpecIso` instead.
@@ -616,6 +622,7 @@ lemma ΓSpecIso_inv_naturality {R S : CommRingCat.{u}} (f : R ⟶ S) :
 -- This is not marked simp to respect the abstraction
 lemma ΓSpecIso_inv : (ΓSpecIso R).inv = StructureSheaf.toOpen R ⊤ := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 lemma toOpen_eq (U) :
     StructureSheaf.toOpen R U =
     (ΓSpecIso R).inv ≫ (Spec R).presheaf.map (homOfLE le_top).op := rfl
@@ -832,6 +839,7 @@ theorem basicOpen_eq_of_affine' {R : CommRingCat} (f : Γ(Spec R, ⊤)) :
   convert basicOpen_eq_of_affine ((Scheme.ΓSpecIso R).hom f)
   exact (Iso.hom_inv_id_apply (Scheme.ΓSpecIso R) f).symm
 
+set_option backward.isDefEq.respectTransparency false in
 theorem Scheme.SpecMap_presheaf_map_eqToHom {X : Scheme} {U V : X.Opens} (h : U = V) (W) :
     (Spec.map (X.presheaf.map (eqToHom h).op)).app W = eqToHom (by cases h; simp) := by
   have : Scheme.Spec.map (X.presheaf.map (𝟙 (op U))).op = 𝟙 _ := by

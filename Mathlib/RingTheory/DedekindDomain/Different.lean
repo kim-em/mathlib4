@@ -141,6 +141,7 @@ open Submodule
 
 variable [IsFractionRing A K]
 
+set_option backward.isDefEq.respectTransparency false in
 variable (A K) in
 lemma map_equiv_traceDual [IsDomain A] [IsFractionRing B L] [IsDomain B]
     [FaithfulSMul A B] (I : Submodule B (FractionRing B)) :
@@ -584,6 +585,7 @@ theorem differentIdeal_eq_differentIdeal_mul_differentIdeal (C : Type*) [IsDomai
 
 variable {B L}
 
+set_option backward.isDefEq.respectTransparency false in
 open Pointwise Polynomial in
 lemma traceForm_dualSubmodule_adjoin
     {x : L} (hx : Algebra.adjoin K {x} = ⊤) (hAx : IsIntegral A x) :
@@ -685,6 +687,7 @@ variable (L)
 variable [IsFractionRing B L] [IsDedekindDomain A] [IsDedekindDomain B]
   [IsTorsionFree A B] [Module.Finite A B]
 
+set_option backward.isDefEq.respectTransparency false in
 include K L in
 lemma pow_sub_one_dvd_differentIdeal_aux
     {p : Ideal A} [p.IsMaximal] (P : Ideal B) {e : ℕ} (he : e ≠ 0) (hp : p ≠ ⊥)

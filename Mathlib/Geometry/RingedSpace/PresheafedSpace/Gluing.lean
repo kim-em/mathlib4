@@ -123,11 +123,13 @@ abbrev toTopGlueData : TopCat.GlueData :=
   { f_open := fun i j => (D.f_open i j).base_open
     toGlueData := 𝖣.mapGlueData (forget C) }
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ι_isOpenEmbedding [HasLimits C] (i : D.J) : IsOpenEmbedding (𝖣.ι i).base := by
   rw [← show _ = (𝖣.ι i).base from 𝖣.ι_gluedIso_inv (PresheafedSpace.forget _) _, TopCat.coe_comp]
   exact (TopCat.homeoOfIso (𝖣.gluedIso (PresheafedSpace.forget _)).symm).isOpenEmbedding.comp
       (D.toTopGlueData.ι_isOpenEmbedding i)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem pullback_base (i j k : D.J) (S : Set (D.V (i, j)).carrier) :
     (π₂ i, j, k) '' ((π₁ i, j, k) ⁻¹' S) = D.f i k ⁻¹' (D.f i j '' S) := by
   have eq₁ : _ = (π₁ i, j, k).base := PreservesPullback.iso_hom_fst (forget C) _ _
@@ -138,6 +140,7 @@ theorem pullback_base (i j k : D.J) (S : Set (D.V (i, j)).carrier) :
   rw [← TopCat.epi_iff_surjective]
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The red and the blue arrows in ![this diagram](https://i.imgur.com/0GiBUh6.png) commute. -/
 @[simp, reassoc]
 theorem f_invApp_f_app (i j k : D.J) (U : Opens (D.V (i, j)).carrier) :
@@ -163,6 +166,7 @@ theorem f_invApp_f_app (i j k : D.J) (U : Opens (D.V (i, j)).carrier) :
   erw [(D.V (i, k)).presheaf.map_id]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- We can prove the `eq` along with the lemma. Thus this is bundled together here, and the
 lemma itself is separated below.
 -/
@@ -228,6 +232,7 @@ theorem snd_invApp_t_app (i j k : D.J) (U : Opens (pullback (D.f i j) (D.f i k))
 
 variable [HasLimits C]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ι_image_preimage_eq (i j : D.J) (U : Opens (D.U i).carrier) :
     (Opens.map (𝖣.ι j).base).obj ((D.ι_isOpenEmbedding i).isOpenMap.functor.obj U) =
       (opensFunctor (D.f j i)).obj
@@ -260,6 +265,7 @@ def opensImagePreimageMap (i j : D.J) (U : Opens (D.U i).carrier) :
       (D.f_open j i).invApp _ (unop _) ≫
         (𝖣.U j).presheaf.map (eqToHom (D.ι_image_preimage_eq i j U)).op
 
+set_option backward.isDefEq.respectTransparency false in
 theorem opensImagePreimageMap_app' (i j k : D.J) (U : Opens (D.U i).carrier) :
     ∃ eq,
       D.opensImagePreimageMap i j U ≫ (D.f j k).c.app _ =
@@ -285,6 +291,7 @@ theorem opensImagePreimageMap_app (i j k : D.J) (U : Opens (D.U i).carrier) :
           (D.V (j, k)).presheaf.map (eqToHom (opensImagePreimageMap_app' D i j k U).choose) :=
   (opensImagePreimageMap_app' D i j k U).choose_spec
 
+set_option backward.isDefEq.respectTransparency false in
 -- This is proved separately since `reassoc` somehow timeouts.
 theorem opensImagePreimageMap_app_assoc (i j k : D.J) (U : Opens (D.U i).carrier) {X' : C}
     (f' : _ ⟶ X') :
@@ -306,6 +313,7 @@ The projection from the limit of `diagram_over_open` to a component of `D.U j`. 
 abbrev diagramOverOpenπ {i : D.J} (U : Opens (D.U i).carrier) (j : D.J) :=
   limit.π (D.diagramOverOpen U) (op (WalkingMultispan.right j))
 
+set_option backward.isDefEq.respectTransparency false in
 /-- (Implementation) We construct the map `Γ(𝒪_{U_i}, U) ⟶ Γ(𝒪_V, U_V)` for each `V` in the gluing
 diagram. We will lift these maps into `ιInvApp`. -/
 def ιInvAppπApp {i : D.J} (U : Opens (D.U i).carrier) (j) :

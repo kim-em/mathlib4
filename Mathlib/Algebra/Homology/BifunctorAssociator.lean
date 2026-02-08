@@ -94,6 +94,7 @@ instance :
 
 section
 
+set_option backward.isDefEq.respectTransparency false in
 variable [DecidableEq ι₁₂] [DecidableEq ι₂₃]
   [HasMapBifunctor (mapBifunctor K₁ K₂ F₁₂ c₁₂) K₃ G c₄]
   [HasMapBifunctor K₁ (mapBifunctor K₂ K₃ G₂₃ c₂₃) F c₄]

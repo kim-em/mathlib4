@@ -67,6 +67,7 @@ end
 
 section
 
+set_option backward.isDefEq.respectTransparency false in
 variable [Preadditive C₁] [HasZeroMorphisms C₂] [Preadditive D]
   (K₁ L₁ : CochainComplex C₁ ℤ) (f₁ : K₁ ⟶ L₁) (K₂ : CochainComplex C₂ ℤ)
   (F : C₁ ⥤ C₂ ⥤ D) [F.Additive] [∀ (X₁ : C₁), (F.obj X₁).PreservesZeroMorphisms] (x : ℤ)
