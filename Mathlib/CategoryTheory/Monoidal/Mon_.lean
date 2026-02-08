@@ -930,6 +930,8 @@ lemma monToLaxMonoidalObj_μ (A : Mon C) (X Y) :
     «μ» (monToLaxMonoidalObj A) X Y = μ[A.X] := rfl
 
 variable (C)
+
+set_option backward.isDefEq.respectTransparency false in
 /-- Implementation of `Mon.equivLaxMonoidalFunctorPUnit`. -/
 @[simps]
 def monToLaxMonoidal : Mon C ⥤ LaxMonoidalFunctor (Discrete PUnit.{w + 1}) C where
@@ -964,11 +966,13 @@ theorem monToLaxMonoidal_laxMonoidalToMon_obj_mul (F : Mon C) :
     μ[((monToLaxMonoidal C ⋙ laxMonoidalToMon C).obj F).X] = μ[F.X] ≫ 𝟙 _ :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isMonHom_counitIsoAux (F : Mon C) :
     IsMonHom (counitIsoAux C F).hom where
 
 @[deprecated (since := "2025-09-15")] alias counitIsoAux_IsMon_Hom := isMonHom_counitIsoAux
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Implementation of `Mon.equivLaxMonoidalFunctorPUnit`. -/
 @[simps!]
 def counitIso : monToLaxMonoidal.{w} C ⋙ laxMonoidalToMon C ≅ 𝟭 (Mon C) :=

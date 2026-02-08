@@ -168,6 +168,7 @@ does not follow from equality of their coercions `X → Y`.
 -- for the reasons explained in the docstring.
 -- As there is no composition in the LHS it is purposely `@[reassoc, simp]` rather
 -- than `@[reassoc (attr := simp)]`
+set_option backward.isDefEq.respectTransparency false in
 /-- Sometimes rewriting with `comp_c_app` doesn't work because of dependent type issues.
 In that case, `erw comp_c_app_assoc` might make progress.
 The lemma `comp_c_app_assoc` is also better suited for rewrites in the opposite direction. -/

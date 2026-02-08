@@ -422,6 +422,7 @@ attribute [local simp] ofHasPushout_inl ofHasPushout_inr ι
 
 namespace LeibnizAdjunction
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given a parametrized adjunction `F ⊣₂ G` and an arrow `X₁ : Arrow C₁`, this is the induced
   adjunction `F.leibnizPushout.obj X₁ ⊣ G.leibnizPullback.obj (op X₁)`. -/
 @[simps]
@@ -466,6 +467,7 @@ def adj (adj₂ : F ⊣₂ G) (X₁ : Arrow C₁) [HasPullbacks C₂] [HasPushou
 
 end LeibnizAdjunction
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The Leibniz (parametrized) adjunction `F.leibnizPushout ⊣₂ G.leibnizPullback` induced by a
   parameterized adjunction `F ⊣₂ G`. -/
 @[simps]

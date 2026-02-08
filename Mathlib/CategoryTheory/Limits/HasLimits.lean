@@ -1040,6 +1040,7 @@ variable {G : J ⥤ C} (α : F ⟶ G)
 
 theorem colimMap_eq : colimMap α = colim.map α := rfl
 
+set_option backward.isDefEq.respectTransparency false in -- This seems to be needed in downstream files.
 @[reassoc]
 theorem colimit.ι_map (j : J) : colimit.ι F j ≫ colim.map α = α.app j ≫ colimit.ι G j := by simp
 

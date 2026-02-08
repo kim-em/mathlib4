@@ -547,6 +547,7 @@ of a colimit cocone over `F` to the cocone point of any cocone over `G`. -/
 def map {F G : J ⥤ C} {s : Cocone F} (P : IsColimit s) (t : Cocone G) (α : F ⟶ G) : s.pt ⟶ t.pt :=
   P.desc ((Cocones.precompose α).obj t)
 
+set_option backward.isDefEq.respectTransparency false in -- This is needed in CategoryTheory/Limits/Shapes/Biproducts.lean
 @[reassoc (attr := simp)]
 theorem ι_map {F G : J ⥤ C} {c : Cocone F} (hc : IsColimit c) (d : Cocone G) (α : F ⟶ G) (j : J) :
     c.ι.app j ≫ IsColimit.map hc d α = α.app j ≫ d.ι.app j :=

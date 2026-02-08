@@ -32,6 +32,7 @@ namespace HomologicalComplex
 variable {V : Type u} [Category.{v} V] [HasZeroMorphisms V]
 variable {ι : Type*} {c : ComplexShape ι}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A complex of functors gives a functor to complexes. -/
 @[simps obj map]
 def asFunctor {T : Type*} [Category* T] (C : HomologicalComplex (T ⥤ V) c) :
