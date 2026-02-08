@@ -55,6 +55,7 @@ noncomputable def functor : (Triangle C)ᵒᵖ ⥤ Triangle Cᵒᵖ where
           opShiftFunctorEquivalence_counitIso_inv_naturality_assoc]
         rfl }
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The functor which sends a triangle `X ⟶ Y ⟶ Z ⟶ X⟦1⟧` in `Cᵒᵖ` to the triangle
 `Z.unop ⟶ Y.unop ⟶ X.unop ⟶ Z.unop⟦1⟧` in `C` (without introducing signs). -/
 @[simps]
@@ -73,6 +74,7 @@ noncomputable def inverse : Triangle Cᵒᵖ ⥤ (Triangle C)ᵒᵖ where
           ← op_comp_assoc, ← Functor.map_comp, ← unop_comp, ← φ.comm₃,
           unop_comp, Functor.map_comp, op_comp, assoc]) }
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The unit isomorphism of the
 equivalence `triangleOpEquivalence C : (Triangle C)ᵒᵖ ≌ Triangle Cᵒᵖ` . -/
 @[simps!]
@@ -83,6 +85,7 @@ noncomputable def unitIso : 𝟭 _ ≅ functor C ⋙ inverse C :=
         (by simp [shift_unop_opShiftFunctorEquivalence_counitIso_inv_app]))))
     (fun {T₁ T₂} f => Quiver.Hom.unop_inj (by cat_disch))
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The counit isomorphism of the
 equivalence `triangleOpEquivalence C : (Triangle C)ᵒᵖ ≌ Triangle Cᵒᵖ` . -/
 @[simps!]

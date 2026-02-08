@@ -140,6 +140,7 @@ def homMk' {X Y : T} {f : X ⟶ Y} {P Q : T} {g : P ⟶ Q} (u : X ⟶ P) (v : Y 
   w := w
 
 -- `w_mk_left` is not needed, as it is a consequence of `w` and `mk_hom`.
+set_option backward.isDefEq.respectTransparency false in -- This is needed in Algebra/Homology/ShortComplex/QuasiIso.lean
 @[reassoc (attr := simp)]
 theorem w_mk_right {f : Arrow T} {X Y : T} {g : X ⟶ Y} (sq : f ⟶ mk g) :
     sq.left ≫ g = f.hom ≫ sq.right :=

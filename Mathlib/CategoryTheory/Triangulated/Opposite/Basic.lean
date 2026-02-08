@@ -207,6 +207,7 @@ lemma opShiftFunctorEquivalence_counitIso_hom_naturality (n : ℤ) {X Y : Cᵒ�
       (opShiftFunctorEquivalence C n).counitIso.hom.app X ≫ f :=
   (opShiftFunctorEquivalence C n).counitIso.hom.naturality f
 
+set_option backward.isDefEq.respectTransparency false in -- This is needed in CategoryTheory/Triangulated/Opposite/Triangle.lean
 @[reassoc (attr := simp)]
 lemma opShiftFunctorEquivalence_counitIso_inv_naturality (n : ℤ) {X Y : Cᵒᵖ} (f : X ⟶ Y) :
     f ≫ (opShiftFunctorEquivalence C n).counitIso.inv.app Y =
