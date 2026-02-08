@@ -120,13 +120,8 @@ theorem relrank_mul_rank_top (h : A ≤ B) : relrank A B * Module.rank B E = Mod
 theorem relfinrank_mul_finrank_top (h : A ≤ B) : relfinrank A B * finrank B E = finrank A E := by
   simpa using congr(toNat $(relrank_mul_rank_top h))
 
-set_option backward.isDefEq.respectTransparency false in
-<<<<<<< HEAD
-set_option backward.isDefEq.respectTransparency false in
-=======
 variable (A B)
 
->>>>>>> nightly-testing
 @[simp]
 theorem relrank_top_left : relrank ⊤ A = 1 := relrank_eq_one_of_le le_top
 

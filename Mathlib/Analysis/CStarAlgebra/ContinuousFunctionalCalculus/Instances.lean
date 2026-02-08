@@ -32,6 +32,8 @@ continuous functional calculus, normal, selfadjoint
 
 @[expose] public section
 
+set_option backward.isDefEq.respectTransparency false
+
 open Topology
 
 noncomputable section
@@ -55,7 +57,6 @@ variable (hp₁ : ∀ {x : A}, p₁ x ↔ p x) (a : A) (ha : p a)
 variable [ContinuousFunctionalCalculus 𝕜 (Unitization 𝕜 A) p₁]
 
 open scoped ContinuousMapZero
-
 
 open Unitization in
 /--

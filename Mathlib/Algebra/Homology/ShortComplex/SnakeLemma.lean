@@ -278,6 +278,7 @@ set_option backward.isDefEq.respectTransparency false in
 noncomputable def δ : S.L₀.X₃ ⟶ S.L₃.X₁ :=
   S.L₀'_exact.desc (S.φ₁ ≫ S.v₂₃.τ₁) (by simp only [L₁_f_φ₁_assoc, w₁₃_τ₁])
 
+set_option backward.isDefEq.respectTransparency false in -- This is needed below.
 @[reassoc (attr := simp)]
 lemma snd_δ : (pullback.snd _ _ : S.P ⟶ _) ≫ S.δ = S.φ₁ ≫ S.v₂₃.τ₁ :=
   S.L₀'_exact.g_desc _ _
@@ -526,6 +527,7 @@ set_option backward.isDefEq.respectTransparency false in
 lemma naturality_φ₁ (f : S₁ ⟶ S₂) : S₁.φ₁ ≫ f.f₂.τ₁ = functorP.map f ≫ S₂.φ₁ := by
   simp only [← cancel_mono S₂.L₂.f, assoc, φ₁_L₂_f, ← naturality_φ₂, f.f₂.comm₁₂, φ₁_L₂_f_assoc]
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc]
 lemma naturality_δ (f : S₁ ⟶ S₂) : S₁.δ ≫ f.f₃.τ₁ = f.f₀.τ₃ ≫ S₂.δ := by
   rw [← cancel_epi (pullback.snd _ _ : S₁.P ⟶ _), S₁.snd_δ_assoc, ← comp_τ₁, ← f.comm₂₃,

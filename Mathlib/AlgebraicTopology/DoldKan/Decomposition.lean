@@ -138,6 +138,7 @@ def preComp : MorphComponents X' n Z where
   a := g.app (op ⦋n + 1⦌) ≫ f.a
   b i := g.app (op ⦋n⦌) ≫ f.b i
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem preComp_φ : (f.preComp g).φ = g.app (op ⦋n + 1⦌) ≫ f.φ := by
   unfold φ preComp

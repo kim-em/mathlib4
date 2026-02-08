@@ -847,6 +847,7 @@ open ENat
 
 set_option backward.isDefEq.respectTransparency false in
 instance (n : ℕ∞) : LEInfty (n : WithTop ℕ∞) := ⟨mod_cast le_top⟩
+set_option backward.isDefEq.respectTransparency false in
 instance (n : ℕ) : LEInfty (n : WithTop ℕ∞) := ⟨mod_cast le_top⟩
 instance (n : ℕ) [n.AtLeastTwo] : LEInfty (no_index (OfNat.ofNat n) : WithTop ℕ∞) :=
   inferInstanceAs (LEInfty (n : WithTop ℕ∞))
@@ -857,6 +858,7 @@ instance {a : WithTop ℕ∞} [IsManifold I ∞ M] [h : LEInfty a] :
     IsManifold I a M :=
   IsManifold.of_le h.out
 
+set_option backward.isDefEq.respectTransparency false in
 instance {a : WithTop ℕ∞} [IsManifold I ω M] :
     IsManifold I a M :=
   IsManifold.of_le le_top
@@ -868,10 +870,12 @@ instance : IsManifold I 0 M := by
   rw [contDiffGroupoid_zero_eq]
   trivial
 
+set_option backward.isDefEq.respectTransparency false in
 instance [IsManifold I 2 M] :
     IsManifold I 1 M :=
   IsManifold.of_le one_le_two
 
+set_option backward.isDefEq.respectTransparency false in
 instance [IsManifold I 3 M] : IsManifold I 2 M := IsManifold.of_le (n := 3) (by norm_cast)
 
 variable (I n M) in
@@ -929,6 +933,7 @@ theorem of_discreteTopology [DiscreteTopology M] [Unique E] :
 attribute [local instance] ChartedSpace.of_discreteTopology in
 example [Unique E] : IsManifold (𝓘(𝕜, E)) n (Fin 2) := of_discreteTopology _
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The product of two `C^n` manifolds is naturally a `C^n` manifold. -/
 instance prod {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
     [NormedSpace 𝕜 E] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H : Type*}
@@ -950,6 +955,7 @@ variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type*}
   [TopologicalSpace H'] {I' : ModelWithCorners 𝕜 E' H'} {n : WithTop ℕ∞}
   {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
 
+set_option backward.isDefEq.respectTransparency false in
 lemma mem_maximalAtlas_prod [IsManifold I n M] [IsManifold I' n M']
     {e : OpenPartialHomeomorph M H} (he : e ∈ maximalAtlas I n M)
     {e' : OpenPartialHomeomorph M' H'} (he' : e' ∈ maximalAtlas I' n M') :

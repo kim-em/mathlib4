@@ -798,6 +798,7 @@ lemma ProbabilityMeasure.exists_lt_measure_biUnion_of_isOpen
     simp [accumulate_def]
   · simpa [G_eq] using fun i _ ↦ subset_iUnion f i
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Assume that, applied to all the elements of a π-system, a sequence of probability measures
 converges to a limiting probability measure. Assume also that the π-system contains arbitrarily
 small neighborhoods of any point. Then the sequence of probability measures converges for the

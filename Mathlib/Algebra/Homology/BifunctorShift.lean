@@ -67,7 +67,8 @@ end
 
 section
 
-set_option backward.isDefEq.respectTransparency false in
+set_option backward.isDefEq.respectTransparency false
+
 variable [Preadditive C₁] [HasZeroMorphisms C₂] [Preadditive D]
   (K₁ L₁ : CochainComplex C₁ ℤ) (f₁ : K₁ ⟶ L₁) (K₂ : CochainComplex C₂ ℤ)
   (F : C₁ ⥤ C₂ ⥤ D) [F.Additive] [∀ (X₁ : C₁), (F.obj X₁).PreservesZeroMorphisms] (x : ℤ)
@@ -152,6 +153,7 @@ noncomputable def mapBifunctorShift₂Iso :
     (mapBifunctorHomologicalComplexShift₂Iso K₁ K₂ F y) (ComplexShape.up ℤ) ≪≫
     (((F.mapBifunctorHomologicalComplex _ _).obj K₁).obj K₂).totalShift₂Iso y
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc]
 lemma ι_mapBifunctorShift₂Iso_hom_f (n₁ n₂ n : ℤ) (h : n₁ + n₂ = n)
     (m₂ m : ℤ) (hm₂ : m₂ = n₂ + y) (hm : m = n + y) :
@@ -165,6 +167,7 @@ lemma ι_mapBifunctorShift₂Iso_hom_f (n₁ n₂ n : ℤ) (h : n₁ + n₂ = n)
   simp [HomologicalComplex₂.ιTotal, HomologicalComplex₂.shiftFunctor₂XXIso,
     HomologicalComplex.XIsoOfEq, eqToHom_map]
 
+set_option backward.isDefEq.respectTransparency false in
 variable {K₂ L₂} in
 @[reassoc (attr := simp)]
 lemma mapBifunctorShift₂Iso_hom_naturality₂ [HasMapBifunctor K₁ L₂ F] :
@@ -177,6 +180,8 @@ lemma mapBifunctorShift₂Iso_hom_naturality₂ [HasMapBifunctor K₁ L₂ F] :
 end
 
 section
+
+set_option backward.isDefEq.respectTransparency false
 
 variable [Preadditive C₁] [Preadditive C₂] [Preadditive D]
   (K₁ : CochainComplex C₁ ℤ) (K₂ : CochainComplex C₂ ℤ)
@@ -210,6 +215,8 @@ end
 end CochainComplex
 
 namespace CategoryTheory.Functor
+
+set_option backward.isDefEq.respectTransparency false
 
 variable [Preadditive C₁] [Preadditive C₂] [Preadditive D]
   (F : C₁ ⥤ C₂ ⥤ D) [F.Additive] [∀ (X₁ : C₁), (F.obj X₁).Additive]
