@@ -1,0 +1,176 @@
+FINITE FREE STAM INEQUALITY — General n Case
+
+Problem 4 from "First Proof" (arXiv:2602.05192):
+For monic real-rooted degree-n polynomials p, q with distinct roots,
+prove that 1/Φ_n(p ⊞_n q) ≥ 1/Φ_n(p) + 1/Φ_n(q).
+
+This is the finite polynomial analog of the free Stam inequality
+(Mingo-Speicher, Theorem 19 / equation 8.19).
+
+PRIORITY: Prove the GENERAL n case. Small cases (n=1,2,3) are already handled
+in the attached context file. We need a proof for ALL n.
+
+=== DEFINITIONS ===
+
+Φ_n(p) = Σ_i (Σ_{j≠i} 1/(λ_i - λ_j))²  for roots λ_1,...,λ_n of p
+
+(p ⊞_n q)(x) = Σ_{k=0}^n c_k x^{n-k} where
+  c_k = Σ_{i+j=k} ((n-i)!(n-j)!)/(n!(n-k)!) · a_i · b_j
+
+=== KEY IDENTITIES ===
+
+1. Φ_n = 2 Σ_{i<j} 1/(λ_i - λ_j)²
+   (Cross terms cancel in the double sum.)
+
+2. Derivative form: Φ_n(p) = Σ_i [p''(λ_i)/(2p'(λ_i))]²
+   where p'(λ_i) = Π_{j≠i}(λ_i - λ_j).
+
+3. Gradient of log-Vandermonde:
+   ξ_i := Σ_{j≠i} 1/(λ_i - λ_j) = (1/2) ∂/∂λ_i log Δ(λ)
+   where Δ(λ) = Π_{i<j} (λ_i - λ_j)² is the squared Vandermonde.
+   Then Φ_n = |ξ|² = Σ_i ξ_i².
+
+4. Random matrix representation (Marcus-Spielman-Srivastava, Thm 1.2):
+   p ⊞_n q = E_Q[det(xI - A - QBQ*)]
+   where A = diag(λ_1,...,λ_n), B = diag(μ_1,...,μ_n), Q uniform over O(n).
+
+5. U-transform (Marcus, Lemma 3.4):
+   [p ⊞_n q](x) = E{(x - S - T)^n}
+   where S, T are INDEPENDENT random variables.
+
+6. Finite free R-transform is ADDITIVE under ⊞_n:
+   R_{p⊞q}^(n) = R_p^(n) + R_q^(n)
+
+7. Hermite equality case:
+   a^n H_n(x/a) ⊞_n b^n H_n(x/b) = c^n H_n(x/c) where c = √(a²+b²).
+
+=== WHAT'S ALREADY PROVEN (in attached .lean context) ===
+
+- n=1: trivial (conjecture_n_1)
+- n=2: EQUALITY via discriminant additivity (conjecture_n_2)
+- n=3: Formula Φ₃ = 18a²/(-4a³-27b²) for reduced cubics (Phi_deg3_reduced_eq)
+- Helper lemmas: boxplus coefficient formulas, discriminant properties,
+  cubic splitting criteria, Vieta's formulas
+
+=== PROOF STRATEGIES (ordered by promise) ===
+
+STRATEGY 1 — Finite Conjugate Variables (mirrors the infinite proof):
+
+The infinite free Stam inequality (Mingo-Speicher Thm 19) is proved using
+conjugate systems. The key idea transfers to finite setting:
+
+Define the "score" at root λ_i:
+  ξ_i = Σ_{j≠i} 1/(λ_i - λ_j)
+
+For the random matrix representation A + QBQ* with Q uniform over O(n):
+- The eigenvalues ν_1,...,ν_n of A + QBQ* have their own scores ξ_i^ν
+- By a conditional expectation argument:
+  ξ_i^ν ≈ E[ξ_i^λ | eigenvalues ν]
+
+The conditional variance inequality gives:
+  Σ_i (ξ_i^ν)² ≤ Σ_i (ξ_i^λ)²
+i.e., Φ_n(ν) ≤ Φ_n(λ) for each realization of Q.
+
+Taking expectations and using Jensen's inequality on 1/Φ (which is concave
+if Φ > 0):
+  1/Φ_n(p ⊞_n q) = 1/Φ_n(E_Q[...]) ≥ E_Q[1/Φ_n(ν)]
+
+Then we need to show E_Q[1/Φ_n(eigenvalues of A+QBQ*)] ≥ 1/Φ_n(A) + 1/Φ_n(B).
+
+This last step might use the independence structure: for generic Q,
+the eigenvalue scores of A+QBQ* decompose into contributions from A and B.
+
+STRATEGY 2 — Finite Free Cumulants / R-Transform:
+
+The R-transform is additive: κ_k(p ⊞_n q) = κ_k(p) + κ_k(q).
+
+Step 1: Express 1/Φ_n as a function f(κ_1,...,κ_n) of finite free cumulants.
+Step 2: Show f is superadditive: f(κ+κ') ≥ f(κ) + f(κ').
+
+For n=2: κ_1 = -e_1, κ_2 = e_1² - 2e_2. Then 1/Φ₂ = κ₂/2 is LINEAR in
+cumulants, giving equality.
+
+For general n: if 1/Φ_n is a concave function of the cumulant vector,
+superadditivity follows. The key would be computing the Hessian of 1/Φ_n
+in cumulant coordinates and showing it's negative semidefinite.
+
+STRATEGY 3 — Electrostatic / Schur-convexity:
+
+Φ_n = 2 Σ_{i<j} 1/(λ_i-λ_j)² is the electrostatic energy of unit charges.
+
+Claim: 1/Φ_n is Schur-concave as a function of the root tuple.
+If true, then since ⊞_n "spreads" roots (by the interlacing results of MSS),
+the root tuple of p ⊞_n q majorizes neither p's nor q's roots individually,
+but the spreading effect gives the inequality.
+
+More concretely: define E(λ) = Σ_{i<j} (λ_i-λ_j)^{-2}.
+Show that 1/E is Schur-concave, i.e., the Schur derivative is ≤ 0:
+  (∂/∂λ_i - ∂/∂λ_j)(1/E) · (λ_i - λ_j) ≤ 0 for all i,j.
+
+STRATEGY 4 — Direct computation via power sums:
+
+Express Φ_n in terms of the power sums p_k = Σ_i λ_i^k and use
+Newton's identities to relate to elementary symmetric polynomials e_k.
+
+Under ⊞_n, the e_k transform via the convolution formula.
+The power sums p_k of p ⊞_n q can be expressed in terms of p_k(λ) and p_k(μ).
+
+For reduced (zero-trace) polynomials, p_1 = 0 and:
+  Φ_n = 2 Σ_{i<j} (λ_i-λ_j)^{-2}
+
+Use the identity: Σ_{i<j} (λ_i-λ_j)^{-2} = [Σ_i ξ_i² - (Σ_i ξ_i)²/n] + ...
+where the correction involves higher power sums of the gaps.
+
+STRATEGY 5 — Information-theoretic / Cramér-Rao:
+
+Classical Stam inequality: 1/J(X+Y) ≥ 1/J(X) + 1/J(Y) where J = Fisher info.
+Proof: Cramér-Rao bound J(X) ≥ 1/Var(X), plus Var(X+Y) = Var(X) + Var(Y).
+
+Finite analog:
+- Φ_n plays the role of Fisher information
+- Need a "finite Cramér-Rao": Φ_n ≥ 1/V_n for some variance-like V_n
+- Need V_n to be additive under ⊞_n
+- Then: 1/Φ_n ≤ V_n, and V_n(p⊞q) = V_n(p) + V_n(q)
+
+The candidate for V_n: related to the variance of the empirical root distribution
+μ_p = (1/n)Σ δ_{λ_i}. The second moment m_2 = (1/n)Σ λ_i² is related to
+the sub-leading coefficient, which IS additive under ⊞_n for reduced polynomials.
+
+But this only gives an upper bound 1/Φ_n ≤ V_n, and we need a LOWER bound
+1/Φ_n(p⊞q) ≥ .... So this approach needs refinement — perhaps a tighter
+Cramér-Rao analog specific to the finite free setting.
+
+=== FORMAL STATEMENT ===
+
+import Mathlib
+open Polynomial Finset
+
+noncomputable section
+
+def phi (n : ℕ) (roots : Fin n → ℝ) : ℝ :=
+  ∑ i, (∑ j ∈ univ.erase i, 1 / (roots i - roots j)) ^ 2
+
+def freeAddConv (n : ℕ) (p q : ℝ[X]) : ℝ[X] :=
+  ∑ k ∈ range (n + 1), C
+    (∑ i ∈ range (k + 1),
+      (((n - i).factorial : ℝ) * ((n - (k - i)).factorial : ℝ)) /
+      (((n.factorial : ℝ) * ((n - k).factorial : ℝ))) *
+      p.coeff (n - i) * q.coeff (n - (k - i))) * X ^ (n - k)
+
+theorem first_proof_problem4 (n : ℕ) (hn : 0 < n)
+    (rp rq rpq : Fin n → ℝ)
+    (hp : Function.Injective rp) (hq : Function.Injective rq) (hpq : Function.Injective rpq)
+    (hconv : (∏ i : Fin n, (X - C (rpq i))) =
+             freeAddConv n (∏ i : Fin n, (X - C (rp i))) (∏ i : Fin n, (X - C (rq i))))
+    : 1 / phi n rpq ≥ 1 / phi n rp + 1 / phi n rq := by
+  sorry
+
+=== NOTES ===
+
+- This is believed to be an OPEN problem. A complete proof would be a significant result.
+- The n=2 case is an equality; for n≥3 strict inequality holds generically.
+- The Hermite polynomial case gives equality for all n (analog of Gaussian+Gaussian).
+- If a full proof is not achievable, partial results are valuable:
+  * Proving it for n=4 or n=5 would extend the known cases
+  * Proving a weaker bound (e.g., 1/Φ(p⊞q) ≥ c·(1/Φ(p) + 1/Φ(q)) for some c < 1)
+  * Identifying the correct general framework even without completing all details
