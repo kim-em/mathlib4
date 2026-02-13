@@ -1,0 +1,197 @@
+FINITE FREE STAM INEQUALITY — General n Proof via Cumulants
+
+Prove the finite free Stam inequality for ALL n:
+
+  1/Φ_n(p ⊞_n q) ≥ 1/Φ_n(p) + 1/Φ_n(q)
+
+for monic real-rooted degree-n polynomials p, q with distinct roots.
+
+=== WHAT IS ALREADY PROVEN (in attached .lean context) ===
+
+The attached .lean file contains definitions and the following proven results:
+
+1. **Finite free cumulants are ADDITIVE** under ⊞_n (the KEY structural result):
+   κ_k(p ⊞_n q) = κ_k(p) + κ_k(q)  for 1 ≤ k ≤ n
+   (theorem `finite_free_cumulant_additive`)
+
+2. **Hat transform multiplicativity**:
+   hat(p ⊞_n q) ≡ (1/n!) · hat(p) · hat(q) (mod X^{n+1})
+   (theorem `hat_poly_boxplus_coeff`)
+
+3. **Truncated polynomial algebra** (all proven):
+   - `poly_inv_mul_mod`: p · poly_inv(p) ≡ 1 (mod X^{n+1})
+   - `poly_inv_unique`: truncated inverse is unique
+   - `poly_log_derivative`: (log p)' ≡ p'/p (mod X^n)
+   - `poly_log_derivative_mul_mod`: (log(pq))' ≡ (log p)' + (log q)' (mod X^n)
+
+4. **Φ_n identities** (all proven for general n):
+   - `phi_eq_sum_sq_diff`: Φ_n = 2 Σ_{i<j} 1/(λ_i - λ_j)²
+   - `phi_translation_invariant`: Φ is translation invariant
+   - `phi_scaling`: Φ(c·roots) = (1/c²) · Φ(roots)
+   - `Phi_eq_phi`: connects polynomial Phi to Fin n phi
+
+5. **Coefficient additivity** (proven for general n):
+   - `boxplus_coeff_n_minus_1`: (n-1)-th coefficient additive
+   - `boxplus_coeff_n_minus_2_of_centered`: (n-2)-th coefficient additive for centered polys
+   - `boxplus_centered_is_centered`: centered polys closed under ⊞_n
+
+6. **Small cases** (all proven):
+   - n=2: EQUALITY (invPhi is additive)
+   - n=3: Full inequality via Cauchy-Schwarz
+   - n=4: Symmetric quartics case
+
+=== WHAT REMAINS TO PROVE ===
+
+The gap is: **express 1/Φ_n as a function of the finite free cumulants κ_1,...,κ_n,
+and prove that this function is superadditive** (i.e., f(κ+κ') ≥ f(κ) + f(κ')).
+
+Since κ_k(p ⊞_n q) = κ_k(p) + κ_k(q), superadditivity of f would immediately give
+the inequality 1/Φ_n(p ⊞_n q) ≥ 1/Φ_n(p) + 1/Φ_n(q).
+
+=== PROOF STRATEGIES (ordered by promise) ===
+
+IMPORTANT NOTE: A second opinion from OpenAI Codex suggests that a clean L-Q decomposition
+(1/Φ_n = linear - convex) is UNLIKELY to generalize beyond n=3 because the invariant
+algebra grows too fast. For n≥5, we would need Q to be a sum of squares of many forms.
+Codex recommends alternative strategies (see below). Keep this in mind.
+
+STRATEGY 1 — Finite free Brownian motion / heat flow (RECOMMENDED)
+
+Track Φ_n under finite free Brownian motion: let p_t = p ⊞_n (Hermite polynomial scaled by √t).
+Since Hermite ⊞_n Hermite = Hermite (with c=√(a²+b²)), the flow is well-defined.
+
+Key idea: if d/dt (1/Φ_n(p_t)) is monotone or satisfies a differential inequality involving
+only additive cumulant quantities, we can integrate to get the result.
+
+In the infinite case, the proof uses the free entropy flow and d/dt Φ(μ_t) = -2∫(ξ')² dμ.
+The finite analog would track d/dt Φ_n(p_t) as t varies.
+
+STRATEGY 2 — Variational / convex duality characterization
+
+If 1/Φ_n can be characterized as:
+  1/Φ_n = inf_v { Σ_i v_i² : Σ_i v_i/(λ_i - x) = ... }  (some variational problem)
+then superadditivity could follow from convex duality arguments.
+
+In the infinite setting, 1/Φ(μ) = inf { ∫f² dμ : ∫f/(x-t) dμ(t) = 1 } or similar.
+The finite analog should exist.
+
+STRATEGY 3 — Symmetry reduction + perturbation
+
+Prove the inequality first for SYMMETRIC polynomials (where all odd cumulants κ_3, κ_5, ... vanish).
+This is a much simpler problem since the space of invariants is smaller.
+
+For symmetric polynomials: p(x) = x^n + a₂x^{n-2} + a₄x^{n-4} + ...
+Here only even cumulants appear, and the problem is lower-dimensional.
+
+Then EXTEND to general polynomials by a stability/perturbation argument:
+if the inequality holds at B=0 (symmetric case) and 1/Φ_n is sufficiently well-behaved
+near the symmetric locus, deduce it for small B (odd cumulants) by second-order Taylor control.
+
+STRATEGY 4 — Express 1/Φ_n via cumulants, prove concavity
+
+The finite free cumulants κ_k are defined as coefficients of log(normalized_hat_poly(p)).
+
+Key observation from n=3: 1/Φ_3 = -(2/9)κ_2 - (3/2)(κ_3/κ_2)²
+This is superadditive via Cauchy-Schwarz.
+
+WARNING (from Codex review): A uniform L-Q decomposition is unlikely for all n.
+Instead, look for 1/Φ_n as:
+  1/Φ_n = f(κ_2, ..., κ_n)
+where f is concave on the relevant domain.
+
+Since f(0,...,0) is degenerate (roots coincide → Φ_n = ∞ → 1/Φ_n = 0), the correct
+statement is: f is concave on the cone of valid cumulant vectors, and f(0) = 0,
+which implies f(x+y) ≥ f(x) + f(y).
+
+STRATEGY 5 — Moment/cumulant bounds (weaker but achievable)
+
+Instead of an exact formula, prove INEQUALITIES:
+  1/Φ_n ≥ g(κ_2)  where g is linear
+This gives a weaker bound: 1/Φ_n(p⊞q) ≥ g(κ_2(p) + κ_2(q)) = g(κ_2(p)) + g(κ_2(q)) ≥ ...
+
+Alternatively, use κ_2 as a "variance" proxy:
+  Φ_n ≤ C_n / κ_2  (a finite Cramér-Rao bound)
+  → 1/Φ_n ≥ κ_2 / C_n
+  → 1/Φ_n(p⊞q) ≥ (κ_2(p) + κ_2(q))/C_n = 1/C_n · κ_2(p) + 1/C_n · κ_2(q) ≥ ...
+
+This would give a weaker inequality with constant c_n < 1 instead of c_n = 1.
+
+STRATEGY 6 — Random matrix / conditional variance
+
+By Marcus-Spielman-Srivastava: p ⊞_n q = E_Q[det(xI - A - QBQ*)] over Haar Q.
+
+For each realization of Q, the eigenvalues ν of A + QBQ* satisfy:
+  ξ_i^ν ≈ E[ξ_i^λ | eigenvalues ν]  (conditional expectation)
+
+By conditional variance inequality:
+  Σ (ξ_i^ν)² ≤ Σ E[(ξ_i^λ)² | ν]
+
+This gives Φ(ν) ≤ E[Φ(λ) | ν] for each Q, hence 1/Φ(ν) ≥ 1/E[Φ(λ)|ν].
+
+STRATEGY 7 — Direct computation for n=4 and n=5
+
+Even if a general proof is out of reach, proving the inequality for n=4 (full, not just
+symmetric) and n=5 would be valuable partial results.
+
+For n=4 centered quartic x⁴ + Ax² + Bx + C:
+  κ_2 = A, κ_3 ~ B (up to normalization), κ_4 ~ C - A²/12
+
+The general form (by homogeneity analysis): 1/Φ_4 scales as degree 2 in roots, degree 1
+in coefficients. So:
+  1/Φ_4 = α·A + β·(B²/A) + γ·(κ_4/A) + δ·(B·κ_4/A²) + ε·(κ_4²/A³)
+
+Compute the exact coefficients α, β, γ, δ, ε by symbolic root calculation,
+then verify superadditivity of this expression.
+
+=== FORMAL STATEMENT ===
+
+import Mathlib
+open Polynomial Finset
+
+noncomputable section
+
+def phi (n : ℕ) (roots : Fin n → ℝ) : ℝ :=
+  ∑ i, (∑ j ∈ univ.erase i, 1 / (roots i - roots j)) ^ 2
+
+def freeAddConv (n : ℕ) (p q : ℝ[X]) : ℝ[X] :=
+  ∑ k ∈ range (n + 1), C
+    (∑ i ∈ range (k + 1),
+      (((n - i).factorial : ℝ) * ((n - (k - i)).factorial : ℝ)) /
+      (((n.factorial : ℝ) * ((n - k).factorial : ℝ))) *
+      p.coeff (n - i) * q.coeff (n - (k - i))) * X ^ (n - k)
+
+theorem first_proof_problem4 (n : ℕ) (hn : 0 < n)
+    (rp rq rpq : Fin n → ℝ)
+    (hp : Function.Injective rp) (hq : Function.Injective rq) (hpq : Function.Injective rpq)
+    (hconv : (∏ i : Fin n, (X - C (rpq i))) =
+             freeAddConv n (∏ i : Fin n, (X - C (rp i))) (∏ i : Fin n, (X - C (rq i))))
+    : 1 / phi n rpq ≥ 1 / phi n rp + 1 / phi n rq := by
+  sorry
+
+=== PRIORITY INSTRUCTIONS ===
+
+1. FIRST PRIORITY: Prove the general n case. Try Strategies 1-4 above.
+
+2. SECOND PRIORITY: If a general proof is not found, prove the FULL n=4 case
+   (not just symmetric quartics — the general centered quartic x⁴+Ax²+Bx+C).
+   Use Strategy 7: compute 1/Φ_4 explicitly and verify superadditivity.
+
+3. THIRD PRIORITY: Prove the inequality for SYMMETRIC polynomials (odd cumulants = 0)
+   for general n, or prove a weaker bound with constant c_n < 1 (Strategy 5).
+
+4. Use the attached .lean context file which has all the definitions and proven results.
+   The cumulant additivity (finite_free_cumulant_additive) is the key building block.
+
+5. Do NOT spend time re-proving n=2, n=3, or the cumulant additivity — these are done.
+
+6. If you find the exact formula for 1/Φ_n in cumulant coordinates for n=4 or n=5,
+   EVEN WITHOUT PROVING SUPERADDITIVITY, that would be valuable — state it as a lemma.
+
+=== MATHEMATICAL NOTES ===
+
+- This is Problem 4 from "First Proof" (arXiv:2602.05192)
+- It is the finite polynomial analog of the free Stam inequality (Mingo-Speicher Thm 19)
+- The infinite version: 1/Φ(μ⊞ν) ≥ 1/Φ(μ) + 1/Φ(ν) for free additive convolution
+- The n=2 case gives EQUALITY; for n≥3 strict inequality holds generically
+- Hermite polynomials give equality for all n: a^n H_n(x/a) ⊞_n b^n H_n(x/b) = c^n H_n(x/c)
+  where c = √(a²+b²)
