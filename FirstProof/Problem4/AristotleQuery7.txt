@@ -1,0 +1,222 @@
+FINITE FREE STAM INEQUALITY — Full n=4 Case and n=5 Exploration
+
+This is a continuation of 6 previous Aristotle queries on the Finite Free Stam Inequality
+(Problem 4 from arXiv:2602.05192, the "First Proof" benchmark).
+
+The main conjecture: for monic real-rooted degree-n polynomials p, q with distinct roots,
+  1/Phi_n(p ⊞_n q) >= 1/Phi_n(p) + 1/Phi_n(q)
+where Phi_n(p) = sum_i (sum_{j!=i} 1/(lambda_i - lambda_j))^2
+and ⊞_n is finite free additive convolution.
+
+=== WHAT IS ALREADY PROVEN (in attached .lean context file) ===
+
+The attached formal context file contains COMPLETE PROOFS (no sorry) of:
+
+Definitions:
+  boxplus_coeff, boxplus, Phi, invPhi, phi, is_centered,
+  hat_poly, normalized_hat_poly, poly_inv, poly_log,
+  finite_free_cumulant, freeAddConv, is_hyperbolic_symmetric_quartic
+
+Key properties (all proven):
+  - Phi_derivative_form: Phi(p) = sum_r (p''(r)/(2p'(r)))^2
+  - Phi_comp_add_C: Phi is translation invariant
+  - Phi_scaleRoots: Phi(c*roots) = (1/c^2)*Phi(roots)
+  - boxplus_centered_is_centered: centered polys closed under boxplus
+  - boxplus_centered_coeff_add: (n-2)-th coefficient additive for centered polys
+  - boxplus_centered_coeff_add_3: (n-3)-th coefficient additive for centered polys
+  - boxplus_centered_deg4_kappa4_additive: 4th cumulant additive for deg-4
+
+Proven cases:
+  - conjecture_n_1: n=1 trivial case
+  - conjecture_n_2: n=2 EQUALITY (invPhi = discriminant/2, additive)
+  - conjecture_n_3_reduced: n=3 full inequality for reduced cubics
+  - invPhi_superadditive_hyperbolic_symmetric_quartic: n=4 symmetric quartics
+
+Helper lemmas (all proven):
+  - n3_inequality: (b1+b2)^2/(u1+u2)^2 <= b1^2/u1^2 + b2^2/u2^2
+  - sum_sq_div_le_sum_sq_div: Cauchy-Schwarz for ratios
+  - quartic_denominator_superadditive: D(u1+u2,K1+K2) >= D(u1,K1)+D(u2,K2)
+  - Phi_symmetric_quartic: explicit Phi formula for X^4+AX^2+C
+  - invPhi_symmetric_quartic_expansion: 1/Phi = u/18 - 4K^2/(u^3+6uK)
+  - n4_symmetric_inequality: superadditivity of F(u,K)
+
+DO NOT re-prove any of the above. Use them as building blocks.
+
+=== KEY STRUCTURAL INSIGHT ===
+
+Finite free cumulants kappa_k are ADDITIVE under ⊞_n:
+  kappa_k(p ⊞_n q) = kappa_k(p) + kappa_k(q)
+
+This is proven for all n (in Query 3). It means: if we can express 1/Phi_n as a
+SUPERADDITIVE function f of the cumulants, the main inequality follows immediately.
+
+The L-Q PATTERN observed so far:
+  n=2: 1/Phi_2 = -kappa_2  (linear, hence additive)
+  n=3: 1/Phi_3 = (2/9)(-kappa_2) - (3/2)(kappa_3^2 / kappa_2^2)
+       Linear in -kappa_2 minus a CONVEX quotient in kappa_3
+  n=4 sym: 1/Phi_4 = (2/3)(-kappa_2) - (4/3)(kappa_4^2 / (-kappa_2 * (kappa_2^2 + kappa_4)))
+       Linear in -kappa_2 minus a CONVEX quotient in kappa_4
+
+Pattern: 1/Phi_n = c_n * (-kappa_2) - Q_n(kappa_3, ..., kappa_n, kappa_2)
+where Q_n is convex in (kappa_3,...,kappa_n), making f superadditive.
+
+Cumulant formulas for quartics (also proven in Query 6):
+  kappa_2 = A/12, kappa_3 = B/24, kappa_4 = C/24 - A^2/288
+
+=== GOAL A (PRIMARY): Full n=4 Case ===
+
+Prove the Stam inequality for GENERAL centered quartics (not just symmetric):
+
+For a centered quartic p(x) = x^4 + Ax^2 + Bx + C with 4 distinct real roots:
+  - kappa_2(p) = A/12
+  - kappa_3(p) = B/24
+  - kappa_4(p) = C/24 - A^2/288
+
+Step 1: Compute 1/Phi_4 as a function f(kappa_2, kappa_3, kappa_4).
+
+Use the derivative form: Phi_4(p) = sum_i ((6 r_i^2 + A) / (4 r_i^3 + 2A r_i + B))^2
+where r_1,...,r_4 are roots summing to 0.
+
+The result should be a rational function of A, B, C (equivalently kappa_2, kappa_3, kappa_4).
+
+IMPORTANT OBSERVATIONS:
+- When B=0 (kappa_3=0), the formula MUST reduce to the proven symmetric case.
+- Phi_4 is EVEN in B: if roots are {r_i}, replacing by {-r_i} negates B but preserves Phi.
+  So Phi_4(A,B,C) = Phi_4(A,-B,C), meaning B appears only in even powers.
+- Therefore 1/Phi_4(kappa_2, kappa_3, kappa_4) should have kappa_3 appearing only in even powers.
+
+Step 2: Prove f(kappa_2, kappa_3, kappa_4) is superadditive.
+
+The symmetric case proof used:
+  (a) Linear term additive
+  (b) Cauchy-Schwarz: sum of ratios >= ratio of sums
+  (c) Denominator superadditivity
+
+For the general case, try the same L-Q decomposition.
+
+Alternatively, try a PERTURBATION approach:
+  - For kappa_3 = 0 (symmetric), the inequality is proven.
+  - d/d(kappa_3) [1/Phi_4] at kappa_3=0 equals 0 (by the B-parity observation).
+  - If d^2/d(kappa_3)^2 [1/Phi_4] <= 0 (concavity in kappa_3), then the perturbation
+    can only help the inequality.
+
+Suggested theorem statement:
+
+theorem stam_inequality_n4_general (A1 B1 C1 A2 B2 C2 : R)
+    (h_roots1 : -- p1 = X^4 + C A1 * X^2 + C B1 * X + C C1 has 4 distinct real roots)
+    (h_roots2 : -- p2 has 4 distinct real roots)
+    (h_roots3 : -- boxplus 4 p1 p2 has 4 distinct real roots) :
+    invPhi (boxplus 4 p1 p2) >= invPhi p1 + invPhi p2
+
+=== GOAL B (SECONDARY): n=5 Symmetric Case ===
+
+Explore degree 5 to test whether the L-Q pattern continues.
+
+For a SYMMETRIC centered quintic: p(x) = x^5 + Ax^3 + Cx (odd symmetry, kappa_3=kappa_5=0).
+This has roots {0, +-r1, +-r2} for some r1, r2 > 0.
+
+Step 1: Compute Phi_5 for this polynomial.
+Use p'(x) = 5x^4 + 3Ax^2 + C, p''(x) = 20x^3 + 6Ax.
+Phi_5 = sum_i (p''(r_i) / (2 p'(r_i)))^2 at the 5 roots.
+
+Step 2: Express 1/Phi_5 in terms of kappa_2 and kappa_4.
+For the symmetric quintic: kappa_2 = A/20 (since binomial(5,2)=10, and kappa_2 = coeff/binomial),
+kappa_4 = C/120 - A^2/(20*... ) (compute from the hat transform).
+
+Step 3: Check if the result has the L-Q form:
+  1/Phi_5 = c_5 * (-kappa_2) - Q_5(kappa_4, kappa_2)
+
+If yes, prove superadditivity using the same Cauchy-Schwarz pattern.
+
+Even if you cannot prove superadditivity, STATING THE FORMULA is valuable.
+
+=== GOAL C (TERTIARY): Pattern Recognition ===
+
+From the formulas for n=2,3,4,5, can you conjecture the general structure?
+
+Look for:
+- What is c_n (the coefficient of -kappa_2)? Is c_n = 2/(n(n-1)) or similar?
+- What is the denominator of Q_n? Is it always a polynomial in kappa_2 and lower cumulants?
+- Is there a uniform proof of convexity of Q_n?
+
+State any conjectured formula as a sorry'd theorem:
+
+theorem invPhi_cumulant_formula (n : N) (p : R[X]) (...) :
+    invPhi p = ... := by sorry
+
+=== PROOF STRATEGY PRIORITIES ===
+
+1. Use algebraic computation (ring, field_simp, nlinarith) — this is what worked before
+2. Use Cauchy-Schwarz inequality for quotients — proven pattern
+3. For Phi computations, use the derivative form (proven in context)
+4. Express everything in terms of Newton/power sums of roots, then convert to cumulants
+5. Do NOT attempt random matrix, heat flow, or measure-theoretic arguments
+6. Do NOT re-prove anything from the context file
+7. Keep proofs modular: first state the formula as a lemma, then prove superadditivity separately
+
+=== SCALING NORMALIZATION HINT ===
+
+By Phi_scaleRoots (proven), Phi scales by 1/c^2 under root scaling, so 1/Phi scales by c^2.
+Cumulants scale as kappa_k ~ c^k. So we can normalize kappa_2 = -1 (i.e. set c so that
+-kappa_2 = 1), prove superadditivity in the reduced parameter space (kappa_3, kappa_4),
+then lift back by scaling. This reduces the number of free parameters.
+
+=== B-PARITY LEMMA ===
+
+A useful standalone lemma to prove first:
+
+lemma Phi_neg_roots (n : N) (r : Fin n -> R) :
+    phi n r = phi n (fun i => -r i)
+
+This formalizes the observation that negating all roots preserves Phi, which means
+for centered quartics, Phi(A,B,C) = Phi(A,-B,C), so B (hence kappa_3) appears only
+in even powers in the Phi formula.
+
+=== CUMULANT DOMAIN PREDICATE ===
+
+Define the feasible region for centered quartic cumulants corresponding to 4 distinct real roots:
+
+def quartic_cumulant_domain (k2 k3 k4 : R) : Prop :=
+  k2 < 0 /\ -- negative second cumulant (needed for real roots)
+  [discriminant condition in terms of k2, k3, k4]
+
+The symmetric case domain is already proven in the context:
+  k2 < 0, k4 > -k2^2/2, k4 < k2^2
+
+Use this predicate in all theorem statements for clean signatures.
+
+=== HELPER LEMMA SUGGESTIONS (in deliverable order) ===
+
+These intermediate results should be proved IN THIS ORDER:
+
+-- Step 1: Phi formula for general centered quartic
+lemma Phi_general_quartic (A B C : R)
+    (h : quartic_has_distinct_real_roots A B C) :
+    Phi (X^4 + C A * X^2 + C B * X + C C) = [explicit rational function of A,B,C]
+
+-- Step 2: invPhi in cumulant coordinates for general quartic
+lemma invPhi_cumulants_n4 (k2 k3 k4 : R)
+    (h : quartic_cumulant_domain k2 k3 k4) :
+    invPhi (quartic_from_cumulants k2 k3 k4) = [f(k2, k3, k4)]
+
+-- Step 3: Superadditivity of the formula
+lemma invPhi_n4_superadditive (k2 k3 k4 k2' k3' k4' : R)
+    (h : quartic_cumulant_domain k2 k3 k4)
+    (h' : quartic_cumulant_domain k2' k3' k4') :
+    f (k2+k2') (k3+k3') (k4+k4') >= f k2 k3 k4 + f k2' k3' k4'
+
+-- Step 4 (optional): Phi formula for symmetric quintic
+lemma Phi_symmetric_quintic (A C : R)
+    (h : quintic_sym_has_distinct_real_roots A C) :
+    Phi (X^5 + C A * X^3 + C C * X) = [explicit formula]
+
+=== DELIVERABLES (ordered by priority) ===
+
+1. Phi formula for general centered quartic X^4 + AX^2 + BX + C  (Step 1)
+2. invPhi expressed in cumulant coordinates f(k2, k3, k4)         (Step 2)
+3. Superadditivity proof for f                                      (Step 3)
+4. (Optional) Symmetric quintic Phi formula and 1/Phi in cumulants  (Step 4)
+5. (Optional) Conjectured general formula (sorry'd statement)       (Goal C)
+
+All results must be proved purely in Lean 4 / Mathlib. No external CAS.
+Each deliverable is valuable on its own — partial progress is useful.
