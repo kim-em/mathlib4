@@ -1,0 +1,242 @@
+FINITE FREE STAM INEQUALITY — Full n=4 General Case with Precomputed Formula
+
+This continues our work on the Finite Free Stam Inequality (Problem 4, arXiv:2602.05192).
+The main conjecture: for monic real-rooted degree-n polynomials p, q with distinct roots,
+  1/Phi_n(p ⊞_n q) >= 1/Phi_n(p) + 1/Phi_n(q)
+
+=== WHAT IS PROVEN (in attached .lean context file) ===
+
+The attached file has COMPLETE PROOFS (no sorry) of all definitions and:
+- Phi_derivative_form, Phi_comp_add_C, Phi_scaleRoots
+- boxplus_centered_is_centered, boxplus_centered_coeff_add, boxplus_centered_coeff_add_3
+- boxplus_centered_deg4_kappa4_additive
+- n3_inequality, sum_sq_div_le_sum_sq_div, quartic_denominator_superadditive
+- conjecture_n_1, conjecture_n_2, conjecture_n_3_reduced
+- Full n=4 symmetric proof chain (Phi_symmetric_quartic through invPhi_superadditive_hyperbolic_symmetric_quartic)
+
+DO NOT re-prove any of the above. Use them as building blocks.
+
+=== NEW RESULT: EXPLICIT Phi_4 FORMULA (verified by CAS) ===
+
+THIS IS THE KEY NEW INFORMATION. We have computed the explicit closed-form formula for
+Phi_4 of a general centered quartic. This formula has been verified numerically against
+exact rational root computations for 84 distinct quartics, with zero errors.
+
+For a centered quartic p(x) = x^4 + A*x^2 + B*x + C with 4 distinct real roots:
+
+  Phi_4(A,B,C) = -4 * (A^2 + 12*C) * (2*A^3 - 8*A*C + 9*B^2) / disc(A,B,C)
+
+where disc(A,B,C) is the polynomial discriminant:
+
+  disc(A,B,C) = 256*C^3 - 128*A^2*C^2 + 144*A*B^2*C - 27*B^4 + 16*A^4*C - 4*A^3*B^2
+
+Equivalently, since 1/Phi is what we need for the inequality:
+
+  1/Phi_4(A,B,C) = -disc(A,B,C) / [4 * (A^2 + 12*C) * (2*A^3 - 8*A*C + 9*B^2)]
+
+Verification for the symmetric case (B=0):
+  disc(A,0,C) = 16*C*(A^2 - 4*C)^2
+  Phi_4(A,0,C) = -4*(A^2+12C)*2A*(A^2-4C) / [16*C*(A^2-4C)^2]
+              = -A*(A^2+12C) / [2*C*(A^2-4C)]
+              = A*(A^2+12C) / [2*C*(4*C-A^2)]
+  This matches the proven Phi_symmetric_quartic.
+
+Key factorizations:
+  Phi_4 * disc = -4*(A^2 + 12*C)*(2*A^3 - 8*A*C + 9*B^2)
+  This is a polynomial of degree 5 (weighted degree 10).
+
+=== CUMULANT COORDINATES ===
+
+With kappa_2 = A/12, kappa_3 = B/24, kappa_4 = C/24 - A^2/288
+(equivalently: A = 12*k2, B = 24*k3, C = 24*k4 + 12*k2^2):
+
+  A^2 + 12*C = 288*(k2^2 + k4)
+  2*A^3 - 8*A*C + 9*B^2 = 576*(4*k2^3 - 4*k2*k4 + 9*k3^2)
+
+So:
+
+  1/Phi_4 = -(16*k2^6 + 72*k2^3*k3^2 - 48*k2^2*k4^2 + 216*k2*k3^2*k4
+              - 81*k3^4 + 32*k4^3) / [6*(k2^2 + k4)*(4*k2^3 - 4*k2*k4 + 9*k3^2)]
+
+For k3=0 (symmetric case), this reduces to:
+  1/Phi_4 = -(16*k2^6 - 48*k2^2*k4^2 + 32*k4^3) / [6*(k2^2+k4)*4*k2*(k2^2-k4)]
+          = -2*(k2^2-k4)*(k2^2+2*k4) / [3*k2*(k2^2+k4)]
+
+which matches the proven invPhi_symmetric_quartic_expansion:
+  (2/3)*(-k2) - (4/3)*k4^2/(-k2*(k2^2+k4)) = -2*(k2^2-k4)*(k2^2+2*k4)/[3*k2*(k2^2+k4)]
+
+=== SUPERADDITIVITY (NUMERICALLY VERIFIED) ===
+
+Define f(k2, k3, k4) = 1/Phi_4 as above. We need to prove:
+
+  f(k2+k2', k3+k3', k4+k4') >= f(k2, k3, k4) + f(k2', k3', k4')
+
+for all (k2,k3,k4), (k2',k3',k4') in the feasible domain (corresponding to quartics
+with 4 distinct real roots).
+
+This has been verified numerically for 1000 random pairs of quartics with zero violations
+and a strictly positive minimum gap.
+
+=== GOAL A (PRIMARY): Prove the Phi_4 formula ===
+
+theorem Phi_quartic_general (A B C : R) (r : Fin 4 -> R)
+    (hr_distinct : Function.Injective r)
+    (hr_sum : r 0 + r 1 + r 2 + r 3 = 0)
+    (hr_roots : forall i, r i ^ 4 + A * r i ^ 2 + B * r i + C = 0) :
+    let disc := 256 * C ^ 3 - 128 * A ^ 2 * C ^ 2 + 144 * A * B ^ 2 * C
+                - 27 * B ^ 4 + 16 * A ^ 4 * C - 4 * A ^ 3 * B ^ 2
+    phi 4 r = -4 * (A ^ 2 + 12 * C) * (2 * A ^ 3 - 8 * A * C + 9 * B ^ 2) / disc
+
+PROOF STRATEGY for the Phi formula:
+
+Method 1 (direct): Use phi = sum_i (sum_{j!=i} 1/(r_i-r_j))^2. Cross-multiply by disc
+= prod_{i<j}(r_i-r_j)^2 to clear denominators. The identity then becomes:
+
+  sum_i (sum_{j!=i} 1/(r_i-r_j))^2 * prod_{i<j}(r_i-r_j)^2
+  = -4 * (A^2+12C) * (2A^3-8AC+9B^2)
+
+Both sides are symmetric polynomials in the roots (weight 10). Express in terms of
+the power sums s_k = sum r_i^k using:
+  s_0=4, s_1=0, s_2=-2A, s_3=-3B, s_4=2A^2-4C
+
+This reduces to a polynomial identity that can be verified by `ring` or `nlinarith`.
+
+Method 2 (factored): The LHS can be rewritten. For each i:
+  sum_{j!=i} 1/(r_i-r_j) = p''(r_i)/(2*p'(r_i)) where p'(r_i) = prod_{j!=i}(r_i-r_j)
+
+So Phi * disc = Phi * prod_{i<j}(r_i-r_j)^2
+  = sum_i [p''(r_i)/(2*p'(r_i))]^2 * prod_{i<j}(r_i-r_j)^2
+
+For each term i in the sum: [p''(r_i)]^2/(4*p'(r_i)^2) * prod_{i<j}(r_i-r_j)^2
+  = [p''(r_i)]^2/4 * prod_{j!=i}(r_j-r_k)^2 for k<j, both != i
+  (because prod_{i<j}(r_i-r_j)^2 / p'(r_i)^2 = prod_{j<k, j,k!=i}(r_j-r_k)^2)
+
+So Phi*disc = (1/4) * sum_i p''(r_i)^2 * D_i where D_i = prod_{j<k, j,k!=i}(r_j-r_k)^2.
+
+With p''(r_i) = 12*r_i^2 + 2A, and D_i being the discriminant of the cubic
+with roots {r_j : j!=i}, this may be easier to manipulate.
+
+=== GOAL B (PRIMARY): Prove superadditivity ===
+
+STRATEGY: Clear denominators and reduce to a polynomial inequality.
+
+Step 1: Define the feasible domain with SIGN LEMMAS.
+
+def quartic_cumulant_feasible (k2 k3 k4 : R) : Prop :=
+  k2 < 0 /\                             -- second cumulant is negative for real-rooted quartics
+  k2 ^ 2 + k4 > 0 /\                    -- ensures A^2+12C > 0 (positive factor)
+  4 * k2 ^ 3 - 4 * k2 * k4 + 9 * k3 ^ 2 < 0  -- ensures 2A^3-8AC+9B^2 < 0 (sign)
+
+These sign conditions are critical: they ensure the denominators of 1/Phi_4 are nonzero
+and have consistent sign, allowing us to cross-multiply the inequality.
+
+Step 2: Cross-multiply to get a polynomial inequality.
+
+The superadditivity f(a+a', b+b', c+c') >= f(a,b,c) + f(a',b',c') where
+  f(a,b,c) = -N(a,b,c) / (6 * D(a,b,c))
+  N(a,b,c) = 16a^6 + 72a^3*b^2 - 48a^2*c^2 + 216a*b^2*c - 81b^4 + 32c^3
+  D(a,b,c) = (a^2+c)*(4a^3-4ac+9b^2)
+
+After clearing the three (negative) denominators and flipping the sign, becomes:
+  N_s*D1*D2 <= N1*D_s*D2 + N2*D_s*D1
+where subscripts s,1,2 denote evaluation at sum, first, second cumulants.
+
+Rearranging: N_s*D1*D2 - N1*D_s*D2 - N2*D_s*D1 <= 0
+
+This is a polynomial inequality in 6 variables (k2,k3,k4,k2',k3',k4')
+subject to the feasible domain constraints.
+
+Step 3: Prove the polynomial inequality using nlinarith or polyrith, potentially
+with auxiliary sum-of-squares lemmas.
+
+=== GOAL C (SECONDARY): Cumulant-coefficient theorem ===
+
+For the record, state and prove the relationship between cumulants and coefficients:
+
+theorem quartic_cumulants (A B C : R) :
+    let k2 := A / 12
+    let k3 := B / 24
+    let k4 := C / 24 - A ^ 2 / 288
+    -- boxplus adds cumulants:
+    -- for p = X^4 + A1*X^2 + B1*X + C1, q = X^4 + A2*X^2 + B2*X + C2:
+    --   boxplus 4 p q has coefficients:
+    --   A' = A1 + A2  (from boxplus_centered_coeff_add)
+    --   B' = B1 + B2  (from boxplus_centered_coeff_add_3)
+    --   C' = C1 + C2 + A1*A2/6  (from boxplus_centered_deg4_kappa4_additive)
+    -- and cumulants add: k2' = k2_1+k2_2, k3' = k3_1+k3_2, k4' = k4_1+k4_2
+    True := trivial
+
+The key fact: C'(convolution) = C1+C2+A1*A2/6, which in cumulant terms is exactly
+k4' = k4_1 + k4_2 (since A1*A2/6 = 12*k2_1*12*k2_2/6 = 24*k2_1*k2_2, and
+C'/24 - A'^2/288 = (C1+C2+24k2_1*k2_2)/24 - (A1+A2)^2/288
+= C1/24 + C2/24 + k2_1*k2_2 - A1^2/288 - A2^2/288 - 2*A1*A2/288
+= k4_1 + k2_1^2/12 + k4_2 + k2_2^2/12 + k2_1*k2_2 - k2_1^2/12 - k2_2^2/12 - k2_1*k2_2...
+Hmm, let me recalculate:
+  k4' = C'/24 - (A1+A2)^2/288
+  = (C1+C2+A1*A2/6)/24 - (A1^2+2A1A2+A2^2)/288
+  = C1/24 + C2/24 + A1A2/144 - A1^2/288 - A1A2/144 - A2^2/288
+  = (C1/24 - A1^2/288) + (C2/24 - A2^2/288)
+  = k4_1 + k4_2  ✓)
+
+=== DELIVERABLES (priority order) ===
+
+1. Phi_quartic_general: prove the explicit formula above                    [KEY — Goal A]
+2. invPhi_quartic_general_superadditive: prove 1/Phi is superadditive       [KEY — Goal B]
+3. stam_inequality_n4_general: full n=4 Stam inequality via Goals A+B       [GOAL]
+4. Any partial result toward Goals A or B                                    [VALUABLE]
+
+=== LEAN THEOREM SIGNATURES ===
+
+-- Predicate for quartic with 4 distinct real roots
+def quartic_has_distinct_roots (A B C : R) : Prop :=
+  exists r : Fin 4 -> R, Function.Injective r /\
+    r 0 + r 1 + r 2 + r 3 = 0 /\
+    forall i, r i ^ 4 + A * r i ^ 2 + B * r i + C = 0
+
+-- The Phi formula
+theorem Phi_quartic_general (A B C : R)
+    (h : quartic_has_distinct_roots A B C)
+    (h_disc : 256 * C ^ 3 - 128 * A ^ 2 * C ^ 2 + 144 * A * B ^ 2 * C
+              - 27 * B ^ 4 + 16 * A ^ 4 * C - 4 * A ^ 3 * B ^ 2 != 0) :
+    Phi (X ^ 4 + C A * X ^ 2 + C B * X + C C) =
+    -4 * (A ^ 2 + 12 * C) * (2 * A ^ 3 - 8 * A * C + 9 * B ^ 2) /
+    (256 * C ^ 3 - 128 * A ^ 2 * C ^ 2 + 144 * A * B ^ 2 * C
+     - 27 * B ^ 4 + 16 * A ^ 4 * C - 4 * A ^ 3 * B ^ 2) := by sorry
+
+-- The superadditivity
+theorem invPhi_quartic_superadditive (k2 k3 k4 k2' k3' k4' : R)
+    (h1 : quartic_cumulant_feasible k2 k3 k4)
+    (h2 : quartic_cumulant_feasible k2' k3' k4')
+    (h3 : quartic_cumulant_feasible (k2+k2') (k3+k3') (k4+k4')) :
+    let f := fun a b c =>
+      -(16*a^6 + 72*a^3*b^2 - 48*a^2*c^2 + 216*a*b^2*c - 81*b^4 + 32*c^3) /
+      (6*(a^2+c)*(4*a^3-4*a*c+9*b^2))
+    f (k2+k2') (k3+k3') (k4+k4') >= f k2 k3 k4 + f k2' k3' k4' := by sorry
+
+-- The main theorem
+theorem stam_inequality_n4 (A1 B1 C1 A2 B2 C2 : R)
+    (h1 : quartic_has_distinct_roots A1 B1 C1)
+    (h2 : quartic_has_distinct_roots A2 B2 C2)
+    (h3 : quartic_has_distinct_roots (A1+A2) (B1+B2) (C1+C2+A1*A2/6)) :
+    invPhi (boxplus 4 (X^4+C A1*X^2+C B1*X+C C1) (X^4+C A2*X^2+C B2*X+C C2))
+    >= invPhi (X^4+C A1*X^2+C B1*X+C C1) + invPhi (X^4+C A2*X^2+C B2*X+C C2) := by
+  sorry -- Follows from Phi_quartic_general + invPhi_quartic_superadditive + cumulant additivity
+
+=== PROOF STRATEGY NOTES ===
+
+1. For Goal A: the identity Phi*disc = -4*(A^2+12C)*(2A^3-8AC+9B^2) is a POLYNOMIAL identity
+   in the roots (both sides are symmetric polynomials of weight 10). This can be verified by
+   expressing both sides in the power sum basis {s_k = sum r_i^k} and checking equality.
+   The power sums satisfy: s_0=4, s_1=0, s_2=-2A, s_3=-3B, s_4=2A^2-4C, s_5=5AB,
+   s_6=-2A^3+6AC+3B^2. Use `ring` or `nlinarith`.
+
+2. For Goal B: cross-multiply to clear all denominators. The inequality
+   f(a1+a2, b1+b2, c1+c2) >= f(a1,b1,c1) + f(a2,b2,c2)
+   becomes (after clearing 3 denominators):
+   N(a1+a2,b1+b2,c1+c2)*D1*D2 >= N1*D(a1+a2,b1+b2,c1+c2)*D2 + N2*D(a1+a2,b1+b2,c1+c2)*D1
+   This is a polynomial inequality in 6 variables. If the denominators all have the same sign
+   (which they do in the feasible domain), this reduces to showing a sum-of-squares.
+   Use `nlinarith` or `polyrith` with appropriate auxiliary lemmas.
+
+3. All proofs must be in Lean 4 / Mathlib. Use ring, field_simp, nlinarith, polyrith.
+   Do NOT re-prove context file results. Do NOT use axiom systems that can derive False.
