@@ -307,6 +307,21 @@ theorem dist_sq_eq_dist_orthogonalProjection_sq_add_dist_orthogonalProjection_sq
   exact Submodule.inner_right_of_mem_orthogonal (vsub_orthogonalProjection_mem_direction p₂ hp₁)
     (orthogonalProjection_vsub_mem_direction_orthogonal s p₂)
 
+/-- If the distance from `p₁` to its orthogonal projection equals its distance to a point in `s`,
+the orthogonal projection is that point. -/
+lemma dist_orthogonalProjection_eq_dist_iff_eq_of_mem {s : AffineSubspace 𝕜 P}
+    [s.direction.HasOrthogonalProjection] {p₁ p₂ : P} (hp₂ : p₂ ∈ s) :
+    haveI : Nonempty s := ⟨p₂, hp₂⟩
+    dist p₁ (orthogonalProjection s p₁) = dist p₁ p₂ ↔ orthogonalProjection s p₁ = p₂ := by
+  haveI : Nonempty s := ⟨p₂, hp₂⟩
+  constructor
+  · intro h
+    rwa [← sq_eq_sq₀ dist_nonneg dist_nonneg, pow_two, pow_two, dist_comm _ p₂,
+      dist_sq_eq_dist_orthogonalProjection_sq_add_dist_orthogonalProjection_sq _ hp₂,
+      right_eq_add, mul_eq_zero, dist_eq_zero, or_self, eq_comm] at h
+  · intro h
+    nth_rw 4 [← h]
+
 /-- The distance between a point and its orthogonal projection to a subspace equals the distance
 to that subspace as given by `Metric.infDist`. This is not a `simp` lemma since the simplest form
 depends on the context (if any calculations are to be done with the distance, the version with

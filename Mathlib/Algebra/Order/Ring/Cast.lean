@@ -59,9 +59,7 @@ set_option backward.isDefEq.respectTransparency false in
 lemma cast_strictMono : StrictMono (fun x : ℤ => (x : R)) :=
   strictMono_of_le_iff_le fun _ _ => cast_le.symm
 
-@[simp, norm_cast] lemma cast_lt : (m : R) < n ↔ m < n := cast_strictMono.lt_iff_lt
-
-@[gcongr] protected alias ⟨_, GCongr.intCast_strictMono⟩ := Int.cast_lt
+@[simp, norm_cast, gcongr] lemma cast_lt : (m : R) < n ↔ m < n := cast_strictMono.lt_iff_lt
 
 @[simp] lemma cast_nonpos : (n : R) ≤ 0 ↔ n ≤ 0 := by rw [← cast_zero, cast_le]
 

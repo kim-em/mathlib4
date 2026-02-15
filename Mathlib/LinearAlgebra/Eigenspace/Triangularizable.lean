@@ -26,7 +26,7 @@ This file contains basic results relevant to the triangularizability of linear e
 
 ## References
 
-* [Sheldon Axler, *Linear Algebra Done Right*][axler2015]
+* [Sheldon Axler, *Linear Algebra Done Right*][axler2024]
 * https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors
 
 ## TODO
@@ -58,7 +58,7 @@ theorem exists_hasEigenvalue_of_genEigenspace_eq_top [Nontrivial M] {f : End R M
     exact HasUnifEigenvalue.lt zero_lt_one hμ
   simp [HasUnifEigenvalue, ← not_forall, ← iSup_eq_bot, hf]
 
--- This is Lemma 5.21 of [axler2015], although we are no longer following that proof.
+-- This is Lemma 5.19 of [axler2024], although we are no longer following that proof.
 /-- In finite dimensions, over an algebraically closed field, every linear endomorphism has an
 eigenvalue. -/
 theorem exists_eigenvalue [IsAlgClosed K] [FiniteDimensional K V] [Nontrivial V] (f : End K V) :

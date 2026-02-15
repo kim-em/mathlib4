@@ -201,12 +201,11 @@ theorem kernelSubobjectIso_comp_kernel_map (sq : Arrow.mk f ⟶ Arrow.mk f') :
 
 end
 
-@[simp]
-theorem kernelSubobject_zero {A B : C} : kernelSubobject (0 : A ⟶ B) = ⊤ :=
-  (isIso_iff_mk_eq_top _).mp (by infer_instance)
+theorem kernelSubobject_zero {A B : C} : kernelSubobject (0 : A ⟶ B) = ⊤ := by
+  simp
 
 instance isIso_kernelSubobject_zero_arrow : IsIso (kernelSubobject (0 : X ⟶ Y)).arrow :=
-  (isIso_arrow_iff_eq_top _).mpr kernelSubobject_zero
+  (isIso_arrow_iff_eq_top _).mpr (by simp)
 
 theorem le_kernelSubobject (A : Subobject X) (h : A.arrow ≫ f = 0) : A ≤ kernelSubobject f :=
   Subobject.le_mk_of_comm (kernel.lift f A.arrow h) (by simp)

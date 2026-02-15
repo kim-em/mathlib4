@@ -81,6 +81,10 @@ This version includes an explicit universe parameter `u` which should always be 
 intended for categorical purposes. See `CompactlyGeneratedSpace` for the version without this
 parameter, intended for topological purposes.
 -/
+-- After https://github.com/leanprover/lean4/pull/12286 and
+-- https://github.com/leanprover/lean4/pull/12423, the compact space universe `u` would default
+-- to a universe output parameter. See Note [universe output parameters and typeclass caching].
+@[univ_out_params]
 class UCompactlyGeneratedSpace (X : Type v) [t : TopologicalSpace X] : Prop where
   /-- The topology of `X` is finer than the compactly generated topology. -/
   le_compactlyGenerated : t ≤ compactlyGenerated.{u} X

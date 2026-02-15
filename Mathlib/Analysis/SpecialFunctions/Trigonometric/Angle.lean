@@ -646,7 +646,7 @@ lemma two_nsmul_eq_iff_eq_of_abs_toReal_lt_pi_div_two {θ ψ : Angle} (hθ : |θ
   suffices θ ≠ ψ + π by simp [this, two_nsmul_eq_iff]
   rintro rfl
   simp only [← cos_pos_iff_abs_toReal_lt_pi_div_two, cos_add_pi] at hθ hψ
-  lia
+  grind
 
 lemma two_zsmul_eq_iff_eq_of_abs_toReal_lt_pi_div_two {θ ψ : Angle} (hθ : |θ.toReal| < π / 2)
     (hψ : |ψ.toReal| < π / 2) : (2 : ℤ) • θ = (2 : ℤ) • ψ ↔ θ = ψ := by

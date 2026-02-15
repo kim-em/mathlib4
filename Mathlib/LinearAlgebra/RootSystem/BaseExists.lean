@@ -268,7 +268,7 @@ private lemma baseOf_root_eq_baseOf_coroot_aux
   · simpa using hij
   · obtain ⟨rfl⟩ : q = -1 := smul_left_injective ℚ (P.ne_zero j) <| by
       simp_rw [neg_smul, ← neg_eq_iff_eq_neg, ← smul_neg, ← hij, one_smul, hq']
-    lia
+    grind
 
 lemma baseOf_root_eq_baseOf_coroot
     (f : M →+ ℚ) (hf : ∀ i, f (P.root i) ≠ 0)

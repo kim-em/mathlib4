@@ -310,7 +310,7 @@ end Rat
 /-- The absolute value on `ℚ` as a map to `ℚ≥0`. -/
 @[pp_nodot]
 def Rat.nnabs (x : ℚ) : ℚ≥0 :=
-  ⟨abs x, abs_nonneg x⟩
+  ⟨abs x, _root_.abs_nonneg x⟩
 
 @[norm_cast, simp]
 theorem Rat.coe_nnabs (x : ℚ) : (Rat.nnabs x : ℚ) = abs x := rfl

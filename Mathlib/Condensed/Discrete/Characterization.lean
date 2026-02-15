@@ -113,7 +113,6 @@ namespace CondensedMod
 
 variable (R : Type (u + 1)) [Ring R]
 
-attribute [local instance] Types.instFunLike Types.instConcreteCategory in
 lemma isDiscrete_iff_isDiscrete_forget (M : CondensedMod R) :
     M.IsDiscrete ↔ ((Condensed.forget R).obj M).IsDiscrete :=
   Sheaf.isConstant_iff_forget (coherentTopology CompHaus)
@@ -229,7 +228,6 @@ namespace LightCondMod
 
 variable (R : Type u) [Ring R]
 
-attribute [local instance] Types.instFunLike Types.instConcreteCategory in
 lemma isDiscrete_iff_isDiscrete_forget (M : LightCondMod R) :
     M.IsDiscrete ↔ ((LightCondensed.forget R).obj M).IsDiscrete :=
   Sheaf.isConstant_iff_forget (coherentTopology LightProfinite)

@@ -409,11 +409,7 @@ lemma Module.FinitePresentation.exists_lift_of_isLocalizedModule
   obtain ⟨x, rfl⟩ := hπ x
   rw [← LinearMap.comp_apply, ← LinearMap.comp_apply, mul_smul, LinearMap.smul_comp, ← hi,
     ← LinearMap.comp_smul, LinearMap.comp_assoc, LinearMap.comp_assoc]
-  congr 2
-  convert Submodule.liftQ_mkQ _ _ this using 2
-  ext x
-  apply (LinearMap.quotKerEquivOfSurjective _ hπ).injective
-  simp [LinearMap.quotKerEquivOfSurjective]
+  simp
 
 set_option backward.isDefEq.respectTransparency false in
 lemma Module.Finite.exists_smul_of_comp_eq_of_isLocalizedModule

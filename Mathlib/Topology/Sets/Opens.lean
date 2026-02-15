@@ -257,6 +257,13 @@ def frameMinimalAxioms : Frame.MinimalAxioms (Opens α) where
 
 instance instFrame : Frame (Opens α) := .ofMinimalAxioms frameMinimalAxioms
 
+/-- The coercion from open sets to sets as a `FrameHom`. -/
+@[simps] protected def frameHom : FrameHom (Opens α) (Set α) where
+  toFun := (·)
+  map_inf' _ _ := rfl
+  map_top' := rfl
+  map_sSup' _ := by simp
+
 theorem isOpenEmbedding' (U : Opens α) : IsOpenEmbedding (Subtype.val : U → α) :=
   U.isOpen.isOpenEmbedding_subtypeVal
 
@@ -473,7 +480,7 @@ instance [Subsingleton α] : Unique (OpenNhdsOf x) where
   uniq U := SetLike.ext' <| Subsingleton.eq_univ_of_nonempty ⟨x, U.mem⟩
 
 instance : DistribLattice (OpenNhdsOf x) :=
-  toOpens_injective.distribLattice _ (fun _ _ => rfl) fun _ _ => rfl
+  toOpens_injective.distribLattice _ .rfl .rfl (fun _ _ ↦ rfl) fun _ _ ↦ rfl
 
 theorem basis_nhds : (𝓝 x).HasBasis (fun _ : OpenNhdsOf x => True) (↑) :=
   (nhds_basis_opens x).to_hasBasis (fun U hU => ⟨⟨⟨U, hU.2⟩, hU.1⟩, trivial, Subset.rfl⟩) fun U _ =>

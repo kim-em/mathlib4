@@ -289,16 +289,6 @@ instance instSemiring (r : R → R → Prop) : Semiring (RingQuot r) where
   right_distrib := by
     rintro ⟨⟨⟩⟩ ⟨⟨⟩⟩ ⟨⟨⟩⟩
     simp only [mul_quot, add_quot, right_distrib]
-  nsmul := (· • ·)
-  nsmul_zero := by
-    rintro ⟨⟨⟩⟩
-    simp only [zero_smul]
-  nsmul_succ := by
-    rintro n ⟨⟨⟩⟩
-    simp only [smul_quot, nsmul_eq_mul, Nat.cast_add, Nat.cast_one, add_mul, one_mul,
-               add_comm, add_quot]
-  __ := instAddCommMonoid r
-  __ := instMonoidWithZero r
 
 -- Has to be exposed, otherwise we get diamonds in ℤ-algebras.
 /-- The `intCast` function for `RingQuot`. -/
@@ -331,11 +321,10 @@ instance instRing {R : Type uR} [Ring R] (r : R → R → Prop) : Ring (RingQuot
       exact congrArg (Quot.mk _) (Int.cast_negSucc n) }
 
 instance instCommSemiring {R : Type uR} [CommSemiring R] (r : R → R → Prop) :
-    CommSemiring (RingQuot r) :=
-  { RingQuot.instSemiring r with
-    mul_comm := by
-      rintro ⟨⟨⟩⟩ ⟨⟨⟩⟩
-      simp [mul_quot, mul_comm] }
+    CommSemiring (RingQuot r) where
+  mul_comm := by
+    rintro ⟨⟨⟩⟩ ⟨⟨⟩⟩
+    simp [mul_quot, mul_comm]
 
 instance {R : Type uR} [CommRing R] (r : R → R → Prop) : CommRing (RingQuot r) :=
   { RingQuot.instCommSemiring r, RingQuot.instRing r with }

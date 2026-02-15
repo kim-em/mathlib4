@@ -6,19 +6,13 @@ Authors: Antoine Chambert-Loir
 
 module
 
+public import Mathlib.Data.Set.PowersetCard
 public import Mathlib.GroupTheory.SpecificGroups.Alternating.MaximalSubgroups
 
 /-! # Combinations
 
 Combinations in a type are finite subsets of given cardinality.
-This file provides some API for handling them, especially in the context of a group action.
-
-* `Set.powersetCard α n` is the set of all `Finset α` with cardinality `n`.
-  The name is chosen in relation with `Finset.powersetCard` which corresponds to
-  the analogous structure for subsets of given cardinality of a given `Finset`, as a `Finset`.
-
-* `Set.powersetCard.card` proves that the `Nat.card`-cardinality
-  of this set is equal to `(Nat.card α).choose n`.
+This file provides some API for handling them in the context of a group action.
 
 * `Set.powersetCard.subMulAction`:
   When a group `G` acts on `α`, the `SubMulAction` of `G` on `powersetCard α n`.
@@ -44,15 +38,6 @@ This induces a `MulAction G (powersetCard α n)` instance. Then:
 -/
 
 @[expose] public section
-
-variable (G : Type*) [Group G] (α : Type*) [MulAction G α]
-
-/-- The type of combinations of `n` elements of a type `α`.
-
-See also `Finset.powersetCard`. -/
-def Set.powersetCard (n : ℕ) := {s : Finset α | s.card = n}
-
-variable {α} {n : ℕ} {s t : Set.powersetCard α n}
 
 namespace Set.powersetCard
 
@@ -197,11 +182,10 @@ variable (n) in
 @[to_additive /-- The equivariant map from embeddings of `Fin n`
   (aka arrangements) to combinations. -/]
 def mulActionHom_of_embedding : (Fin n ↪ α) →[G] powersetCard α n where
-  toFun f := ⟨Finset.univ.map f, by rw [mem_iff, Finset.card_map, Finset.card_fin]⟩
+  toFun := ofFinEmb n α
   map_smul' g f := by
-    rw [← Subtype.coe_inj, Subtype.coe_mk, coe_smul,
-      f.smul_def, Finset.smul_finset_def,
-      ← Finset.map_map, Finset.map_eq_image]
+    rw [← Subtype.coe_inj, coe_smul, f.smul_def, val_ofFinEmb, val_ofFinEmb,
+      Finset.smul_finset_def, ← Finset.map_map, Finset.map_eq_image]
     simp [toPerm]
 
 @[to_additive]
@@ -297,7 +281,7 @@ theorem isPretransitive_of_isMultiplyPretransitive (h : IsMultiplyPretransitive 
 theorem isPretransitive : IsPretransitive (Perm α) (powersetCard α n) :=
   isPretransitive_of_isMultiplyPretransitive _ (isMultiplyPretransitive α n)
 
-section
+section compl
 
 variable (α)
 
@@ -305,42 +289,41 @@ variable [Fintype α] {m : ℕ} (hm : m + n = Fintype.card α)
 include hm
 
 /-- The complement of a combination, as an equivariant map. -/
-def compl : powersetCard α n →[G] powersetCard α m where
-  toFun s := ⟨(sᶜ : Finset α), by
-      rw [mem_iff, Finset.card_compl]
-      have := mem_iff.mp s.2
-      omega⟩
+def mulActionHom_compl : powersetCard α n →[G] powersetCard α m where
+  toFun := compl hm
   map_smul' g s := by ext; simp [← Finset.inv_smul_mem_iff]
 
 variable {hm} in
-theorem coe_compl {s : powersetCard α n} :
-    (compl G α hm s : Finset α) = (s : Finset α)ᶜ :=
+theorem coe_mulActionHom_compl {s : powersetCard α n} :
+    (mulActionHom_compl G α hm s : Finset α) = (s : Finset α)ᶜ :=
   rfl
 
 variable {hm} in
-theorem mem_compl {s : powersetCard α n} {a : α} :
-    a ∈ compl G α hm s ↔ a ∉ s :=
+theorem mem_mulActionHom_compl {s : powersetCard α n} {a : α} :
+    a ∈ mulActionHom_compl G α hm s ↔ a ∉ s :=
   Finset.mem_compl
 
-theorem compl_compl :
-    (compl G α <| (n.add_comm m).trans hm).comp (compl G α hm) = .id G := by
+theorem mulActionHom_compl_mulActionHom_compl :
+    (mulActionHom_compl G α <| (n.add_comm m).trans hm).comp
+    (mulActionHom_compl G α hm) = .id G := by
   ext s a
-  change a ∈ (compl G α _).comp (compl G α hm) s ↔ a ∈ s
-  simp [MulActionHom.comp_apply, mem_compl]
+  change a ∈ (mulActionHom_compl G α _).comp (mulActionHom_compl G α hm) s ↔ a ∈ s
+  simp [MulActionHom.comp_apply, mem_mulActionHom_compl]
 
-theorem compl_bijective :
-    Function.Bijective (compl G α hm) :=
-  Function.bijective_iff_has_inverse.mpr ⟨compl G α ((n.add_comm m).trans hm),
-    DFunLike.ext_iff.mp (compl_compl G α hm), DFunLike.ext_iff.mp (compl_compl G α _)⟩
+theorem mulActionHom_compl_bijective :
+    Function.Bijective (mulActionHom_compl G α hm) :=
+  Function.bijective_iff_has_inverse.mpr ⟨mulActionHom_compl G α ((n.add_comm m).trans hm),
+    DFunLike.ext_iff.mp (mulActionHom_compl_mulActionHom_compl G α hm),
+    DFunLike.ext_iff.mp (mulActionHom_compl_mulActionHom_compl G α _)⟩
 
-end
+end compl
 
 variable (α)
 
 /-- The obvious map from a type to its 1-combinations, as an equivariant map. -/
 @[to_additive /-- The obvious map from a type to its 1-combinations, as an equivariant map. -/]
-def mulActionHom_singleton : α →[G] powersetCard α 1 where
-  toFun x := ⟨{x}, Finset.card_singleton x⟩
+noncomputable def mulActionHom_singleton : α →[G] powersetCard α 1 where
+  toFun := ofSingleton
   map_smul' _ _ := rfl
 
 @[to_additive]
@@ -396,7 +379,7 @@ theorem isPretransitive_alternatingGroup [Fintype α] (hα : 3 ≤ Nat.card α) 
       grind
     by_cases hn' : n ≤ Nat.card α
     · apply IsPretransitive.of_surjective_map
-        (compl_bijective (alternatingGroup α) α _).surjective this
+        (mulActionHom_compl_bijective (alternatingGroup α) α _).surjective this
       aesop
     · suffices Subsingleton (powersetCard α n) by infer_instance
       rw [not_le] at hn'

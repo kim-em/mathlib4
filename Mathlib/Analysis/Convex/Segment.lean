@@ -246,11 +246,17 @@ theorem image_openSegment (f : E →ᵃ[𝕜] F) (a b : E) :
 @[simp]
 theorem vadd_segment [AddTorsor G E] [VAddCommClass G E E] (a : G) (b c : E) :
     a +ᵥ [b -[𝕜] c] = [a +ᵥ b -[𝕜] a +ᵥ c] :=
+  #adaptation_note /-- Prior to https://github.com/leanprover/lean4/pull/12286/
+  we didn't need this `let` statement. -/
+  let : AddTorsor E E := addGroupIsAddTorsor E
   image_segment 𝕜 ⟨_, LinearMap.id, fun _ _ => vadd_comm _ _ _⟩ b c
 
 @[simp]
 theorem vadd_openSegment [AddTorsor G E] [VAddCommClass G E E] (a : G) (b c : E) :
     a +ᵥ openSegment 𝕜 b c = openSegment 𝕜 (a +ᵥ b) (a +ᵥ c) :=
+  #adaptation_note /-- Prior to https://github.com/leanprover/lean4/pull/12286/
+  we didn't need this `let` statement. -/
+  let : AddTorsor E E := addGroupIsAddTorsor E
   image_openSegment 𝕜 ⟨_, LinearMap.id, fun _ _ => vadd_comm _ _ _⟩ b c
 
 @[simp]

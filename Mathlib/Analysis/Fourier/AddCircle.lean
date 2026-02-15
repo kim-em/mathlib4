@@ -295,7 +295,7 @@ variable [hT : Fact (0 < T)]
 
 section fourierCoeff
 
-variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 /-- The `n`-th Fourier coefficient of a function `AddCircle T → E`, for `E` a complete normed
 `ℂ`-vector space, defined as the integral over `AddCircle T` of `fourier (-n) t • f t`. -/
@@ -492,6 +492,19 @@ theorem has_pointwise_sum_fourier_series_of_summable (h : Summable (fourierCoeff
 end Convergence
 
 end ScopeHT
+
+section computations
+
+theorem fourierCoeff_fourier {T : ℝ} [hT : Fact (0 < T)] (n : ℤ) :
+    fourierCoeff (T := T) (fourier n) = Pi.single n 1 := by
+  ext m
+  rw [← fourierCoeff_congr_ae (coeFn_fourierLp 2 n), ← fourierBasis_repr,
+    HilbertBasis.repr_apply_apply, coe_fourierBasis]
+  obtain (rfl | hmn) := eq_or_ne m n
+  · rw [inner_self_eq_norm_sq_to_K, (orthonormal_fourier (hT := hT)).1 m]; simp
+  · rw [(orthonormal_fourier (hT := hT)).2 hmn]; simp [hmn]
+
+end computations
 
 section deriv
 

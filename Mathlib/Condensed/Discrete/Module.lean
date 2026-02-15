@@ -166,11 +166,9 @@ instance : (discrete (ModuleCat R)).Full :=
 instance : (constantSheaf (coherentTopology CompHaus) (ModuleCat R)).Full :=
   inferInstanceAs (discrete (ModuleCat R)).Full
 
-attribute [local instance] Types.instFunLike Types.instConcreteCategory in
 instance : (constantSheaf (coherentTopology CompHaus) (Type (u + 1))).Faithful :=
   inferInstanceAs (discrete (Type (u + 1))).Faithful
 
-attribute [local instance] Types.instFunLike Types.instConcreteCategory in
 instance : (constantSheaf (coherentTopology CompHaus) (Type (u + 1))).Full :=
   inferInstanceAs (discrete (Type (u + 1))).Full
 
@@ -284,11 +282,9 @@ instance : (discrete (ModuleCat.{u} R)).Full :=
 instance : (constantSheaf (coherentTopology LightProfinite.{u}) (ModuleCat.{u} R)).Full :=
   inferInstanceAs (discrete.{u} (ModuleCat.{u} R)).Full
 
-attribute [local instance] Types.instFunLike Types.instConcreteCategory in
 instance : (constantSheaf (coherentTopology LightProfinite.{u}) (Type u)).Faithful :=
   inferInstanceAs (discrete (Type u)).Faithful
 
-attribute [local instance] Types.instFunLike Types.instConcreteCategory in
 instance : (constantSheaf (coherentTopology LightProfinite.{u}) (Type u)).Full :=
   inferInstanceAs (discrete (Type u)).Full
 

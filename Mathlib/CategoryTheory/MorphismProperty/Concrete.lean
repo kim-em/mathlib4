@@ -5,7 +5,7 @@ Authors: Andrew Yang
 -/
 module
 
-public import Mathlib.CategoryTheory.ConcreteCategory.Basic
+public import Mathlib.CategoryTheory.ConcreteCategory.Forget
 public import Mathlib.CategoryTheory.MorphismProperty.Composition
 public import Mathlib.CategoryTheory.MorphismProperty.Factorization
 
@@ -141,7 +141,6 @@ def functorialSurjectiveInjectiveFactorizationData :
     rw [Subtype.ext_iff]
     exact h
 
-attribute [local instance] Types.instFunLike Types.instConcreteCategory in
 instance : HasFunctorialSurjectiveInjectiveFactorization (Type u) where
   nonempty_functorialFactorizationData :=
     ⟨functorialSurjectiveInjectiveFactorizationData⟩

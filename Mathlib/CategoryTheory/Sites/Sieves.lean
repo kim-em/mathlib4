@@ -177,15 +177,6 @@ lemma ofArrows.mk' {ι : Type*} {Y : ι → C} {f : ∀ i, Y i ⟶ X} {Z : C} {g
   subst hg
   constructor
 
-theorem ofArrows_pUnit : (ofArrows _ fun _ : PUnit => f) = singleton f := by
-  funext Y
-  ext g
-  constructor
-  · rintro ⟨_⟩
-    apply singleton.mk
-  · rintro ⟨_⟩
-    exact ofArrows.mk PUnit.unit
-
 instance {ι : Type*} (Z : ι → C) (g : ∀ i : ι, Z i ⟶ X)
     [∀ i, HasPullback (g i) f] : (ofArrows Z g).HasPullbacks f where
   hasPullback {_} _ := fun ⟨i⟩ ↦ inferInstance
@@ -273,6 +264,17 @@ lemma ofArrows_comp_eq_of_surjective {X : C} {ι σ : Type*} {Y : ι → C}
 lemma ofArrows_le_iff {X : C} {ι : Type*} {Y : ι → C} {f : ∀ i, Y i ⟶ X} {R : Presieve X} :
     Presieve.ofArrows Y f ≤ R ↔ ∀ i, R (f i) :=
   ⟨fun hle i ↦ hle _ ⟨i⟩, fun h _ g ⟨i⟩ ↦ h i⟩
+
+lemma ofArrows_of_unique {X : C} {ι : Type*} [Unique ι] {Y : ι → C} (f : ∀ i, Y i ⟶ X) :
+    ofArrows Y f = singleton (f default) := by
+  refine le_antisymm ?_ fun Y _ ⟨⟩ ↦ ⟨default⟩
+  rw [ofArrows_le_iff]
+  intro i
+  obtain rfl : i = default := Subsingleton.elim _ _
+  simp
+
+theorem ofArrows_pUnit : (ofArrows _ fun _ : PUnit => f) = singleton f := by
+  rw [ofArrows_of_unique]
 
 /-- A convenient constructor for a refinement of a presieve of the form `Presieve.ofArrows`.
 This contains a sieve obtained by `Sieve.bind` and `Sieve.ofArrows`, see
@@ -645,6 +647,10 @@ theorem generate_top : generate (⊤ : Presieve X) = ⊤ :=
   generate_of_contains_isSplitEpi (𝟙 _) ⟨⟩
 
 @[simp]
+lemma generate_bot : generate (⊥ : Presieve X) = ⊥ := by
+  simp only [eq_bot_iff, generate_le_iff, bot_le]
+
+@[simp]
 lemma comp_mem_iff (i : X ⟶ Y) (f : Y ⟶ Z) [IsIso i] (S : Sieve Z) :
     S (i ≫ f) ↔ S f := by
   refine ⟨fun H ↦ ?_, fun H ↦ S.downward_closed H _⟩
@@ -741,6 +747,13 @@ lemma ofArrows_eq_ofObjects {X : C} (hX : IsTerminal X)
   rintro ⟨i, ⟨h⟩⟩
   exact ⟨i, h, hX.hom_ext _ _⟩
 
+lemma ofObjects_mono {I : Type*} {X : I → C} {I' : Type*} {X' : I' → C} {Y : C}
+    (h : Set.range X ⊆ Set.range X') :
+    Sieve.ofObjects X Y ≤ Sieve.ofObjects X' Y := by
+  rintro Z f ⟨i, ⟨g⟩⟩
+  obtain ⟨i', h⟩ := h ⟨i, rfl⟩
+  exact ⟨i', ⟨h ▸ g⟩⟩
+
 /-- Given a morphism `h : Y ⟶ X`, send a sieve S on X to a sieve on Y
 as the inverse image of S with `_ ≫ h`. That is, `Sieve.pullback S h := (≫ h) '⁻¹ S`. -/
 @[simps]
@@ -787,6 +800,12 @@ lemma pullback_ofObjects_eq_top
   simp only [top_apply, iff_true]
   rw [mem_ofObjects_iff]
   exact ⟨i, ⟨h ≫ g⟩⟩
+
+@[simp]
+lemma pullback_ofObjects {I : Type*} (X : I → C) {Y Z : C} (f : Z ⟶ Y) :
+    (ofObjects X Y).pullback f = ofObjects X Z := by
+  ext
+  simp [Sieve.ofObjects]
 
 /-- Push a sieve `R` on `Y` forward along an arrow `f : Y ⟶ X`: `gf : Z ⟶ X` is in the sieve if `gf`
 factors through some `g : Z ⟶ Y` which is in `R`.
@@ -1088,6 +1107,12 @@ lemma mem_functorPushforward_iff_of_full_of_faithful [F.Full] [F.Faithful]
   rw [Sieve.mem_functorPushforward_iff_of_full]
   refine ⟨fun ⟨g, hcomp, hg⟩ ↦ ?_, fun hf ↦ ⟨f, rfl, hf⟩⟩
   rwa [← F.map_injective hcomp]
+
+lemma functorPushforward_ofObjects_le
+    {I : Type*} (X : I → C) (Y : C) :
+    (ofObjects X Y).functorPushforward F ≤ ofObjects (F.obj ∘ X) (F.obj Y) := by
+  rintro Z f ⟨W, g₁, g₂, ⟨i, ⟨g₃⟩⟩, hf⟩
+  exact ⟨i, ⟨g₂ ≫ F.map g₃⟩⟩
 
 end Functor
 

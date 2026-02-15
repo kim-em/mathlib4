@@ -297,7 +297,7 @@ theorem degreeOf_mul_X_of_ne {i j : σ} (f : MvPolynomial σ R) (h : i ≠ j) :
   simp only [degreeOf_eq_sup i, support_mul_X, Finset.sup_map]
   congr
   ext
-  simp only [Finsupp.single, add_eq_left, addRightEmbedding_apply, coe_mk,
+  simp only [Finsupp.single, addRightEmbedding_apply, coe_mk,
     Pi.add_apply, comp_apply, Finsupp.coe_add, Pi.single_eq_of_ne h]
 
 set_option backward.isDefEq.respectTransparency false in

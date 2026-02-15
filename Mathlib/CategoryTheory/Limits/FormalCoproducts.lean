@@ -1,16 +1,6 @@
-/-
-Copyright (c) 2025 Kenny Lau. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Joël Riou, Kenny Lau
--/
 module
 
-public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Products
-public import Mathlib.CategoryTheory.Limits.Shapes.Opposites.Products
-public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.HasPullback
-public import Mathlib.CategoryTheory.Limits.Shapes.Terminal
-public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
-public import Mathlib.CategoryTheory.Limits.Shapes.ZeroObjects
+public import Mathlib.CategoryTheory.Limits.FormalCoproducts.Basic
 
 /-!
 # Formal Coproducts

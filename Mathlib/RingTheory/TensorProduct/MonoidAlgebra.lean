@@ -110,7 +110,7 @@ lemma scalarTensorEquiv_symm_single (m : M) (a : A) :
 
 open scoped AlgebraMonoidAlgebra
 
-variable [Algebra S B] [Algebra A B] [Algebra R B] [IsScalarTower R A B] [IsScalarTower R S B]
+variable [Algebra S B] [Algebra A B] [IsScalarTower R A B] [IsScalarTower R S B]
 
 set_option backward.isDefEq.respectTransparency false in
 @[to_additive (dont_translate := R S B)]

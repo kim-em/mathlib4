@@ -714,10 +714,13 @@ theorem HasDerivAt.const_rpow (ha : 0 < a) (hf : HasDerivAt f f' x) :
   rw [← hasDerivWithinAt_univ] at *
   exact hf.const_rpow ha
 
-theorem derivWithin_const_rpow (ha : 0 < a) (hf : DifferentiableWithinAt ℝ f s x)
-    (hxs : UniqueDiffWithinAt ℝ s x) :
-    derivWithin (a ^ f ·) s x = Real.log a * derivWithin f s x * a ^ f x :=
-  (hf.hasDerivWithinAt.const_rpow ha).derivWithin hxs
+theorem derivWithin_const_rpow (ha : 0 < a) (hf : DifferentiableWithinAt ℝ f s x) :
+    derivWithin (a ^ f ·) s x = Real.log a * derivWithin f s x * a ^ f x := by
+  by_cases hxs : UniqueDiffWithinAt ℝ s x
+  · exact (hf.hasDerivWithinAt.const_rpow ha).derivWithin hxs
+  · rw [derivWithin_zero_of_not_uniqueDiffWithinAt hxs,
+      derivWithin_zero_of_not_uniqueDiffWithinAt hxs,
+      mul_zero, zero_mul]
 
 @[simp]
 theorem deriv_const_rpow (ha : 0 < a) (hf : DifferentiableAt ℝ f x) :

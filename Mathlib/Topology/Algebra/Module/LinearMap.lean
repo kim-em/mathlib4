@@ -843,9 +843,7 @@ instance sub : Sub (M →SL[σ₁₂] M₂) :=
 
 set_option backward.isDefEq.respectTransparency false in
 instance addCommGroup : AddCommGroup (M →SL[σ₁₂] M₂) where
-  __ := ContinuousLinearMap.addCommMonoid
   sub_eq_add_neg _ _ := by ext; apply sub_eq_add_neg
-  nsmul := (· • ·)
   zsmul := (· • ·)
   zsmul_zero' f := by ext; simp
   zsmul_succ' n f := by ext; simp [add_smul, add_comm]

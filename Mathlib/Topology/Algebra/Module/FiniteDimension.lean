@@ -206,8 +206,9 @@ variable [CompleteSpace 𝕜]
 set_option backward.isDefEq.respectTransparency false in
 /-- This version imposes `ι` and `E` to live in the same universe, so you should instead use
 `continuous_equivFun_basis` which gives the same result without universe restrictions. -/
-private theorem continuous_equivFun_basis_aux [T2Space E] {ι : Type v} [Fintype ι]
+private theorem continuous_equivFun_basis_aux [T2Space E] {ι : Type v} [Finite ι]
     (ξ : Basis ι 𝕜 E) : Continuous ξ.equivFun := by
+  have := Fintype.ofFinite ι
   letI : UniformSpace E := IsTopologicalAddGroup.rightUniformSpace E
   letI : IsUniformAddGroup E := isUniformAddGroup_of_addCommGroup
   suffices ∀ n, Fintype.card ι = n → Continuous ξ.equivFun by exact this _ rfl
@@ -228,7 +229,7 @@ private theorem continuous_equivFun_basis_aux [T2Space E] {ι : Type v} [Fintype
         have : Fintype.card (Basis.ofVectorSpaceIndex 𝕜 s) = n := by
           rw [← s_dim]
           exact (finrank_eq_card_basis b).symm
-        have : Continuous b.equivFun := IH b this
+        have : Continuous b.equivFun := IH b inferInstance this
         exact
           b.equivFun.symm.isUniformEmbedding b.equivFun.symm.toLinearMap.continuous_on_pi this
       have : IsComplete (s : Set E) :=

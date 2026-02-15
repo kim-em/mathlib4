@@ -5,8 +5,9 @@ Authors: Kim Morrison, Yury Kudryashov
 -/
 module
 
-public import Mathlib.CategoryTheory.ConcreteCategory.Basic
-public import Mathlib.CategoryTheory.ConcreteCategory.Bundled
+public import Mathlib.CategoryTheory.Category.Init
+public import Mathlib.Tactic.Common
+public import Mathlib.Util.CompileInductive
 
 /-!
 # Category instances for algebraic structures that use bundled homs.

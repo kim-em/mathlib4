@@ -421,7 +421,7 @@ theorem FG.restrictScalars_iff [Module.Finite R A] : (S.restrictScalars R).FG �
   ⟨of_restrictScalars R, restrictScalars⟩
 
 /-- If a ring `R` is finite over a subring `S` then the `R`-span of an FG `S`-submodule is FG. -/
-protected theorem FG.span (hS : S.FG) : (span A (S : Set M)).FG := by
+protected theorem FG.span {S : Submodule R M} (hS : S.FG) : (span A (S : Set M)).FG := by
   obtain ⟨t, ht⟩ := hS
   use t
   rw [← ht, Submodule.span_span_of_tower]

@@ -48,8 +48,8 @@ noncomputable def coconePointSMul :
   toFun r := colimMap
     { app := fun j => (F.obj j).smul r
       naturality := fun _ _ _ => smul_naturality _ _ }
-  map_zero' := colimit.hom_ext (by simp +instances )
-  map_one' := colimit.hom_ext (by simp +instances )
+  map_zero' := colimit.hom_ext (by simp +instances)
+  map_one' := colimit.hom_ext (by simp +instances)
   map_add' r s := colimit.hom_ext (fun j => by
     simp +instances only [Functor.comp_obj, forget₂_obj, map_add, ι_colimMap]
     rw [Preadditive.add_comp, Preadditive.comp_add]

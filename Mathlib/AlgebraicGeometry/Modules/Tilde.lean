@@ -1,12 +1,13 @@
 /-
 Copyright (c) 2024 Weihong Xu. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Kevin Buzzard, Johan Commelin, Amelia Livingston, Sophie Morel, Jujian Zhang, Weihong Xu
+Authors: Kevin Buzzard, Johan Commelin, Amelia Livingston, Sophie Morel, Jujian Zhang, Weihong Xu,
+  Andrew Yang
 -/
 module
 
 public import Mathlib.Algebra.Module.LocalizedModule.Basic
-public import Mathlib.AlgebraicGeometry.StructureSheaf
+public import Mathlib.AlgebraicGeometry.AffineScheme
 public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf
 public import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
@@ -20,43 +21,34 @@ Given any commutative ring `R` and `R`-module `M`, we construct the sheaf `M^~` 
 such that `M^~(U)` is the set of dependent functions that are locally fractions.
 
 ## Main definitions
-
-* `ModuleCat.tildeInType` : `M^~` as a sheaf of types groups.
-* `ModuleCat.tilde` : `M^~` as a sheaf of `𝒪_{Spec R}`-modules.
-* `ModuleCat.tilde.stalkIso`: The isomorphism of `R`-modules from the stalk of `M^~` at `x` to
-  the localization of `M` at the prime ideal corresponding to `x`.
-
-## Technical note
-
-To get the `R`-module structure on the stalks on `M^~`, we had to define
-`ModuleCat.tildeInModuleCat`, which is `M^~` seen as sheaf of `R`-modules. We get it by
-applying a forgetful functor to `ModuleCat.tilde M`.
+* `AlgebraicGeometry.tilde` : `M^~` as a sheaf of `𝒪_{Spec R}`-modules.
+* `AlgebraicGeometry.tilde.adjunction` : `~` is left adjoint to taking global sections.
 
 -/
 
-@[expose] public section
+@[expose] public noncomputable section
 
 universe u
 
 open TopCat AlgebraicGeometry TopologicalSpace CategoryTheory Opposite
 
-variable {R : Type u} [CommRing R] (M : ModuleCat.{u} R)
+variable {R : CommRingCat.{u}} (M : ModuleCat.{u} R)
 
-namespace ModuleCat
+namespace AlgebraicGeometry
 
-namespace Tilde
+open _root_.PrimeSpectrum
 
-/-- For an `R`-module `M` and a point `P` in `Spec R`, `Localizations P` is the localized module
-`M` at the prime ideal `P`. -/
-abbrev Localizations (P : PrimeSpectrum.Top R) :=
-LocalizedModule P.asIdeal.primeCompl M
+/-- The forgetful functor from `𝒪_{Spec R}` modules to sheaves of `R`-modules. -/
+def modulesSpecToSheaf :
+    (Spec R).Modules ⥤ TopCat.Sheaf (ModuleCat R) (Spec R) :=
+  SheafOfModules.forgetToSheafModuleCat (Spec R).ringCatSheaf (.op ⊤)
+    (Limits.initialOpOfTerminal Limits.isTerminalTop) ⋙
+  sheafCompose _ (ModuleCat.restrictScalars (StructureSheaf.globalSectionsIso R).hom.hom)
 
-/-- For any open subset `U ⊆ Spec R`, `IsFraction` is the predicate expressing that a function
-`f : ∏_{x ∈ U}, Mₓ` is such that for any `𝔭 ∈ U`, `f 𝔭 = m / s` for some `m : M` and `s ∉ 𝔭`.
-In short `f` is a fraction on `U`. -/
-def isFraction {U : Opens (PrimeSpectrum R)} (f : ∀ 𝔭 : U, Localizations M 𝔭.1) : Prop :=
-  ∃ (m : M) (s : R),
-    ∀ x : U, s ∉ x.1.asIdeal ∧ s • f x = LocalizedModule.mkLinearMap x.1.asIdeal.primeCompl M m
+/-- The global section functor for `𝒪_{Spec R}` modules -/
+noncomputable
+def moduleSpecΓFunctor : (Spec (.of R)).Modules ⥤ ModuleCat R :=
+  modulesSpecToSheaf ⋙ TopCat.Sheaf.forget _ _ ⋙ (evaluation _ _).obj (.op ⊤)
 
 /--
 The property of a function `f : ∏_{x ∈ U}, Mₓ` being a fraction is stable under restriction.
@@ -170,19 +162,10 @@ noncomputable instance (U : (Opens (PrimeSpectrum.Top R))ᵒᵖ) :
 /--
 `M^~` as a sheaf of `𝒪_{Spec R}`-modules
 -/
-noncomputable def tilde : (Spec <| .of R).Modules where
-  val :=
-    { obj := fun U ↦ ModuleCat.of _ (M.tildeInType.val.obj U)
-      map := fun {U V} i ↦ ofHom
-        -- TODO: after https://github.com/leanprover-community/mathlib4/pull/19511 we need to hint `(Y := ...)`
-        -- This suggests `restrictScalars` needs to be redesigned.
-        (Y := (restrictScalars ((Spec <| .of R).ringCatSheaf.val.map i).hom).obj
-          (of ((Spec <| .of R).ringCatSheaf.val.obj V) (M.tildeInType.val.obj V)))
-        { toFun := M.tildeInType.val.map i
-          map_smul' := by intros; rfl
-          map_add' := by intros; rfl } }
+def tilde : (Spec R).Modules where
+  val := moduleStructurePresheaf R M
   isSheaf := (TopCat.Presheaf.isSheaf_iff_isSheaf_comp (forget AddCommGrpCat) _).2
-    M.tildeInType.2
+    (structureSheafInType R M).2
 
 set_option backward.isDefEq.respectTransparency false in
 /--
@@ -194,13 +177,20 @@ noncomputable def tildeInModuleCat :
     Limits.initialOpOfTerminal Limits.isTerminalTop).obj (tilde M).1 ⋙
   ModuleCat.restrictScalars (StructureSheaf.globalSectionsIso R).hom.hom
 
-namespace Tilde
+/-- (Implementation). The image of `tilde` under `modulesSpecToSheaf` is isomorphic to
+`structurePresheafInModuleCat`. They are defeq as types but the `Smul` instance are not defeq. -/
+noncomputable
+def modulesSpecToSheafIso :
+    (modulesSpecToSheaf.obj (tilde M)).1 ≅ structurePresheafInModuleCat R M :=
+  NatIso.ofComponents (fun U ↦ LinearEquiv.toModuleIso
+    (X₁ := (modulesSpecToSheaf.obj (tilde M)).presheaf.obj _)
+    { __ := AddEquiv.refl _,
+      map_smul' r m := IsScalarTower.algebraMap_smul (M := ((structureSheafInType R M).val.obj U))
+        ((structureSheafInType R R).val.obj U) r m }) fun _ ↦ rfl
 
-@[simp]
-theorem res_apply (U V : Opens (PrimeSpectrum.Top R)) (i : V ⟶ U)
-    (s : (tildeInModuleCat M).obj (op U)) (x : V) :
-    ((tildeInModuleCat M).map i.op s).1 x = (s.1 (i x) :) :=
-  rfl
+/-- The map from `M` to `Γ(M, U)`. This is a localiation map when `U = D(f)`. -/
+def toOpen (U : (Spec R).Opens) : M ⟶ (modulesSpecToSheaf.obj (tilde M)).presheaf.obj (.op U) :=
+  ModuleCat.ofHom (StructureSheaf.toOpenₗ R M U) ≫ ((modulesSpecToSheafIso M).app _).inv
 
 lemma smul_section_apply (r : R) (U : Opens (PrimeSpectrum.Top R))
     (s : (tildeInModuleCat M).obj (op U)) (x : U) :
@@ -237,8 +227,16 @@ noncomputable def toOpen (U : Opens (PrimeSpectrum.Top R)) :
 
 @[simp]
 theorem toOpen_res (U V : Opens (PrimeSpectrum.Top R)) (i : V ⟶ U) :
-    toOpen M U ≫ (tildeInModuleCat M).map i.op = toOpen M V :=
+    toOpen M U ≫ (modulesSpecToSheaf.obj (tilde M)).presheaf.map i.op = toOpen M V :=
   rfl
+
+instance (f : R) : IsLocalizedModule (.powers f) (toOpen M (basicOpen f)).hom :=
+  .of_linearEquiv (.powers f) (StructureSheaf.toOpenₗ R M (basicOpen f))
+    ((modulesSpecToSheafIso M).app _).toLinearEquiv.symm
+
+noncomputable
+instance (x : PrimeSpectrum.Top R) : Module R ((tilde M).presheaf.stalk x) :=
+  inferInstanceAs (Module R ↑(TopCat.Presheaf.stalk (moduleStructurePresheaf R M).presheaf x))
 
 /--
 If `x` is a point of `Spec R`, this is the morphism of `R`-modules from `M` to the stalk of
@@ -433,15 +431,194 @@ noncomputable def stalkIso (x : PrimeSpectrum.Top R) :
     simp)
 
 instance (x : PrimeSpectrum.Top R) :
-    IsLocalizedModule x.asIdeal.primeCompl (toStalk M x).hom := by
-  convert IsLocalizedModule.of_linearEquiv
-    (hf := localizedModuleIsLocalizedModule (M := M) x.asIdeal.primeCompl)
-    (e := (stalkIso M x).symm.toLinearEquiv)
-  ext
-  simp only [of_coe,
-    show (stalkIso M x).symm.toLinearEquiv.toLinearMap = (stalkIso M x).inv.hom by rfl]
-  erw [LocalizedModule.lift_comp]
+    IsLocalizedModule x.asIdeal.primeCompl (toStalk M x).hom :=
+  inferInstanceAs (IsLocalizedModule x.asIdeal.primeCompl (StructureSheaf.toStalkₗ ..))
 
-end Tilde
+/-- The tilde construction is functorial. -/
+protected noncomputable def map {M N : ModuleCat R} (f : M ⟶ N) : tilde M ⟶ tilde N :=
+  SpecModulesToSheafFullyFaithful.preimage ⟨(modulesSpecToSheafIso M).hom ≫
+    { app U := ModuleCat.ofHom (StructureSheaf.comapₗ f.hom _ _ .rfl) } ≫
+    (modulesSpecToSheafIso N).inv⟩
+
+@[reassoc (attr := simp)]
+lemma toOpen_map_app {M N : ModuleCat R} (f : M ⟶ N)
+    (U : TopologicalSpace.Opens (PrimeSpectrum R)) :
+    toOpen M U ≫ (modulesSpecToSheaf.map (tilde.map f)).1.app _ =
+    f ≫ toOpen N U := by
+  ext x; exact Subtype.ext (funext fun y ↦ IsLocalizedModule.map_apply y.1.asIdeal.primeCompl
+    (LocalizedModule.mkLinearMap y.1.asIdeal.primeCompl M)
+     (LocalizedModule.mkLinearMap y.1.asIdeal.primeCompl N) _ x)
+
+variable (R) in
+/-- Tilde as a functor -/
+@[simps] protected noncomputable def functor : ModuleCat R ⥤ (Spec (.of R)).Modules where
+  obj := tilde
+  map := tilde.map
+  map_id M := by
+    ext p x
+    exact Subtype.ext (funext fun y ↦ DFunLike.congr_fun (LocalizedModule.map_id _) _)
+  map_comp {M N P} f g := by
+    ext p x
+    exact Subtype.ext (funext
+      fun y ↦ DFunLike.congr_fun (IsLocalizedModule.map_comp' y.1.asIdeal.primeCompl
+        (LocalizedModule.mkLinearMap y.1.asIdeal.primeCompl M)
+        (LocalizedModule.mkLinearMap y.1.asIdeal.primeCompl N)
+        (LocalizedModule.mkLinearMap y.1.asIdeal.primeCompl P) _ _) _)
+
+instance isIso_toOpen_top {M : ModuleCat R} : IsIso (toOpen M ⊤) := by
+  rw [toOpen, isIso_comp_right_iff, ConcreteCategory.isIso_iff_bijective]
+  exact StructureSheaf.toOpenₗ_top_bijective
+
+/-- The isomorphism between the global sections of `M^~` and `M`. -/
+@[simps! hom]
+noncomputable def isoTop (M : ModuleCat R) :
+    M ≅ (modulesSpecToSheaf.obj (tilde M)).presheaf.obj (.op ⊤) :=
+  asIso (toOpen M ⊤)
+
+open PrimeSpectrum in
+lemma isUnit_algebraMap_end_basicOpen (M : (Spec (.of R)).Modules) (f : R) :
+    IsUnit (algebraMap R (Module.End R
+      ((modulesSpecToSheaf.obj M).presheaf.obj (.op (basicOpen f)))) f) := by
+  rw [Module.End.isUnit_iff]
+  change Function.Bijective (algebraMap Γ(Spec R, basicOpen f)
+      (Module.End Γ(Spec R, basicOpen f) Γ(M, basicOpen f)) (algebraMap R _ f))
+  rw [← Module.End.isUnit_iff]
+  exact (IsLocalization.Away.algebraMap_isUnit _).map _
+
+end tilde
+
+/-- This is the counit of the tilde-Gamma adjunction. -/
+noncomputable def Scheme.Modules.fromTildeΓ (M : (Spec (.of R)).Modules) :
+    tilde ((modulesSpecToSheaf.obj M).presheaf.obj (.op ⊤)) ⟶ M :=
+  SpecModulesToSheafFullyFaithful.preimage
+    ⟨TopCat.Sheaf.restrictHomEquivHom _ _ isBasis_basic_opens
+    { app (f : Rᵒᵖ) := by
+        refine (ModuleCat.ofHom (IsLocalizedModule.lift (.powers (M := R) f.unop)
+          (tilde.toOpen _ (PrimeSpectrum.basicOpen f.unop)).hom
+          ((modulesSpecToSheaf.obj M).val.map (homOfLE le_top).op).hom ?_):)
+        rw [Subtype.forall]
+        change Submonoid.powers _ ≤ (IsUnit.submonoid _).comap _
+        simp only [inducedFunctor_obj, Submonoid.powers_le, Submonoid.mem_comap]
+        exact tilde.isUnit_algebraMap_end_basicOpen M f.unop
+      naturality {f g : Rᵒᵖ} i := by
+        letI N := (modulesSpecToSheaf.obj M).presheaf.obj (.op ⊤)
+        ext1
+        apply IsLocalizedModule.ext (.powers (M := R) f.unop)
+          (tilde.toOpen _ (PrimeSpectrum.basicOpen (R := R) f.unop)).hom
+        · rw [Subtype.forall]
+          change Submonoid.powers _ ≤ (IsUnit.submonoid _).comap _
+          simp only [Submonoid.powers_le, Submonoid.mem_comap, IsUnit.mem_submonoid_iff]
+          obtain ⟨n, a, e⟩ : ∃ n, f.unop ∣ g.unop ^ n := by
+            simpa only [Ideal.mem_radical_iff, Ideal.mem_span_singleton] using
+              (basicOpen_le_basicOpen_iff _ _).mp (i.1.hom.le)
+          refine ((Commute.isUnit_mul_iff (b := algebraMap R _ a) (.map (.all _ _) _)).mp ?_).1
+          rw [← map_mul, ← e, map_pow]
+          exact (tilde.isUnit_algebraMap_end_basicOpen M g.unop).pow n
+        · dsimp [← ModuleCat.hom_comp]
+          rw [tilde.toOpen_res_assoc]
+          ext x
+          dsimp
+          simp only [IsLocalizedModule.lift_apply, ← ModuleCat.comp_apply, ← Functor.map_comp]
+          rfl }⟩
+
+@[reassoc]
+lemma Scheme.Modules.toOpen_fromTildeΓ_app (M : (Spec (.of R)).Modules) (U) :
+    tilde.toOpen ((modulesSpecToSheaf.obj M).presheaf.obj (.op ⊤)) U ≫
+      (modulesSpecToSheaf.map M.fromTildeΓ).1.app (.op U) =
+    (modulesSpecToSheaf.obj M).1.map (homOfLE le_top).op := by
+  wlog hU : U = PrimeSpectrum.basicOpen 1 generalizing U
+  · rw [← tilde.toOpen_res _ (PrimeSpectrum.basicOpen 1) _ (homOfLE (by simp)), Category.assoc,
+      NatTrans.naturality, ← Category.assoc, this, ← Functor.map_comp, ← op_comp, homOfLE_comp]
+    simp
+  subst hU
+  simp only [fromTildeΓ, inducedFunctor_obj,
+    homOfLE_leOfHom, Functor.FullyFaithful.map_preimage, TopCat.Sheaf.extend_hom_app]
+  ext x
+  refine (IsLocalizedModule.lift_apply (.powers (M := R) 1)
+    (tilde.toOpen _ (PrimeSpectrum.basicOpen (R := R) 1)).hom
+    ((modulesSpecToSheaf.obj M).val.map (homOfLE le_top).op).hom (by simp) x)
+
+/-- This is the counit of the tilde-Gamma adjunction. -/
+noncomputable def Scheme.Modules.fromTildeΓNatTrans :
+    moduleSpecΓFunctor (R := R) ⋙ tilde.functor (R := R) ⟶ 𝟭 _ where
+  app := fromTildeΓ
+  naturality {M N} f := by
+    apply SpecModulesToSheafFullyFaithful.map_injective
+    apply CategoryTheory.Sheaf.hom_ext
+    apply (TopCat.Sheaf.restrictHomEquivHom _ _ PrimeSpectrum.isBasis_basic_opens).symm.injective
+    ext r : 3
+    apply IsLocalizedModule.ext (.powers (M := R) r.unop)
+      (tilde.toOpen ((modulesSpecToSheaf.obj M).presheaf.obj (.op ⊤))
+        (PrimeSpectrum.basicOpen (R := R) r.unop)).hom
+    · rw [Subtype.forall]
+      change Submonoid.powers _ ≤ (IsUnit.submonoid _).comap _
+      simp only [Submonoid.powers_le, Submonoid.mem_comap, IsUnit.mem_submonoid_iff]
+      exact tilde.isUnit_algebraMap_end_basicOpen ..
+    dsimp [TopCat.Sheaf.restrictHomEquivHom, Functor.IsCoverDense.restrictHomEquivHom,
+      moduleSpecΓFunctor, Sheaf.forget]
+    simp only [← ModuleCat.hom_comp, Functor.map_comp]
+    rw [CategoryTheory.Sheaf.comp_val, CategoryTheory.Sheaf.comp_val]
+    congr 1
+    simp only [NatTrans.comp_app]
+    rw [tilde.toOpen_map_app_assoc, toOpen_fromTildeΓ_app N (PrimeSpectrum.basicOpen r.unop),
+      toOpen_fromTildeΓ_app_assoc M (PrimeSpectrum.basicOpen r.unop),
+      ← (modulesSpecToSheaf.map f).val.naturality]
+
+/-- `tilde.isoTop` bundled as a natural isomorphism.
+This is the unit of the tilde-Gamma adjunction. -/
+def tilde.toTildeΓNatIso : 𝟭 _ ≅ tilde.functor R ⋙ moduleSpecΓFunctor :=
+  NatIso.ofComponents tilde.isoTop fun f ↦ (tilde.toOpen_map_app f _).symm
+
+open Scheme.Modules in
+/-- The tilde-Gamma adjuntion. -/
+def tilde.adjunction : tilde.functor R ⊣ moduleSpecΓFunctor where
+  unit := toTildeΓNatIso.hom
+  counit := fromTildeΓNatTrans
+  left_triangle_components M := by
+    apply SpecModulesToSheafFullyFaithful.map_injective
+    apply CategoryTheory.Sheaf.hom_ext
+    apply (TopCat.Sheaf.restrictHomEquivHom _ _ PrimeSpectrum.isBasis_basic_opens).symm.injective
+    ext r : 3
+    apply IsLocalizedModule.ext (.powers (M := R) r.unop)
+      (toOpen _ (PrimeSpectrum.basicOpen (R := R) r.unop)).hom
+    · rw [Subtype.forall]
+      change Submonoid.powers _ ≤ (IsUnit.submonoid _).comap _
+      simp only [Submonoid.powers_le, Submonoid.mem_comap, IsUnit.mem_submonoid_iff]
+      exact isUnit_algebraMap_end_basicOpen ..
+    dsimp [toTildeΓNatIso, isoTop,
+      TopCat.Sheaf.restrictHomEquivHom, Functor.IsCoverDense.restrictHomEquivHom,
+      fromTildeΓNatTrans, moduleSpecΓFunctor, Sheaf.forget, sheafToPresheaf]
+    simp only [← ModuleCat.hom_comp, Functor.map_comp]
+    congr 1
+    rw [CategoryTheory.Sheaf.comp_val]
+    dsimp
+    rw [toOpen_map_app_assoc, toOpen_fromTildeΓ_app]
+    rfl
+  right_triangle_components M := by
+    dsimp [toTildeΓNatIso, fromTildeΓNatTrans, tilde.isoTop, moduleSpecΓFunctor, Sheaf.forget]
+    rw [toOpen_fromTildeΓ_app]
+    exact (modulesSpecToSheaf.obj M).val.map_id _
+
+instance : IsIso (tilde.adjunction (R := R)).unit := by
+  dsimp [tilde.adjunction]; infer_instance
+
+/-- The tilde functor is fully faithful. We will later show that the essential image is
+exactly quasi-coherent modules. -/
+def tilde.fullyFaithfulFunctor : (tilde.functor R).FullyFaithful :=
+  tilde.adjunction.fullyFaithfulLOfIsIsoUnit
+
+instance : (tilde.functor (R := R)).Full := tilde.fullyFaithfulFunctor.full
+instance : (tilde.functor (R := R)).Faithful :=
+  tilde.fullyFaithfulFunctor.faithful
+instance : (tilde.functor (R := R)).IsLeftAdjoint := tilde.adjunction.isLeftAdjoint
+
+end AlgebraicGeometry
+
+namespace ModuleCat
+
+@[deprecated (since := "2026-02-11")] noncomputable alias tilde := AlgebraicGeometry.tilde
+@[deprecated (since := "2026-02-11")] noncomputable alias Tilde.toOpen := tilde.toOpen
+@[deprecated (since := "2026-02-11")] alias Tilde.toOpen_res := tilde.toOpen_res
+@[deprecated (since := "2026-02-11")] noncomputable alias Tilde.toStalk := tilde.toStalk
 
 end ModuleCat

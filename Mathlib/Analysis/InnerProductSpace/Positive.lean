@@ -544,10 +544,10 @@ theorem ContinuousLinearMap.isPositive_iff_eq_sum_rankOne [FiniteDimensional �
     ((hT.isSymmetric.eigenvalues rfl i).sqrt : 𝕜) • hT.isSymmetric.eigenvectorBasis rfl i
   refine ⟨Module.finrank 𝕜 E, a, ext fun _ ↦ ?_⟩
   simp_rw [sum_apply, rankOne_apply, a, inner_smul_left, smul_smul, mul_assoc, conj_ofReal,
-    mul_comm (⟪_, _⟫_𝕜), ← mul_assoc, ← ofReal_mul, ← Real.sqrt_mul
-      (hT.toLinearMap.nonneg_eigenvalues rfl _), Real.sqrt_mul_self
-      (hT.toLinearMap.nonneg_eigenvalues rfl _), mul_comm _ (⟪_, _⟫_𝕜), ← smul_eq_mul, smul_assoc,
-    ← hT.isSymmetric.apply_eigenvectorBasis, ← map_smul, ← map_sum,
+    mul_comm (⟪_, _⟫_𝕜), ← mul_assoc, ← ofReal_mul,
+    ← Real.sqrt_mul (hT.toLinearMap.nonneg_eigenvalues rfl _),
+    Real.sqrt_mul_self (hT.toLinearMap.nonneg_eigenvalues rfl _), mul_comm _ (⟪_, _⟫_𝕜),
+    ← smul_eq_mul, smul_assoc, ← hT.isSymmetric.apply_eigenvectorBasis, ← map_smul, ← map_sum,
     ← OrthonormalBasis.repr_apply_apply, OrthonormalBasis.sum_repr, coe_coe]
 
 open scoped ComplexOrder in

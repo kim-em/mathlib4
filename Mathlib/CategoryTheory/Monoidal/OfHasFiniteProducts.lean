@@ -156,6 +156,8 @@ end
 
 section
 
+#adaptation_note /-- prior to nightly-2026-02-05
+these four fields were provided by the auto_param -/
 /-- A category with an initial object and binary coproducts has a natural monoidal structure. -/
 @[instance_reducible]
 def monoidalOfHasFiniteCoproducts [HasInitial C] [HasBinaryCoproducts C] : MonoidalCategory C :=

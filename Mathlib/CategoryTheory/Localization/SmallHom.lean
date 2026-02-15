@@ -43,6 +43,10 @@ variable (L : C ⥤ D) [L.IsLocalization W] (X Y Z : C)
 /-- This property holds if the type of morphisms between `X` and `Y`
 in the localized category with respect to `W : MorphismProperty C`
 is small. -/
+-- After https://github.com/leanprover/lean4/pull/12286 and
+-- https://github.com/leanprover/lean4/pull/12423, the universe `w` would default to a
+-- universe output parameter. See Note [universe output parameters and typeclass caching].
+@[univ_out_params]
 class HasSmallLocalizedHom : Prop where
   small : Small.{w} (W.Q.obj X ⟶ W.Q.obj Y)
 
