@@ -1,0 +1,124 @@
+FINITE FREE STAM INEQUALITY — Prove the general case for all n ≥ 2
+
+=== GOAL ===
+
+Prove the single sorry in the attached context: finite_free_stam_inequality.
+This states: for monic real-rooted degree-n polynomials p, q with distinct roots,
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== AVAILABLE INFRASTRUCTURE (all proven in context, do NOT re-prove) ===
+
+1. ff_kappa_additive: ∀ k ≤ n, ff_kappa n (boxplus n p q) k = ff_kappa n p k + ff_kappa n q k
+2. boxplus_comp_add_C: translation covariance for all n
+3. boxplus_comm: commutativity for all n
+4. Phi_derivative_form: Phi p = Σ_{r ∈ roots} (p''.eval r / (2 * p'.eval r))^2
+5. invPhi_comp_add_C: invPhi (p.comp(X+Cc)) = invPhi p
+6. roots_card_eq_natDegree: for split monic p, p.roots.card = p.natDegree
+7. Phi_comp_add_C: Phi (p.comp(X+Cc)) = Phi p
+8. scaled_coeff_boxplus: scaled coefficients of boxplus = binomial convolution
+
+=== WHAT WE KNOW FROM SPECIFIC CASES (not in context, for motivation) ===
+
+For n=2: invPhi = disc/2 = -(λ_1-λ_2)²/2. Since disc is additive under ⊞_2
+(disc(p⊞q) = disc(p)+disc(q)), the inequality is actually EQUALITY.
+
+For n=3 (reduced cubics X³+aX+b, a<0):
+  invPhi = -(2/9)a - (3/2)(b/a)²
+The inequality follows because (b₁+b₂)²/(a₁+a₂)² ≤ b₁²/a₁² + b₂²/a₂²
+by Cauchy-Schwarz (both a₁,a₂ < 0).
+
+For n=4 (symmetric quartics, b=0):
+  invPhi = -(2/3)κ₂ - (4/3)κ₄²/(κ₂(κ₂²+κ₄))
+The inequality follows by decomposing into linear part (superadditive because
+κ₂ additive) and ratio part (superadditive by Cauchy-Schwarz on x↦y²/(x(x²+y))).
+
+The PATTERN: invPhi_n = linear function of κ₂ + correction involving higher cumulants.
+The correction is always superadditive by Cauchy-Schwarz type arguments.
+
+=== APPROACH 1 (PRIMARY): Centering + Phi bound ===
+
+Step 1: CENTERING REDUCTION (should be straightforward)
+By invPhi_comp_add_C (proven), invPhi is translation-invariant.
+By boxplus_comp_add_C (proven), boxplus commutes with translation.
+Therefore WLOG we can assume p and q are centered (coeff(n-1) = 0).
+The centering shift is c = -coeff(n-1)/n for each polynomial.
+
+Prove a lemma:
+  lemma centering_reduction : ∀ p q, ... → invPhi(boxplus n p q) ≥ invPhi p + invPhi q ↔
+    (same for centered versions of p and q)
+
+Step 2: FOR CENTERED POLYNOMIALS, BOUND Phi
+For centered polynomials, the coefficient a_{n-2} (= n(n-1)κ₂/2) determines
+the sum of squared roots: Σλ_i² = -2a_{n-2}.
+
+By Phi_derivative_form: Phi = Σ_i S_i² where S_i = Σ_{j≠i} 1/(λ_i-λ_j).
+
+Key identity: Σ_i S_i = 0 (by antisymmetry of 1/(λ_i-λ_j)).
+
+So Phi = Σ S_i² with Σ S_i = 0, meaning the S_i vector lies on a hyperplane.
+
+Step 3: RELATE Phi TO κ₂
+For centered monic degree-n with roots summing to zero and Σλ_i² = -2a_{n-2}:
+  By Cauchy-Schwarz applied to (S_i) and (1):
+    Phi = Σ S_i² ≥ (Σ S_i)²/n = 0
+
+A sharper bound: Phi relates to the "electrostatic energy" of roots on the line.
+The minimum Phi for given Σλ_i² is achieved by equally-spaced roots.
+
+Step 4: PROVE THE INEQUALITY
+If you can show: 1/Phi_n ≥ c(n) * (-κ₂) for some constant c(n) > 0
+and: 1/Phi_n ≤ C(n) * (-κ₂) for some constant C(n) > 0
+and: κ₂ is additive (by ff_kappa_additive),
+then at minimum you have a bound. For the exact inequality, you need
+the precise relationship between 1/Phi and the cumulant vector.
+
+=== APPROACH 2: Direct algebraic / discriminant ===
+
+For n=2: 1/Phi = disc/2 and disc is additive. For general n, 1/Phi is NOT
+simply proportional to the discriminant, but there may be an algebraic identity
+relating Phi to the discriminant and other polynomial invariants.
+
+Key identity from the Phi_derivative_form:
+  Phi(p) * Π_{i<j}(λ_i-λ_j)² = Σ_i (p''(λ_i)/2)² * Π_{j≠i,k<l,(k,l)≠...}
+
+Try to derive: Phi = N/D where N, D are expressible in terms of coefficients,
+then show 1/Phi = D/N is superadditive.
+
+=== APPROACH 3: Induction on n with base n=2 ===
+
+Base: n=2, equality (straightforward from definitions).
+Step: Assume for n-1, prove for n.
+
+Challenge: The boxplus_n operation depends on n, so relating ⊞_n to ⊞_{n-1}
+is non-trivial. But there might be a "projection" or "marginal" relationship.
+
+=== PLAN B: If full proof is too hard, prove these helper lemmas ===
+
+These are all valuable stepping stones and each is likely provable from context:
+
+B1. Centering reduction lemma (reduce to centered case)
+B2. Phi_pos: For monic split polynomial with distinct roots and degree ≥ 2, Phi p > 0
+B3. invPhi_pos: Under same conditions, invPhi p > 0
+B4. Phi_sum_S_eq_zero: Σ_{r ∈ roots} (Σ_{s ∈ roots, s≠r} 1/(r-s)) = 0
+B5. Phi_lower_bound: Phi p ≥ n * (n-1)² / (Σ (λ_i-λ_j)²)
+    (by Cauchy-Schwarz: Σ S_i² ≥ (Σ_{i,j≠i} 1/(λ_i-λ_j))² / n = 0 is trivial,
+     but a better bound uses the constraint that roots are distinct)
+B6. invPhi_n2: For n=2, invPhi(boxplus 2 p q) = invPhi p + invPhi q (equality)
+
+=== LEAN TACTIC HINTS ===
+
+- Unfold invPhi: the definition checks p.roots.Nodup ∧ p.roots.card > 1.
+  Use the hypotheses hp_nodup, hpq_nodup with roots_card_eq_natDegree to discharge.
+- For the centering: define cp := p.comp(X + C(-p.coeff(n-1)/n)), show it's centered.
+- For algebraic inequalities: nlinarith, polyrith, positivity
+- For sums over roots: work with p.roots.toFinset and Finset.sum
+- For Cauchy-Schwarz on sums: sq_nonneg (Σ a_i * b_i - ...), or use
+  Finset.inner_mul_le_norm_mul_sq
+
+=== CRITICAL ===
+
+1. Do NOT re-prove any infrastructure lemma from the context.
+2. The single sorry is finite_free_stam_inequality. That's the only goal.
+3. Express all intermediate results as named lemmas building toward the goal.
+4. If the full proof is too hard, prove as many Plan B lemmas as possible
+   and use them to make maximal progress on the main theorem.
