@@ -1,0 +1,127 @@
+FINITE FREE STAM INEQUALITY — General n proof with enriched context
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== WHAT IS PROVEN IN CONTEXT (do NOT re-prove) ===
+
+The context file has 1095 lines of proven results including:
+
+GENERAL INFRASTRUCTURE:
+- ff_kappa_additive: κ_k(p⊞q) = κ_k(p) + κ_k(q) for all k ≤ n
+- boxplus_comp_add_C: translation covariance for all n
+- boxplus_comm: commutativity
+- Phi_derivative_form: Phi = Σ_{r∈roots} (p''(r)/(2p'(r)))²
+- invPhi_comp_add_C, Phi_comp_add_C: translation invariance
+- roots_card_eq_natDegree: roots.card = natDegree for split monic polys
+- scaled_coeff_boxplus: binomial convolution formula
+- exists_shift_centered: any monic poly can be centered
+- boxplus_centered_is_centered: centering preserved under boxplus
+- boxplus_centered_coeff_add: coeff(n-2) additive for centered polys
+
+SPECIFIC CASES (proven):
+- finite_free_stam_inequality_n2: the n=2 case (with EQUALITY)
+- conjecture_n_3_reduced: the n=3 case for reduced cubics
+- Phi_deg3_reduced_eq: Phi formula for cubics
+- n3_inequality: Cauchy-Schwarz for (b1+b2)²/(u1+u2)² ≤ b1²/u1² + b2²/u2²
+
+=== PROOF STRATEGY ===
+
+STEP 1: CASE SPLIT on n.
+  - n = 0, 1: impossible since hn : n ≥ 2.
+  - n = 2: use finite_free_stam_inequality_n2 directly.
+  - n ≥ 3: need the argument below.
+
+Use `interval_cases` or `rcases n with _ | _ | _ | n` then `omega` for impossible cases.
+
+STEP 2: CENTERING REDUCTION (for n ≥ 3).
+By exists_shift_centered, find c, d such that p.comp(X+Cc) and q.comp(X+Cd) are centered.
+By invPhi_comp_add_C: invPhi is unchanged by the shift.
+By boxplus_comp_add_C: boxplus(p.comp(X+Cc), q.comp(X+Cd)) = boxplus(p,q).comp(X+C(c+d)).
+So WLOG p and q are centered (coeff(n-1) = 0).
+
+STEP 3: EXPRESS invPhi IN TERMS OF ROOTS.
+invPhi(p) = 1/Phi(p) when p has distinct roots and degree ≥ 2.
+Phi(p) = Σ_i S_i² where S_i = Σ_{j≠i} 1/(λ_i - λ_j).
+
+KEY IDENTITY: Σ_i S_i = 0 (antisymmetry: pair (i,j) contributes 1/(λ_i-λ_j) + 1/(λ_j-λ_i) = 0).
+
+For the convolution p ⊞_n q with roots μ_1,...,μ_n:
+We need: 1/Σ S_k(p⊞q)² ≥ 1/Σ S_i(p)² + 1/Σ S_j(q)²
+
+Equivalently: Σ S_i(p)² · Σ S_j(q)² ≥ Σ S_k(p⊞q)² · (Σ S_i(p)² + Σ S_j(q)²)
+
+This is the HARMONIC MEAN INEQUALITY for Phi:
+  Phi(p⊞q) ≤ Phi(p)·Phi(q) / (Phi(p) + Phi(q))
+
+STEP 4: THE MISSING LINK — connecting roots of p⊞q to roots of p and q.
+
+The context proves cumulant additivity (ff_kappa_additive), but there is NO
+direct formula expressing Phi in terms of cumulants for general n.
+This is the KEY GAP.
+
+POSSIBLE APPROACHES TO BRIDGE THIS GAP:
+
+(A) DERIVE Phi IN TERMS OF COEFFICIENTS for general n.
+    For centered degree-n poly with roots λ_1,...,λ_n (sum = 0):
+    The power sums p_k = Σ λ_i^k relate to coefficients via Newton's identities.
+    And Phi = Σ S_i² = Σ_i (Σ_{j≠i} 1/(λ_i-λ_j))² is related to the discriminant:
+      disc(p) = Π_{i<j} (λ_i - λ_j)²
+    By Phi_derivative_form, Phi = Σ (p''(λ_i)/(2p'(λ_i)))².
+    Since p'(λ_i) = Π_{j≠i}(λ_i-λ_j), we get Phi·disc = Σ [p''(λ_i)/2]² · disc/[p'(λ_i)]².
+    This equals Σ [p''(λ_i)/2]² · Π_{j≠i, k<l, (k,l)∩{i}=∅} (λ_k-λ_l)².
+
+(B) USE THE n=3 PATTERN DIRECTLY for general n.
+    For n=3: invPhi = -(2/9)a - (3/2)(b/a)² = linear(κ₂) + Cauchy-Schwarz-superadditive(κ₃/κ₂).
+    Conjecture for general n: invPhi_n = c_n·κ₂ + R(κ₂,...,κ_n) where R is superadditive.
+    The linear part c_n·κ₂ is superadditive by cumulant additivity.
+    Prove R is superadditive by showing it has the form Σ(numerator²/denominator)
+    where the denominator is itself superadditive.
+
+(C) PROVE Phi IS CONCAVE in roots (in an appropriate sense), then use:
+    Phi(expected roots) ≤ expected Phi, giving the bound.
+
+=== LEAN IMPLEMENTATION HINTS ===
+
+For the case split:
+```
+  rcases n, hn with ⟨_ | _ | _ | n, hn⟩
+  · omega  -- n=0
+  · omega  -- n=1
+  · exact finite_free_stam_inequality_n2 p q hp hp_nodup hp_monic hp_deg ...
+  · -- n ≥ 3: the main argument
+```
+
+For the centering reduction:
+```
+  obtain ⟨c, hc⟩ := exists_shift_centered n p (by omega) hp_monic hp_deg
+  obtain ⟨d, hd⟩ := exists_shift_centered n q (by omega) hq_monic hq_deg
+  rw [show invPhi (boxplus n p q) = invPhi (boxplus n (p.comp(X+Cc)) (q.comp(X+Cd))) from ...]
+```
+
+For invPhi unfolding:
+```
+  unfold invPhi
+  simp [hp_nodup, roots_card_eq_natDegree, hp_monic, hp, hp_deg]
+  -- then work with 1/Phi
+```
+
+=== PLAN B: If full proof too hard ===
+
+At minimum, prove these helper lemmas:
+1. Phi_pos: Phi p > 0 when p has ≥ 2 distinct real roots
+2. invPhi_pos: invPhi p > 0 under same conditions
+3. sum_field_strengths_zero: Σ_{r∈roots} (Σ_{s∈roots\{r}} 1/(r-s)) = 0
+4. centering_reduction: reduce to centered case formally
+5. invPhi_n3: the n=3 case lifted from conjecture_n_3_reduced to the general signature
+
+Then combine: for n=2 use n2 case, for n=3 use n3 case.
+Even partial progress (n ≤ 3) is valuable.
+
+=== CRITICAL ===
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Build named lemmas toward the goal.
+4. If general n impossible, proving n ≤ 3 via case-split is good progress.
