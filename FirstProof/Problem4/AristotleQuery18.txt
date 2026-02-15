@@ -1,0 +1,123 @@
+FINITE FREE STAM INEQUALITY — Score decomposition approach
+
+=== GOAL ===
+
+Prove the single sorry in the attached context: finite_free_stam_inequality.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== KEY MATHEMATICAL INSIGHT ===
+
+This is the finite polynomial analogue of the classical Stam inequality
+for Fisher information: 1/J(X+Y) ≥ 1/J(X) + 1/J(Y).
+
+The classical proof in 3 lines:
+  Let Z = X+Y, α = J(Y)/(J(X)+J(Y)), β = J(X)/(J(X)+J(Y)).
+  J(Z) = E[score_Z²] = E[(α·E[score_X|Z] + β·E[score_Y|Z])²]
+       ≤ α·J(X) + β·J(Y) = J(X)J(Y)/(J(X)+J(Y))    [Jensen twice]
+  Therefore 1/J(Z) ≥ 1/J(X) + 1/J(Y).
+
+For the finite free case:
+  Phi(p) = Σ_i S_i(p)²  where S_i = Σ_{j≠i} 1/(λ_i - λ_j)
+
+This is analogous to J(X) = E[score_X²] = Σ_i S_i²/n (up to factor n).
+
+=== PROOF STRATEGY ===
+
+Step 1: Prove Phi(p) > 0 for all polynomials in our setting.
+  Since p has n ≥ 2 distinct real roots, there exist i≠j with λ_i ≠ λ_j.
+  Then S_i includes a nonzero term 1/(λ_i-λ_j), so S_i ≠ 0.
+  Therefore Phi = Σ S_i² > 0.
+
+Step 2: Define α = Phi(q)/(Phi(p)+Phi(q)), β = Phi(p)/(Phi(p)+Phi(q)).
+  Note α + β = 1, α > 0, β > 0.
+
+Step 3: Prove the KEY INEQUALITY:
+  Phi(p ⊞_n q) ≤ α·Phi(p) + β·Phi(q) = Phi(p)·Phi(q)/(Phi(p)+Phi(q))
+
+  This is equivalent to 1/Phi(p⊞q) ≥ 1/Phi(p) + 1/Phi(q).
+
+  The key inequality says: Phi(p⊞q) ≤ harmonic_mean(Phi(p), Phi(q)).
+
+Step 4: For Step 3, we need to show that the "field strengths" S_k(p⊞q)
+  of the convolution are bounded by a weighted combination of S_i(p) and S_j(q).
+
+  Concretely, if we can find vectors (a_k) and (b_k) with k=1,...,n such that:
+    S_k(p⊞q) = a_k + b_k  for all k
+    Σ a_k² ≤ Phi(p)  (or more precisely, Σ a_k² ≤ α·Phi(p) in a suitable sense)
+    Σ b_k² ≤ Phi(q)
+  then by Cauchy-Schwarz:
+    Phi(p⊞q) = Σ(a_k+b_k)² ≤ 2(Σa_k² + Σb_k²) ≤ 2(Phi(p)+Phi(q))
+
+  But we need the SHARP bound with the harmonic mean, not factor 2.
+
+  SHARP VERSION: By (αu+βv)² ≤ α·u² + β·v² (Jensen with α+β=1):
+    Σ(a_k+b_k)² = Σ(α·(a_k/α) + β·(b_k/β))²
+                 ≤ α·Σ(a_k/α)² + β·Σ(b_k/β)²
+                 = (1/α)·Σa_k² + (1/β)·Σb_k²
+
+  If Σa_k² ≤ α²·Phi(p) and Σb_k² ≤ β²·Phi(q), then:
+    Phi(p⊞q) ≤ α·Phi(p) + β·Phi(q) = Phi(p)Phi(q)/(Phi(p)+Phi(q))
+
+  So the KEY CLAIM: there exist decompositions a_k, b_k of S_k(p⊞q) with:
+    Σ a_k² ≤ [Phi(q)/(Phi(p)+Phi(q))]² · Phi(p)
+    Σ b_k² ≤ [Phi(p)/(Phi(p)+Phi(q))]² · Phi(q)
+
+=== ALTERNATIVE: Direct from cumulant additivity ===
+
+The context proves ff_kappa_additive: κ_k(p⊞q) = κ_k(p) + κ_k(q) for all k ≤ n.
+By invPhi_comp_add_C, we can assume p,q are centered (coeff(n-1)=0).
+
+For centered polynomials, the coefficients ARE the cumulants (up to binomial factors).
+So (p⊞q).coeff(n-k) = p.coeff(n-k) + q.coeff(n-k) for k=2,3 (proven for all n).
+
+For k ≥ 4, there are cross terms. But the CUMULANTS add exactly.
+
+If we can express Phi (or 1/Phi) as a function of cumulants:
+  1/Phi = F(κ_2, κ_3, ..., κ_n)
+and show F is superadditive, we're done.
+
+For n=2: F(κ_2) = -2κ_2 (linear, hence superadditive).
+For n=3: F(κ_2, κ_3) = -(2/9)κ_2 - (3/2)κ_3²/κ_2² (superadditive by Cauchy-Schwarz).
+For n=4: Similar pattern.
+
+The general pattern suggests: F = linear in κ₂ + correction.
+The linear part is superadditive because κ₂ adds. The correction is superadditive by
+some Cauchy-Schwarz / convexity argument.
+
+=== AVAILABLE INFRASTRUCTURE (in context, do NOT re-prove) ===
+
+1. ff_kappa_additive: ∀ k ≤ n, κ_k(p⊞q) = κ_k(p) + κ_k(q)
+2. boxplus_comp_add_C: translation covariance
+3. boxplus_comm: commutativity
+4. Phi_derivative_form: Phi = Σ (p''(r)/(2p'(r)))²
+5. invPhi_comp_add_C, Phi_comp_add_C: translation invariance of Phi, invPhi
+6. roots_card_eq_natDegree: roots.card = natDegree for split monic polys
+7. ff_cumulant, ff_kappa definitions and properties
+8. scaled_coeff_boxplus: binomial convolution of scaled coefficients
+
+=== PLAN B HELPER LEMMAS ===
+
+If the full proof is out of reach, prove these stepping stones:
+
+1. Phi_pos: Phi p > 0 (when p has ≥ 2 distinct real roots)
+2. invPhi_pos: invPhi p > 0 (same conditions)
+3. sum_field_strengths_eq_zero: Σ S_i = 0 where S_i = Σ_{j≠i} 1/(λ_i-λ_j)
+4. Phi_eq_sum_sq: Phi p = Σ_i S_i² (restatement of Phi_derivative_form)
+5. invPhi_eq_formula: invPhi = 1/(Σ S_i²) when conditions hold
+6. centering_reduction: the inequality for general p,q reduces to centered p,q
+
+=== LEAN TACTIC HINTS ===
+
+- Unfold invPhi: check the if-then-else condition with hp_nodup, roots_card_eq_natDegree
+- For Phi_pos: find i,j with S_i ≠ 0, use sq_pos_of_ne_zero
+- For sum = 0: pair terms (i,j) and (j,i), use 1/(a-b) + 1/(b-a) = 0
+- For the main inequality: after reducing to Phi(p⊞q) ≤ Phi(p)Phi(q)/(Phi(p)+Phi(q)),
+  clear denominators (all positive) and prove the polynomial inequality
+- nlinarith, polyrith for algebraic inequalities
+- Finset.sum_le_sum for pointwise bounds on sums
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. The single sorry is finite_free_stam_inequality.
+3. Build named lemmas toward the goal.
