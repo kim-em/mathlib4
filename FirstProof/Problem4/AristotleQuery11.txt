@@ -1,0 +1,115 @@
+FINITE FREE STAM INEQUALITY — Prove the n=4 general case
+
+=== THE GOAL ===
+
+Prove the attached Lean file's SINGLE sorry: `stam_inequality_n4_cumulants`.
+
+theorem stam_inequality_n4_cumulants (k2 k3 k4 k2' k3' k4' : ℝ)
+    (h1 : quartic_cumulant_feasible k2 k3 k4)
+    (h2 : quartic_cumulant_feasible k2' k3' k4')
+    (h3 : quartic_cumulant_feasible (k2+k2') (k3+k3') (k4+k4')) :
+    -N_cumulant (k2+k2') (k3+k3') (k4+k4') / D_cumulant (k2+k2') (k3+k3') (k4+k4') >=
+    -N_cumulant k2 k3 k4 / D_cumulant k2 k3 k4 +
+    -N_cumulant k2' k3' k4' / D_cumulant k2' k3' k4' := by sorry
+
+This is the Finite Free Stam Inequality for degree-4 polynomials:
+  1/Phi_4 is superadditive in cumulant coordinates (k2, k3, k4).
+
+=== WHAT IS ALREADY PROVEN (in the attached .lean context) ===
+
+The context file has ~1360 lines of COMPLETE PROOFS (zero sorry, except the target).
+Key results — do NOT re-prove these:
+
+1. Phi_quartic_general: Phi_4 = -4(A^2+12C)(2A^3-8AC+9B^2) / disc  [PROVEN]
+2. invPhi_eq_cumulant_formula: 1/Phi = -N_cumulant/D_cumulant  [PROVEN]
+3. D_cumulant_neg: D_cumulant < 0 on feasible domain  [PROVEN]
+4. invPhi_symmetric_superadditive: 1/Phi superadditive when k3=k3'=0  [PROVEN]
+5. Q_quartic_nonneg: Q >= 0 on feasible domain  [PROVEN]
+6. invPhi_decomposition: -N/D = -2/3*k2 + Q/D  [PROVEN]
+7. quartic_boxplus_cumulants: cumulants additive under boxplus  [PROVEN]
+8. quartic_cumulant_bounds: k2 < 0, k2^2 + k4 > 0, k4 < k2^2  [PROVEN]
+9. symmetric_ratio_inequality: q(x,y)=y^2/(x(x^2+y)) is subadditive  [PROVEN]
+10. Phi_quartic_even_in_B: Phi is even in B (equivalently in k3)  [PROVEN]
+
+=== PROOF STRATEGY ===
+
+The function f(k2,k3,k4) = -N_cumulant/D_cumulant represents 1/Phi_4.
+We need: f(a+a', b+b', c+c') >= f(a,b,c) + f(a',b',c')
+
+CLEARING DENOMINATORS (careful with signs!):
+  D_s, D_1, D_2 are all < 0 (by D_cumulant_neg).
+  To derive `D_cumulant ≠ 0`, use `ne_of_lt (D_cumulant_neg ...)`.
+  Multiplying both sides by D_s * D_1 * D_2 (which is NEGATIVE, since
+  product of three negative numbers is negative) REVERSES the inequality:
+
+  f_s >= f_1 + f_2
+  <==> N_s * D_1 * D_2 - N_1 * D_s * D_2 - N_2 * D_s * D_1 <= 0
+
+  Call this polynomial P(k2,k3,k4,k2',k3',k4'). We need P <= 0.
+
+KEY DECOMPOSITION (from invPhi_decomposition):
+  -N/D = -2/3*k2 + Q/D
+  where Q = Q_quartic >= 0 (proven) and D < 0 (proven), so Q/D <= 0.
+
+  The linear part -2/3*k2 is trivially superadditive (equality).
+  So superadditivity of -N/D reduces to showing Q/D is SUPERADDITIVE
+  (i.e. Q_s/D_s >= Q_1/D_1 + Q_2/D_2, where each term is non-positive).
+
+  NOTE: Q >= 0 and D < 0 give Q/D <= 0 but do NOT imply superadditivity.
+  The Q/D superadditivity requires a separate inequality — this is the core difficulty.
+
+STRATEGY 1 — Generalize the Cauchy-Schwarz approach (RECOMMENDED):
+  The symmetric case (k3=0) was proven by showing q(x,y) = y^2/(x(x^2+y))
+  is subadditive via Cauchy-Schwarz (symmetric_ratio_inequality).
+
+  For the general case, try to express Q/D as a function of suitable variables
+  and prove a generalized ratio inequality. The remainder Q_quartic involves
+  k3 terms; find substitutions (x = -k2, y = k4, z = 9*k3^2) such that
+  Q/D becomes a subadditive function of (x, y, z).
+
+  Bridge lemma approach: prove
+    Q_quartic(sum) / D_cumulant(sum) >= Q_quartic(k) / D_cumulant(k) + Q_quartic(k') / D_cumulant(k')
+  Then combine with linearity of -2/3*k2.
+
+STRATEGY 2 — Direct polynomial inequality:
+  Clear denominators (field_simp), then show P <= 0 using nlinarith with
+  auxiliary square terms. P has ~547 terms, degree 15 in 6 variables.
+  This is hard for nlinarith alone, but may work with explicit SOS witnesses.
+
+  Hint: When k3=k3'=0, P factors as:
+    18432 * (k2^2-k4) * (k2'^2-k4') * ((k2+k2')^2-k4-k4') * (nonneg polynomial)
+  All factors are nonneg on the feasible domain (since k4 < k2^2).
+  Try decomposing P in powers of k3, k3':
+    P = P_0(k2,k4,k2',k4') + k3^2 * R_2 + k3'^2 * R_2' + k3*k3' * R_11 + ...
+  and bound each coefficient using feasibility conditions.
+
+STRATEGY 3 — Perturbation (LOW PRIORITY, Lean-unfriendly):
+  Since f is even in k3 (by Phi_quartic_even_in_B), the superadditivity deficit
+  is even in (k3, k3'). Expand to second order in k3, k3' from the proven k3=0 case.
+
+=== FEASIBILITY DOMAIN ===
+
+quartic_cumulant_feasible k2 k3 k4 means:
+  k2 < 0
+  k2^2 + k4 > 0      (i.e. k4 > -k2^2)
+  4*k2^3 - 4*k2*k4 + 9*k3^2 < 0
+
+Derived bounds (from quartic_cumulant_bounds):
+  k4 < k2^2            (so |k4| < k2^2, i.e. -k2^2 < k4 < k2^2)
+  P := k2^2 - k4 > 0   (useful substitution variable)
+  9*k3^2 < 4*(-k2)*P   (bounds k3 in terms of k2 and P)
+
+=== LEAN TACTIC SUGGESTIONS ===
+
+- `have hD1 := D_cumulant_neg k2 k3 k4 h1` — get D < 0
+- `have hD1_ne := ne_of_lt hD1` — get D ≠ 0 (needed for field_simp)
+- `unfold quartic_cumulant_feasible` at h1 h2 h3 to extract individual bounds
+- `rw [ge_iff_le, ← sub_nonneg]` to rephrase as difference >= 0
+- `field_simp` to clear denominators (needs D ≠ 0 hypotheses)
+- After clearing denominators, the goal becomes a polynomial inequality
+- `nlinarith` with auxiliary `have` statements:
+  * `sq_nonneg (...)` for sum-of-squares witnesses
+  * Products of feasibility conditions
+  * Q_quartic_nonneg, D_cumulant_neg, quartic_cumulant_bounds
+- `ring` or `grind +ring` for algebraic simplifications
+- Alternative: `rw [invPhi_decomposition]` to use the Q/D decomposition directly
