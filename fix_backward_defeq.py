@@ -8,18 +8,94 @@ import subprocess
 import re
 import os
 import sys
+from abc import ABC, abstractmethod
 from pathlib import Path
 from threading import Lock, Thread
 from queue import Queue, Empty
 import time
 
-SET_OPTION_LINE = "set_option backward.isDefEq.respectTransparency false in"
 PROJECT_DIR = Path(__file__).parent
 
 # ANSI escape codes
 CLEAR_LINE = "\033[2K"
 HIDE_CURSOR = "\033[?25l"
 SHOW_CURSOR = "\033[?25h"
+
+
+class FixStrategy(ABC):
+    """Abstract strategy for proposing and verifying fixes for build errors."""
+
+    @abstractmethod
+    def propose_fix(self, filepath: str, lines: list[str], error_line: int
+                    ) -> tuple[list[str] | None, str]:
+        """Propose a fix for the error at error_line.
+
+        Returns (new_lines, message).
+        - new_lines not None: the fix to try, message describes it
+        - new_lines is None: can't fix, message explains why
+        """
+
+    @abstractmethod
+    def did_fix_work(self, filepath: str, error_line: int,
+                     new_errors: dict[str, list[int]]) -> tuple[bool, str]:
+        """Check if the fix resolved the error.
+
+        Returns (success, message).
+        """
+
+
+class BackwardDefEqStrategy(FixStrategy):
+    """Fix errors by adding `set_option backward.isDefEq.respectTransparency false in`."""
+
+    SET_OPTION_LINE = "set_option backward.isDefEq.respectTransparency false in"
+
+    def _is_inside_block_comment(self, lines: list[str], line_idx: int) -> bool:
+        """Check if the given line index is inside a /- ... -/ block comment (including /-- and /-!)."""
+        for i in range(line_idx - 1, -1, -1):
+            line = lines[i]
+            if "/-" in line:
+                start_pos = line.find("/-")
+                end_pos = line.find("-/", start_pos + 2)
+                if end_pos == -1:
+                    return True
+                return False
+            if "-/" in line:
+                return False
+        return False
+
+    def _find_declaration_start(self, lines: list[str], error_line: int) -> int:
+        """Find the start of the declaration containing the error."""
+        idx = error_line - 1
+
+        while idx > 0:
+            idx -= 1
+            if lines[idx].strip() == "":
+                if not self._is_inside_block_comment(lines, idx):
+                    return idx + 1
+
+        return 0
+
+    def propose_fix(self, filepath: str, lines: list[str], error_line: int
+                    ) -> tuple[list[str] | None, str]:
+        decl_start = self._find_declaration_start(lines, error_line)
+
+        # Check if set_option is already there
+        if decl_start > 0 and self.SET_OPTION_LINE in lines[decl_start - 1]:
+            return None, f"set_option already present at line {decl_start}"
+
+        if lines[decl_start].strip().startswith(self.SET_OPTION_LINE):
+            return None, "set_option already at declaration start"
+
+        # Insert the set_option line
+        new_lines = lines[:decl_start] + [self.SET_OPTION_LINE + "\n"] + lines[decl_start:]
+        return new_lines, f"inserted set_option before line {decl_start + 1}"
+
+    def did_fix_work(self, filepath: str, error_line: int,
+                     new_errors: dict[str, list[int]]) -> tuple[bool, str]:
+        expected_error_line = error_line + 1
+        if filepath in new_errors and expected_error_line in new_errors[filepath]:
+            return False, f"set_option didn't fix error at line {error_line}"
+        return True, ""
 
 
 class StatusDisplay:
@@ -137,7 +213,8 @@ class StatusDisplay:
 class BuildCoordinator:
     """Coordinates parallel file processing with dynamic discovery of new failing files."""
 
-    def __init__(self, num_workers: int):
+    def __init__(self, strategy: FixStrategy, num_workers: int):
+        self.strategy = strategy
         self.num_workers = num_workers
         self.work_queue: Queue[str] = Queue()
         self.display = StatusDisplay(num_workers)
@@ -178,15 +255,22 @@ class BuildCoordinator:
             f"📊 Queued: {queued} | In progress: {in_prog} | Done: {done} | Fixes: {fixes}"
         )
 
-    def run_lake_build(self) -> str:
-        """Run lake build and capture output."""
-        result = subprocess.run(
+    def run_lake_build(self, on_output=None) -> str:
+        """Run lake build and capture output. Optionally calls on_output(line) for each line."""
+        proc = subprocess.Popen(
             ["lake", "build", "--verbose"],
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True,
             cwd=PROJECT_DIR
         )
-        return result.stdout + result.stderr
+        output_lines = []
+        for line in proc.stdout:
+            output_lines.append(line)
+            if on_output:
+                on_output(line)
+        proc.wait()
+        return "".join(output_lines)
 
     def run_lake_build_file(self, filepath: str) -> str:
         """Run lake build on a specific file and capture output."""
@@ -284,8 +368,16 @@ class BuildCoordinator:
             self.build_count += 1
             build_num = self.build_count
 
+        progress_re = re.compile(r'\[(\d+)/(\d+)\]')
+
+        def update_progress(line):
+            m = progress_re.search(line)
+            if m:
+                self.display.set_discovery_status(
+                    f"Build #{build_num} [{m.group(1)}/{m.group(2)}]")
+
         self.display.set_discovery_status(f"Build #{build_num} running...")
-        build_output = self.run_lake_build()
+        build_output = self.run_lake_build(on_output=update_progress)
 
         log_file = f"/tmp/lake-build-discovery-{build_num}.log"
         with open(log_file, "w") as f:
@@ -305,35 +397,9 @@ class BuildCoordinator:
         if added > 0:
             self.log(f"🔍 Discovery #{build_num}: found {added} new files")
 
-    def is_inside_doc_comment(self, lines: list[str], line_idx: int) -> bool:
-        """Check if the given line index is inside a /-- ... -/ doc-comment."""
-        for i in range(line_idx - 1, -1, -1):
-            line = lines[i]
-            if "/--" in line:
-                start_pos = line.find("/--")
-                end_pos = line.find("-/", start_pos + 3)
-                if end_pos == -1:
-                    return True
-                return False
-            if "-/" in line:
-                return False
-        return False
-
-    def find_declaration_start(self, lines: list[str], error_line: int) -> int:
-        """Find the start of the declaration containing the error."""
-        idx = error_line - 1
-
-        while idx > 0:
-            idx -= 1
-            if lines[idx].strip() == "":
-                if not self.is_inside_doc_comment(lines, idx):
-                    return idx + 1
-
-        return 0
-
     def process_file(self, filepath: str, worker_id: int) -> tuple[int, int]:
         """
-        Process a single file, trying to fix errors with set_option.
+        Process a single file, trying to fix errors using the strategy.
         Returns (fixes_applied, errors_remaining).
         """
         def status(msg: str):
@@ -364,27 +430,14 @@ class BuildCoordinator:
             with open(filepath, 'r') as f:
                 lines = f.readlines()
 
-            decl_start = self.find_declaration_start(lines, first_error_line)
+            new_lines, message = self.strategy.propose_fix(filepath, lines, first_error_line)
 
-            # Check if set_option is already there
-            if decl_start > 0 and SET_OPTION_LINE in lines[decl_start - 1]:
-                reason = f"set_option already present at line {decl_start}"
-                status(f"⚠ {reason}")
+            if new_lines is None:
+                status(f"⚠ {message}")
                 with self.lock:
-                    self.failed_files[filepath] = reason
-                self.display.set_last_failed(filepath, reason)
+                    self.failed_files[filepath] = message
+                self.display.set_last_failed(filepath, message)
                 break
-
-            if lines[decl_start].strip().startswith(SET_OPTION_LINE):
-                reason = "set_option already at declaration start"
-                status(f"⚠ {reason}")
-                with self.lock:
-                    self.failed_files[filepath] = reason
-                self.display.set_last_failed(filepath, reason)
-                break
-
-            # Insert the set_option line
-            new_lines = lines[:decl_start] + [SET_OPTION_LINE + "\n"] + lines[decl_start:]
 
             with open(filepath, 'w') as f:
                 f.writelines(new_lines)
@@ -394,10 +447,9 @@ class BuildCoordinator:
             build_output = self.run_lake_build_file(filepath)
             errors = self.parse_errors(build_output)
 
-            expected_error_line = first_error_line + 1
+            success, reason = self.strategy.did_fix_work(filepath, first_error_line, errors)
 
-            if filepath in errors and expected_error_line in errors[filepath]:
-                reason = f"set_option didn't fix error at line {first_error_line}"
+            if not success:
                 status(f"{progress}, reverting...")
                 with open(filepath, 'w') as f:
                     f.writelines(lines)
@@ -473,7 +525,15 @@ class BuildCoordinator:
         print("Running initial lake build to find all errors...")
         print("=" * 60)
 
-        build_output = self.run_lake_build()
+        progress_re = re.compile(r'\[(\d+)/(\d+)\]')
+
+        def show_progress(line):
+            m = progress_re.search(line)
+            if m:
+                print(f"\r  Building... [{m.group(1)}/{m.group(2)}]", end="", flush=True)
+
+        build_output = self.run_lake_build(on_output=show_progress)
+        print()  # newline after progress
 
         with open("/tmp/lake-build-initial.log", "w") as f:
             f.write(build_output)
@@ -546,7 +606,8 @@ class BuildCoordinator:
 
 def main():
     num_workers = os.cpu_count() or 4
-    coordinator = BuildCoordinator(num_workers)
+    strategy = BackwardDefEqStrategy()
+    coordinator = BuildCoordinator(strategy, num_workers)
 
     try:
         coordinator.run()

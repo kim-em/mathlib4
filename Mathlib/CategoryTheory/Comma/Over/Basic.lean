@@ -578,6 +578,7 @@ def functor : CostructuredArrow (toOver F X) Y ⥤ CostructuredArrow F Y.left wh
   map f :=
     CostructuredArrow.homMk f.left.left (by rw [← CostructuredArrow.w f]; dsimp)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Auxiliary definition for `costructuredArrowToOverEquivalence`. -/
 @[simps]
 def inverse : CostructuredArrow F Y.left ⥤ CostructuredArrow (toOver F X) Y where
@@ -591,6 +592,7 @@ def inverse : CostructuredArrow F Y.left ⥤ CostructuredArrow (toOver F X) Y wh
 
 end costructuredArrowToOverEquivalence
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A category of costructured arrows for a functor `toOver F X` identifies
 to a category of costructured arrows for `F`. -/
 def costructuredArrowToOverEquivalence (F : D ⥤ T) {X : T} (Y : Over X) :
