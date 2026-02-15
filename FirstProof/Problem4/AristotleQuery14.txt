@@ -1,0 +1,108 @@
+FINITE FREE STAM INEQUALITY — General infrastructure for all n
+
+=== GOAL ===
+
+Build the general-n infrastructure needed for the Finite Free Stam Inequality.
+The attached context has proven results for n=2,3,4 and some general-n lemmas.
+This query asks to GENERALIZE the key structural results to all n.
+
+=== DELIVERABLES (in priority order) ===
+
+1. GENERAL BOXPLUS TRANSLATION COVARIANCE:
+   For all n, the boxplus convolution commutes with translation:
+     boxplus n (p.comp (X + C c)) (q.comp (X + C d)) =
+     (boxplus n p q).comp (X + C (c + d))
+   The context proves this for n=3 (boxplus_comp_add_C_n3). Generalize.
+
+2. GENERAL FINITE FREE CUMULANT ADDITIVITY:
+   Define finite free cumulants kappa_k for k=2,...,n of a centered monic
+   degree-n polynomial, and prove:
+     kappa_k(p ⊞_n q) = kappa_k(p) + kappa_k(q) for all k >= 2
+   The context proves this for k=2 (boxplus_centered_coeff_add),
+   k=3 (boxplus_centered_coeff_add_3), and k=4 (boxplus_centered_deg4_kappa4_additive).
+
+   The cumulant kappa_k is related to the coefficient a_k of the centered polynomial
+   p = X^n + a_2*X^{n-2} + a_3*X^{n-3} + ... + a_n by:
+     kappa_k = a_k / C(n,k)
+   where C(n,k) = n!/(k!(n-k)!).
+
+   Equivalently: the k-th coefficient of p ⊞_n q (for a centered polynomial)
+   is the sum of the k-th coefficients. This is already proven for k=2,3.
+   Prove it for ALL k from 2 to n.
+
+   The proof: for centered monic degree-n polynomials (coeff n = 1, coeff (n-1) = 0),
+   the boxplus formula simplifies because many terms vanish.
+
+3. GENERAL roots.card = natDegree LEMMA:
+   For p : ℝ[X] with p.Splits (RingHom.id ℝ) and p.Monic:
+     p.roots.card = p.natDegree
+   This is needed to unfold invPhi.
+
+4. PHI IN TERMS OF ROOTS (general form):
+   The context has Phi_derivative_form which expresses Phi as a sum over roots
+   of (p''(r)/(2p'(r)))^2. Ensure this is stated cleanly for general n.
+
+5. THE MAIN THEOREM (if possible):
+
+theorem finite_free_stam_inequality (n : ℕ) (hn : n ≥ 2)
+    (p q : ℝ[X])
+    (hp : p.Splits (RingHom.id ℝ)) (hp_nodup : p.roots.Nodup)
+    (hp_monic : p.Monic) (hp_deg : p.natDegree = n)
+    (hq : q.Splits (RingHom.id ℝ)) (hq_nodup : q.roots.Nodup)
+    (hq_monic : q.Monic) (hq_deg : q.natDegree = n)
+    (hpq : (boxplus n p q).Splits (RingHom.id ℝ))
+    (hpq_nodup : (boxplus n p q).roots.Nodup) :
+    invPhi (boxplus n p q) ≥ invPhi p + invPhi q := by sorry
+
+=== KEY INSIGHT FOR CUMULANT ADDITIVITY ===
+
+The boxplus coefficient formula is:
+  (p ⊞_n q).coeff(n-k) = sum_{i+j=k} [C(n-i,n-k)*C(n-j,n-k)/C(n,n-k)] * p.coeff(n-i) * q.coeff(n-j)
+
+For CENTERED polynomials (coeff(n) = 1, coeff(n-1) = 0):
+When k >= 2, the only nonzero terms in the sum have i >= 2 or j >= 2
+(because coeff(n-1) = 0 forces i=0 when j=k, giving coeff(n)=1, etc.)
+
+Actually the key simplification: for centered polys, the sum reduces to
+  (p ⊞_n q).coeff(n-k) = p.coeff(n-k) + q.coeff(n-k)
+because the cross terms (i >= 1, j >= 1) involve coeff(n-1) = 0.
+
+More precisely: the i=0,j=k term gives [C(n,n-k)*C(n-k,n-k)/C(n,n-k)] * 1 * q.coeff(n-k)
+= q.coeff(n-k). Similarly the i=k,j=0 term gives p.coeff(n-k).
+For 1 <= i <= k-1: we need j = k-i >= 1, so we use p.coeff(n-i) and q.coeff(n-j).
+But if i=1 or j=1, we get coeff(n-1) = 0. If i >= 2 AND j >= 2,
+then i + j = k >= 4. So for k <= 3, all cross terms vanish.
+
+For k >= 4: cross terms with i >= 2, j >= 2 can be nonzero!
+So coefficient additivity does NOT hold for k >= 4 in general.
+Instead, CUMULANT additivity holds, where cumulants are nonlinear functions
+of the coefficients.
+
+The cumulant kappa_k is defined by the relation:
+  a_k = sum over partitions of k of products of kappa's / combinatorial factors
+
+For k=2: kappa_2 = a_2/C(n,2) = a_2 * 2/(n(n-1))
+For k=3: kappa_3 = a_3/C(n,3)
+For k=4: kappa_4 = a_4/C(n,4) - kappa_2^2 * C(n,2)^2 / (2*C(n,4))
+   (the correction is because the partition {2,2} of 4 contributes)
+
+The context has boxplus_centered_deg4_kappa4_additive which proves kappa_4 additivity.
+
+IMPORTANT: Even if general cumulant additivity is hard, proving it for k=2,3 (which
+IS just coefficient additivity for centered polys) is a great start. It's already
+done in the context! The challenge is k >= 4.
+
+=== LEAN TACTIC HINTS ===
+
+For boxplus translation covariance:
+- Use Polynomial.comp, Polynomial.eval_comp
+- The key: boxplus_coeff depends only on coefficients, and comp(X+c) shifts coefficients
+- May need induction on n or direct computation
+
+For cumulant additivity:
+- boxplus_coeff formula with centered poly simplification
+- For k=2,3: show cross terms vanish (use coeff(n-1) = 0)
+- For k>=4: define cumulants via moment-cumulant relation and show additivity
+
+For roots.card = natDegree:
+- Use Polynomial.splits_iff_card_roots or Polynomial.card_roots_eq_of_splits
