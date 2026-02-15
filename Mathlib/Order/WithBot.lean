@@ -535,23 +535,9 @@ theorem monotone_iff {f : WithBot α → β} :
         WithBot.forall.2 ⟨fun h => (not_coe_le_bot _ h).elim,
           fun _ hle => h.1 (coe_le_coe.1 hle)⟩⟩⟩
 
-set_option backward.isDefEq.respectTransparency false in
-@[to_dual existing]
-theorem _root_.WithTop.monotone_iff {f : WithTop α → β} :
-    Monotone f ↔ Monotone (fun (a : α) => f a) ∧ ∀ x : α, f x ≤ f ⊤ :=
-  ⟨fun h => ⟨h.comp WithTop.coe_mono, fun _ => h le_top⟩, fun h =>
-    WithTop.forall.2
-      ⟨WithTop.forall.2 ⟨fun _ => le_rfl, fun _ h => (WithTop.not_top_le_coe _ h).elim⟩, fun x =>
-        WithTop.forall.2 ⟨fun _ => h.2 x, fun _ hle => h.1 (WithTop.coe_le_coe.1 hle)⟩⟩⟩
-
-@[simp]
+@[to_dual (attr := simp)]
 theorem monotone_map_iff {f : α → β} : Monotone (WithBot.map f) ↔ Monotone f :=
   monotone_iff.trans <| by simp [Monotone]
-
-set_option backward.isDefEq.respectTransparency false in
-@[to_dual existing, simp]
-theorem _root_.WithTop.monotone_map_iff {f : α → β} : Monotone (WithTop.map f) ↔ Monotone f :=
-  WithTop.monotone_iff.trans <| by simp [Monotone]
 
 @[to_dual]
 alias ⟨_, _root_.Monotone.withBot_map⟩ := monotone_map_iff
@@ -564,15 +550,7 @@ theorem strictMono_iff {f : WithBot α → β} :
       ⟨WithBot.forall.2 ⟨flip absurd (lt_irrefl _), fun x _ => h.2 x⟩, fun _ =>
         WithBot.forall.2 ⟨fun h => (not_lt_bot h).elim, fun _ hle => h.1 (coe_lt_coe.1 hle)⟩⟩⟩
 
-set_option backward.isDefEq.respectTransparency false in
-@[to_dual existing]
-theorem _root_.WithTop.strictMono_iff {f : WithTop α → β} :
-    StrictMono f ↔ StrictMono (fun (a : α) => f a) ∧ ∀ x : α, f x < f ⊤ :=
-  ⟨fun h => ⟨h.comp WithTop.coe_strictMono, fun _ => h (WithTop.coe_lt_top _)⟩, fun h =>
-    WithTop.forall.2
-      ⟨WithTop.forall.2 ⟨flip absurd (lt_irrefl _), fun _ h => (not_top_lt h).elim⟩, fun x =>
-        WithTop.forall.2 ⟨fun _ => h.2 x, fun _ hle => h.1 (WithTop.coe_lt_coe.1 hle)⟩⟩⟩
-
+@[to_dual]
 theorem strictAnti_iff {f : WithBot α → β} :
     StrictAnti f ↔ StrictAnti (fun a ↦ f a : α → β) ∧ ∀ x : α, f x < f ⊥ :=
   strictMono_iff (β := βᵒᵈ)
@@ -581,11 +559,6 @@ theorem strictAnti_iff {f : WithBot α → β} :
 theorem strictMono_map_iff {f : α → β} :
     StrictMono (WithBot.map f) ↔ StrictMono f :=
   strictMono_iff.trans <| by simp [StrictMono, bot_lt_coe]
-
-set_option backward.isDefEq.respectTransparency false in
-@[to_dual existing, simp]
-theorem _root_.WithTop.strictMono_map_iff {f : α → β} : StrictMono (WithTop.map f) ↔ StrictMono f :=
-  WithTop.strictMono_iff.trans <| by simp [StrictMono, WithTop.coe_lt_top]
 
 @[to_dual]
 alias ⟨_, _root_.StrictMono.withBot_map⟩ := strictMono_map_iff
@@ -821,19 +794,19 @@ instance trichotomous.lt [Preorder α] [@Std.Trichotomous α (· < ·)] :
     cases x <;> cases y <;> simp [trichotomous]
 
 set_option backward.isDefEq.respectTransparency false in
-instance _root_.WithTop.trichotomous.lt [Preorder α] [IsTrichotomous α (· < ·)] :
-    IsTrichotomous (WithTop α) (· < ·) where
-  trichotomous x y := by cases x <;> cases y <;> simp [trichotomous]
+instance _root_.WithTop.trichotomous.lt [Preorder α] [@Std.Trichotomous α (· < ·)] :
+    @Std.Trichotomous (WithTop α) (· < ·) :=
+  Std.trichotomous_of_rel_or_eq_or_rel_swap fun {x y} ↦ by
+    cases x <;> cases y <;> simp [trichotomous]
 
 -- TODO: the hypotheses are equivalent to `LinearOrder` + `WellFoundedLT`, remove this.
 instance IsWellOrder.lt [Preorder α] [IsWellOrder α (· < ·)] :
   IsWellOrder (WithBot α) (· < ·) where
-  wf := instWellFoundedLT.wf
 
 -- TODO: the hypotheses are equivalent to `LinearOrder` + `WellFoundedLT`, remove this.
+set_option backward.isDefEq.respectTransparency false in
 instance _root_.WithTop.IsWellOrder.lt [Preorder α] [IsWellOrder α (· < ·)] :
   IsWellOrder (WithTop α) (· < ·) where
-  wf := WithTop.instWellFoundedLT.wf
 
 instance trichotomous.gt [Preorder α] [@Std.Trichotomous α (· > ·)] :
     @Std.Trichotomous (WithBot α) (· > ·) :=
@@ -846,21 +819,17 @@ instance _root_.WithTop.trichotomous.gt [Preorder α] [@Std.Trichotomous α (· 
 -- TODO: the hypotheses are equivalent to `LinearOrder` + `WellFoundedGT`, remove this.
 instance IsWellOrder.gt [Preorder α] [IsWellOrder α (· > ·)] :
     IsWellOrder (WithBot α) (· > ·) where
-  wf := instWellFoundedGT.wf
 
 -- TODO: the hypotheses are equivalent to `LinearOrder` + `WellFoundedGT`, remove this.
+set_option backward.isDefEq.respectTransparency false in
 instance _root_.WithTop.IsWellOrder.gt [Preorder α] [IsWellOrder α (· > ·)] :
     IsWellOrder (WithTop α) (· > ·) where
-  wf := WithTop.instWellFoundedGT.wf
 
 section LinearOrder
 variable [LinearOrder α] {x y : WithBot α}
 
--- TODO: lean4#12179 (backward.isDefEq.respectTransparency) - @[to_dual] needs this workaround
-set_option backward.isDefEq.respectTransparency false in
 @[to_dual]
 lemma coe_min (a b : α) : ↑(min a b) = min (a : WithBot α) b := rfl
-set_option backward.isDefEq.respectTransparency false in
 @[to_dual]
 lemma coe_max (a b : α) : ↑(max a b) = max (a : WithBot α) b := rfl
 
