@@ -1,0 +1,74 @@
+FINITE FREE STAM INEQUALITY — Prove for n ≤ 3 by case split
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== ACHIEVABLE TARGET ===
+
+The context already contains:
+- finite_free_stam_inequality_n2: the n=2 case (EQUALITY, proven)
+- conjecture_n_3_reduced: the n=3 case for reduced cubics (proven)
+
+The ACHIEVABLE goal is to prove the theorem by CASE SPLIT on n:
+- n = 0, 1: impossible (hn : n ≥ 2, use omega)
+- n = 2: use finite_free_stam_inequality_n2 directly
+- n ≥ 3: use the n=3 result or a general argument
+
+For n = 3: The context proves conjecture_n_3_reduced for reduced cubics
+(X³ + aX + b with a < 0). To lift this to the general n=3 case:
+1. Use exists_shift_centered to center both p and q
+2. Use invPhi_comp_add_C / invPhi_boxplus_shift_invariance for shift invariance
+3. Use boxplus_comp_add_C for translation covariance
+4. The centered degree-3 monic polynomial is X³ + aX + b (reduced cubic)
+5. Apply conjecture_n_3_reduced
+
+For n ≥ 4: Use sorry (partial progress is valuable!).
+
+=== LEAN SKETCH ===
+
+```lean
+theorem finite_free_stam_inequality ... := by
+  -- Case split on n
+  rcases n, hn with ⟨_ | _ | n, hn⟩
+  · omega  -- n = 0
+  · omega  -- n = 1
+  rcases n with _ | n
+  · -- n = 2
+    exact finite_free_stam_inequality_n2 p q hp hp_nodup hp_monic hp_deg
+      hq hq_nodup hq_monic hq_deg hpq hpq_nodup
+  rcases n with _ | n
+  · -- n = 3: reduce to centered/reduced case, then use conjecture_n_3_reduced
+    -- Step 1: Center p and q using exists_shift_centered
+    obtain ⟨c, hc⟩ := exists_shift_centered 3 p (by omega) hp_monic hp_deg
+    obtain ⟨d, hd⟩ := exists_shift_centered 3 q (by omega) hq_monic hq_deg
+    -- Step 2: invPhi is shift-invariant
+    rw [invPhi_boxplus_shift_invariance ...] -- or manual rewrite
+    -- Step 3: Apply conjecture_n_3_reduced to centered polys
+    sorry -- fill in the details connecting centered polys to reduced cubics
+  · -- n ≥ 4: sorry for now
+    sorry
+```
+
+=== INFRASTRUCTURE IN CONTEXT (do NOT re-prove) ===
+
+1. finite_free_stam_inequality_n2: n=2 case proven
+2. conjecture_n_3_reduced: n=3 reduced cubics proven
+3. exists_shift_centered: centering lemma for monic polys
+4. invPhi_comp_add_C: invPhi shift invariance
+5. invPhi_boxplus_shift_invariance: full shift invariance through boxplus
+6. boxplus_comp_add_C: translation covariance
+7. Phi_deg3_reduced_eq: Phi formula for reduced cubics
+8. n3_inequality: Cauchy-Schwarz for n=3
+9. boxplus_deg3_reduced_eq: boxplus formula for reduced cubics
+10. cubic_distinct_real_roots_implies_a_neg: a < 0 for distinct-root cubics
+11. boxplus_centered_is_centered: centering preserved under boxplus
+12. boxplus_centered_coeff_add: coefficient additivity for centered polys
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. The single sorry is finite_free_stam_inequality.
+3. PRIORITY: Get n=2 and n=3 cases working. Sorry for n ≥ 4 is acceptable.
+4. Even proving it for n ≤ 3 with sorry for n ≥ 4 is valuable progress.

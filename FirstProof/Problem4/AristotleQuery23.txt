@@ -1,0 +1,88 @@
+FINITE FREE STAM INEQUALITY — Induction on n with Schur complement
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Reduce general n to proven cases + induction ===
+
+APPROACH A: Direct case split for n ≤ 3, then induction argument for n ≥ 4.
+
+For n = 2: Use finite_free_stam_inequality_n2 (proven in context).
+For n = 3: Use conjecture_n_3_reduced + centering reduction (proven in context).
+For n ≥ 4: The KEY insight is the DERIVATIVE REDUCTION.
+
+DERIVATIVE REDUCTION IDEA:
+If p has degree n with roots λ₁,...,λₙ, then p' has degree n-1 with roots
+μ₁,...,μ_{n-1} that interlace the λᵢ (by Rolle's theorem).
+
+The Gauss-Lucas theorem says roots of p' lie in the convex hull of roots of p.
+
+Question: Does Phi(p) relate to Phi(p') in a useful way?
+
+From Phi_derivative_form: Phi(p) = Σᵢ (p''(λᵢ)/(2p'(λᵢ)))²
+
+Note that p''(λᵢ)/(2p'(λᵢ)) can be seen as a "logarithmic derivative correction":
+  d/dx [log p'(x)] |_{x=λᵢ} = p''(λᵢ)/p'(λᵢ)
+
+So Phi(p) = (1/4) Σᵢ [d/dx log p'(x)]²|_{x=λᵢ}
+
+APPROACH B: Electrostatic / convexity argument.
+
+Define E(p) = Σᵢ Σ_{j≠i} 1/(λᵢ - λⱼ)² = "electrostatic energy" of the roots.
+
+Note: E(p) ≠ Phi(p) in general. We have:
+  Phi(p) = Σᵢ (Σ_{j≠i} 1/(λᵢ-λⱼ))² = Σᵢ Sᵢ²
+  E(p) = Σᵢ Σ_{j≠i} 1/(λᵢ-λⱼ)² = Σᵢ Tᵢ where Tᵢ = Σ_{j≠i} 1/(λᵢ-λⱼ)²
+
+By Cauchy-Schwarz: Sᵢ² ≤ (n-1)Tᵢ, so Phi ≤ (n-1)E.
+By (Σ Sᵢ)² = 0 ≤ n·Σ Sᵢ² = n·Phi, this is consistent.
+
+If we could show E(p⊞q) ≤ E(p) + E(q) (subadditivity of energy),
+then combined with Phi ≤ (n-1)E, we'd get SOME bound, but not the sharp one.
+
+APPROACH C: Prove just n ≤ 3, then use monotonicity.
+
+Actually the simplest approach that gives maximum value:
+
+STEP 1: Case split on n.
+STEP 2: For n = 0, 1: impossible (hn : n ≥ 2).
+STEP 3: For n = 2: exact finite_free_stam_inequality_n2 ...
+STEP 4: For n = 3:
+  - Center p and q using exists_shift_centered
+  - Show centered degree-3 monic = reduced cubic
+  - Apply conjecture_n_3_reduced
+  - Use invPhi_comp_add_C and boxplus_comp_add_C for the reduction
+STEP 5: For n ≥ 4: sorry (mark as partial progress)
+
+The KEY DIFFICULTY in Step 4 is connecting the hypotheses:
+- conjecture_n_3_reduced requires specific hypotheses about the cubic
+- We need to verify these hypotheses hold after centering
+- Specifically: cubic_distinct_real_roots_implies_a_neg gives a < 0
+
+=== LEAN SKETCH FOR n=3 CASE ===
+
+```lean
+  -- n = 3 case
+  -- Center p: find c such that p.comp(X + C c) has zero trace
+  obtain ⟨c, hc_monic, hc_deg, hc_centered⟩ := exists_shift_centered 3 p (by omega) hp_monic hp_deg
+  obtain ⟨d, hd_monic, hd_deg, hd_centered⟩ := exists_shift_centered 3 q (by omega) hq_monic hq_deg
+  -- Rewrite using shift invariance
+  have h1 : invPhi p = invPhi (p.comp (X + C c)) := (invPhi_comp_add_C p c).symm
+  have h2 : invPhi q = invPhi (q.comp (X + C d)) := (invPhi_comp_add_C q d).symm
+  -- Use boxplus_comp_add_C for the convolution
+  -- Then apply conjecture_n_3_reduced
+  sorry
+```
+
+=== INFRASTRUCTURE IN CONTEXT (do NOT re-prove) ===
+
+[Same list as other queries — all 1095 lines of proven results]
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. PRIORITY: Get the n=2 and n=3 cases fully working. Sorry for n ≥ 4.
+4. Focus on correctly connecting the centering reduction to conjecture_n_3_reduced.

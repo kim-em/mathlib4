@@ -1,0 +1,78 @@
+FINITE FREE STAM INEQUALITY — Phi coefficient formula approach
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Express Phi directly in terms of coefficients ===
+
+The context proves Phi_derivative_form:
+  Phi p = Σ_{r ∈ roots} (p''.eval r / (2 * p'.eval r))²
+
+For a CENTERED monic polynomial of degree n (i.e., coeff(n-1) = 0):
+  p = X^n + a₂X^{n-2} + a₃X^{n-3} + ... + aₙ
+
+The derivative is p' = nX^{n-1} + (n-2)a₂X^{n-3} + (n-3)a₃X^{n-4} + ...
+The second derivative is p'' = n(n-1)X^{n-2} + (n-2)(n-3)a₂X^{n-4} + ...
+
+KEY OBSERVATION: For the ratio p''(r)/(2p'(r)) at a root r of p:
+Since p(r) = 0, we have r^n = -a₂r^{n-2} - a₃r^{n-3} - ... - aₙ
+
+The ratio p''(r)/(2p'(r)) is a rational function of r whose numerator
+has degree n-2 and denominator has degree n-1 (since p'(r) ≠ 0 for distinct roots).
+
+STEP 1: Prove that for centered degree-n monic p with distinct roots:
+  Phi(p) can be expressed as a rational function of the coefficients a₂,...,aₙ.
+
+STEP 2: Under boxplus, the context proves:
+  boxplus_centered_coeff_add: (boxplus n p q).coeff(n-2) = p.coeff(n-2) + q.coeff(n-2)
+  This means a₂ is ADDITIVE under boxplus for centered polys.
+  For higher coefficients, ff_kappa_additive gives cumulant additivity.
+
+STEP 3: Show invPhi is superadditive in the coefficient/cumulant variables.
+
+=== CONCRETE COMPUTATION FOR SMALL n ===
+
+n=2: p = X² + a₂. Roots ±√(-a₂). Phi = 1/(-2a₂). invPhi = -2a₂.
+  Since a₂ adds: invPhi(p⊞q) = -2(a₂+b₂) = invPhi(p) + invPhi(q). EQUALITY.
+
+n=3: p = X³ + a₂X + a₃. (Already proven in context as conjecture_n_3_reduced.)
+  Phi = ... invPhi = -(2/9)a₂ - (3/2)a₃²/a₂².
+  Superadditive by Cauchy-Schwarz on the a₃²/a₂² term.
+
+n=4: p = X⁴ + a₂X² + a₃X + a₄.
+  p'(r) = 4r³ + 2a₂r + a₃
+  p''(r) = 12r² + 2a₂
+  Phi = Σᵢ (6rᵢ² + a₂)² / (4rᵢ³ + 2a₂rᵢ + a₃)²
+
+  Using power sum symmetric functions of roots:
+  s₁ = Σrᵢ = 0 (centered), s₂ = Σrᵢ² = -2a₂, s₃ = Σrᵢ³ = -3a₃
+  s₄ = Σrᵢ⁴ = 2a₂² - 4a₄
+
+  Try to express Phi in terms of a₂, a₃, a₄, then show 1/Phi is superadditive
+  using the additivity of the cumulants κ₂ = a₂/6, κ₃ = a₃/24, κ₄ = (a₄ - a₂²/12)/24.
+
+=== AVAILABLE INFRASTRUCTURE (do NOT re-prove) ===
+
+All infrastructure from the context file (1095 lines), including:
+- ff_kappa_additive, boxplus_comp_add_C, boxplus_comm
+- Phi_derivative_form, invPhi_comp_add_C, Phi_comp_add_C
+- roots_card_eq_natDegree, scaled_coeff_boxplus
+- exists_shift_centered, boxplus_centered_is_centered
+- boxplus_centered_coeff_add
+- finite_free_stam_inequality_n2, conjecture_n_3_reduced
+- n3_inequality, Phi_deg3_reduced_eq
+
+=== PLAN B ===
+
+If the full general n proof is too hard, at minimum:
+1. Case-split: n=2 (use n2 case), n=3 (use n3 case), n≥4 (sorry)
+2. Prove any new helper lemmas about Phi in terms of coefficients
+3. Prove Phi_pos for degree ≥ 2 with distinct roots
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Build named lemmas toward the goal.
