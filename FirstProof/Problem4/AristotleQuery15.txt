@@ -1,0 +1,103 @@
+FINITE FREE STAM INEQUALITY — Prove via electrostatic / Cauchy-Schwarz for general n
+
+=== THE GOAL ===
+
+Prove the Finite Free Stam Inequality for all n >= 2:
+
+theorem finite_free_stam_inequality (n : ℕ) (hn : n ≥ 2)
+    (p q : ℝ[X])
+    (hp : p.Splits (RingHom.id ℝ)) (hp_nodup : p.roots.Nodup)
+    (hp_monic : p.Monic) (hp_deg : p.natDegree = n)
+    (hq : q.Splits (RingHom.id ℝ)) (hq_nodup : q.roots.Nodup)
+    (hq_monic : q.Monic) (hq_deg : q.natDegree = n)
+    (hpq : (boxplus n p q).Splits (RingHom.id ℝ))
+    (hpq_nodup : (boxplus n p q).roots.Nodup) :
+    invPhi (boxplus n p q) ≥ invPhi p + invPhi q := by sorry
+
+=== THE KEY MATHEMATICAL IDEA ===
+
+Phi_n(p) = sum_i S_i^2 where S_i = p''(λ_i)/(2p'(λ_i)) = sum_{j≠i} 1/(λ_i - λ_j).
+
+This is the electrostatic energy: if we place unit charges at the roots λ_i,
+then S_i is the electric field at λ_i due to all other charges, and
+Phi = sum of squared field strengths.
+
+1/Phi = 1/(sum S_i^2). By Cauchy-Schwarz:
+  (sum S_i^2)(sum 1) >= (sum |S_i|)^2
+so sum S_i^2 >= (sum |S_i|)^2 / n, giving 1/Phi <= n/(sum |S_i|)^2.
+
+But we need the OPPOSITE direction for superadditivity. The key insight:
+
+For the convolution p ⊞_n q with roots μ_k, we need to relate
+S_i(p ⊞_n q) to S_i(p) and S_i(q).
+
+=== APPROACH: DISCRIMINANT IDENTITY ===
+
+The discriminant of p is disc(p) = prod_{i<j} (λ_i - λ_j)^2.
+
+There is a classical identity: disc(p) = (-1)^{n(n-1)/2} * Res(p, p') / leading_coeff(p).
+
+Phi * disc can be computed directly:
+  Phi * disc = sum_i S_i^2 * prod_{j<k} (λ_j - λ_k)^2
+            = sum_i [p''(λ_i)/(2p'(λ_i))]^2 * disc(p)
+
+Using p'(λ_i) = prod_{j≠i} (λ_i - λ_j):
+  Phi * disc = sum_i [p''(λ_i)/2]^2 * prod_{j≠i, k<l, (k,l)≠(all pairs not involving i)} (λ_k - λ_l)^2
+
+This simplifies: Phi * disc = sum_i [p''(λ_i)/2]^2 * [disc(p) / prod_{j≠i}(λ_i-λ_j)^2]
+                             = disc(p) * sum_i [p''(λ_i)/(2*p'(λ_i))]^2
+                             = disc(p) * Phi(p)
+
+That's circular. Let me think differently.
+
+=== APPROACH: DIRECT FROM THE FORMULA ===
+
+invPhi(p) = 1/Phi(p) = 1/(sum_i S_i^2)
+
+The boxplus formula: (p ⊞_n q)(x) = sum_{k=0}^n boxplus_coeff(n,p,q,k) * x^{n-k}
+
+For the PROOF, the most promising path for Lean:
+
+1. Prove that invPhi(p) = trace(M^{-1}) / n where M is related to the Cauchy matrix
+   of the roots. Specifically, if C_{ij} = 1/(λ_i - λ_j) for i≠j, then
+   Phi = trace(C^T C) where C is the "field matrix".
+
+2. For convolutions, use the RANDOM MATRIX representation:
+   p ⊞_n q = E[det(xI - A - QBQ^T)] where A=diag(roots of p), B=diag(roots of q),
+   Q uniform on O(n).
+
+3. By Jensen's inequality on 1/Phi (which is concave when Phi > 0):
+   1/Phi(E[det(xI-A-QBQ^T)]) >= E[1/Phi(det(xI-A-QBQ^T))]
+   >= 1/Phi(p) + 1/Phi(q) by some orthogonal invariance.
+
+This is the information-theoretic approach: the Stam inequality for Shannon entropy
+uses E[1/Fisher(X|Y)] >= 1/Fisher(X) via Jensen.
+
+=== ALTERNATIVE: PROVE JUST THE KEY LEMMAS ===
+
+If the full theorem is too hard, prove any of these:
+
+LEMMA A: For centered monic degree-n polynomials, boxplus_coeff(n,p,q,k) is
+additive in the k-th coefficient when k <= 3:
+  (p ⊞_n q).coeff(n-k) = p.coeff(n-k) + q.coeff(n-k)  for k=2,3
+[ALREADY PROVEN in context for k=2,3]
+
+LEMMA B: General translation covariance:
+  boxplus n (p.comp(X + C c)) (q.comp(X + C d)) =
+  (boxplus n p q).comp(X + C(c+d))
+
+LEMMA C: boxplus preserves the property of having n distinct real roots
+(real-rootedness preservation is known from Marcus-Spielman-Srivastava).
+
+LEMMA D: For n=5, compute Phi_5 explicitly and prove the inequality.
+[Context has Phi for n=5 symmetric case already]
+
+LEMMA E: The function 1/x^2 is convex, so by Jensen:
+If the roots of p ⊞_n q are "averages" of the roots of p and q in some sense,
+then Phi(p ⊞_n q) <= average of Phi values, giving 1/Phi(p ⊞_n q) >= ...
+
+=== LEAN CONTEXT ===
+
+The attached .lean file has 762 lines with one sorry (the main theorem).
+Key proven results: Phi_derivative_form, boxplus coefficient additivity for k=2,3,
+invPhi translation invariance, n=3 full proof, n=4 symmetric proof.
