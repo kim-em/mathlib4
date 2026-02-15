@@ -1,0 +1,134 @@
+FINITE FREE STAM INEQUALITY — General n proof
+
+=== THE PROBLEM ===
+
+For monic real-rooted degree-n polynomials p, q with distinct roots, prove:
+  1/Phi_n(p ⊞_n q) >= 1/Phi_n(p) + 1/Phi_n(q)
+
+where Phi_n(p) = sum_i (sum_{j≠i} 1/(λ_i - λ_j))^2 and ⊞_n is the finite free
+additive convolution defined by:
+  (p ⊞_n q)(x) = sum_{k=0}^{n} C(n,k) * (sum_{i+j=k} C(n-i,n-k)*C(n-j,n-k)/C(n,n-k)^2 * a_i * b_j) * x^{n-k}
+
+The definitions of boxplus, Phi, invPhi are in the attached context file.
+
+=== WHAT IS PROVEN (in the attached .lean context) ===
+
+The context file has 744 lines of COMPLETE PROOFS (zero sorry). Key results:
+
+DEFINITIONS: boxplus, Phi, invPhi, is_centered, boxplus_coeff
+PROVEN FOR ALL n:
+  - Phi_derivative_form: Phi(p) = sum_{r in roots} (p''(r)/(2p'(r)))^2
+  - Phi_comp_add_C: Phi(p(x+c)) = Phi(p)
+  - Phi_scaleRoots: Phi(p(cx)) = c^{-2} * Phi(p)
+  - boxplus_centered_is_centered: boxplus preserves centering
+  - boxplus_centered_coeff_add: (p ⊞_n q).coeff(n-2) = p.coeff(n-2) + q.coeff(n-2)
+  - boxplus_centered_coeff_add_3: (p ⊞_n q).coeff(n-3) = p.coeff(n-3) + q.coeff(n-3)
+  - invPhi_comp_add_C: invPhi(p(x+c)) = invPhi(p)
+PROVEN FOR n=3:
+  - conjecture_n_3_reduced: full inequality for reduced cubics
+  - invPhi_boxplus_shift_invariance_n3: shift invariance
+PROVEN FOR n=4 (symmetric):
+  - Phi_symmetric_quartic: explicit Phi formula for X^4 + A*X^2 + C
+  - invPhi_superadditive_hyperbolic_symmetric_quartic: full inequality
+  - boxplus_centered_deg4_kappa4_additive: 4th cumulant additivity
+
+=== THE GENERAL PROOF ===
+
+Here is the theorem to prove:
+
+theorem finite_free_stam_inequality (n : ℕ) (hn : n ≥ 2)
+    (p q : ℝ[X])
+    (hp : p.Splits (RingHom.id ℝ)) (hp_nodup : p.roots.Nodup)
+    (hp_monic : p.Monic) (hp_deg : p.natDegree = n)
+    (hq : q.Splits (RingHom.id ℝ)) (hq_nodup : q.roots.Nodup)
+    (hq_monic : q.Monic) (hq_deg : q.natDegree = n)
+    (hpq : (boxplus n p q).Splits (RingHom.id ℝ))
+    (hpq_nodup : (boxplus n p q).roots.Nodup) :
+    invPhi (boxplus n p q) ≥ invPhi p + invPhi q := by
+  sorry
+
+=== PROOF APPROACHES ===
+
+APPROACH 1 — Random matrix / expectation (MOST PROMISING for general n):
+
+The finite free convolution has a random matrix representation:
+  (p ⊞_n q)(x) = E_Q[det(xI - A - Q*B*Q^T)]
+where A, B are diagonal matrices of roots and Q is Haar-distributed orthogonal.
+
+The key identity: Phi_n(p) = trace((p''(Λ)/(2p'(Λ)))^2) where Λ = diag(roots).
+
+For the convolution: the roots of p ⊞_n q are expectations of eigenvalues of A + QBQ^T.
+By Jensen's inequality or variance decomposition:
+  Phi_n(p ⊞_n q) relates to conditional expectations of Phi applied to A + QBQ^T.
+
+The Stam inequality in information theory is proved via the identity:
+  1/Fisher(X+Y) = E[1/Fisher(X|X+Y)] (conditional Fisher info)
+and Jensen: E[1/Fisher(X|X+Y)] >= 1/E[Fisher(X|X+Y)] = 1/Fisher(X).
+
+Try the ANALOGOUS approach: define a conditional Phi for the random matrix model
+and use Jensen's inequality for the convex function 1/x.
+
+APPROACH 2 — Heat flow / Dyson Brownian motion:
+
+For the infinite free case, the Stam inequality follows from the free heat flow.
+The finite analog: roots of p_t = p ⊞_n (X^n + t*X^{n-2}) satisfy a system of ODEs
+(finite Dyson Brownian motion). Under this flow:
+  d/dt (1/Phi_n(p_t)) = something nonneg
+which gives superadditivity of 1/Phi_n.
+
+The derivative computation uses Phi_derivative_form and the ODE for roots.
+
+APPROACH 3 — Cauchy-Schwarz on the pairwise form:
+
+Phi_n(p) = sum_i (sum_{j≠i} 1/(λ_i-λ_j))^2. Define:
+  S_i(p) = sum_{j≠i} 1/(λ_i - λ_j) = p''(λ_i)/(2p'(λ_i))
+
+Then 1/Phi = 1/(sum_i S_i^2). For p ⊞_n q with roots μ_k:
+  S_i(p ⊞_n q) relates to S(p) and S(q) via the convolution.
+
+By Cauchy-Schwarz: (sum a_i^2)(sum b_i^2) >= (sum a_i*b_i)^2.
+This gives inequalities between Phi values.
+
+The Titu's lemma approach:
+  sum_i 1/S_i^2 >= n^2 / (sum_i S_i^2) = n^2/Phi
+and 1/Phi = (sum S_i^2)^{-1}. Not directly useful, but the structure
+of S_i as p''/(2p') under convolution may yield the inequality.
+
+APPROACH 4 — Cumulant coordinates (extends proven n=3,4 cases):
+
+In finite free cumulant coordinates (κ_2, ..., κ_n), the convolution is:
+  κ_k(p ⊞_n q) = κ_k(p) + κ_k(q) for all k ≥ 2.
+This is essentially proven (boxplus_centered_coeff_add for k=2, boxplus_centered_coeff_add_3 for k=3,
+boxplus_centered_deg4_kappa4_additive for k=4).
+
+Express 1/Phi_n as a function f(κ_2, ..., κ_n) of cumulants, then show
+f is superadditive. For n=3: f(κ_2, κ_3) = (2/9)κ_2 - (3/2)κ_3^2/κ_2^2 (proven).
+For n=4 symmetric: f(κ_2, κ_4) proven superadditive.
+
+The pattern: 1/Phi = linear in κ_2 + nonpositive remainder, and the remainder
+involves a convex ratio that satisfies Cauchy-Schwarz.
+
+APPROACH 5 — Induction on n:
+
+Base cases n=2 (equality), n=3 (proven). For the inductive step:
+degree-n polynomials relate to degree-(n-1) via differentiation or root interlacing.
+The Gauss-Lucas theorem and Rolle's theorem connect roots of p' to roots of p.
+
+If Phi_{n-1}(p') relates nicely to Phi_n(p), induction may work.
+
+=== LEAN TACTIC SUGGESTIONS ===
+
+For random matrix approaches: define the expected characteristic polynomial using
+Finset.sum over permutations or orthogonal matrices.
+
+For cumulant approaches: use boxplus_centered_coeff_add and extend to all k.
+
+For Cauchy-Schwarz: use Finset.inner_mul_le_norm_mul_sq or similar.
+
+For direct computation: Phi_derivative_form gives Phi in terms of derivatives at roots.
+
+The proof will likely need:
+- `simp [invPhi]` to unfold 1/Phi
+- `div_le_div` or `one_div_le_one_div_iff` for reciprocal inequalities
+- `Finset.sum_le_sum` for pointwise bounds
+- The proven small cases as base cases or for inspiration
