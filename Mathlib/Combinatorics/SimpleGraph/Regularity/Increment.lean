@@ -94,6 +94,7 @@ private noncomputable def distinctPairs (x : {x // x ∈ P.parts.offDiag}) :
 
 variable {hP G ε}
 
+set_option backward.isDefEq.respectTransparency false in
 private theorem distinctPairs_increment :
     P.parts.offDiag.attach.biUnion (distinctPairs hP G ε) ⊆ (increment hP G ε).parts.offDiag := by
   rintro ⟨Ui, Vj⟩

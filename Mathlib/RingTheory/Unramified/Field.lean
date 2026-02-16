@@ -217,6 +217,7 @@ theorem iff_isSeparable (L : Type u) [Field L] [Algebra K L] [EssFiniteType K L]
 
 end Algebra.FormallyUnramified
 
+set_option backward.isDefEq.respectTransparency false in
 variable {K A} in
 /-- If `A = K[X]/⟨p⟩` is unramified at some prime `Q`, then the minpoly of `X` in `κ(Q)`
 only divides `p` once. -/

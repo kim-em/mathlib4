@@ -86,6 +86,7 @@ variable {A : Type*} [PartialOrder A] [NonUnitalRing A] [TopologicalSpace A] [St
 
 /- ## `nnrpow` -/
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Real powers of operators, based on the non-unital continuous functional calculus. -/
 noncomputable def nnrpow (a : A) (y : ℝ≥0) : A := cfcₙ (NNReal.nnrpow · y) a
 
@@ -97,11 +98,13 @@ noncomputable instance (priority := 100) : Pow A ℝ≥0 where
 @[simp]
 lemma nnrpow_eq_pow {a : A} {y : ℝ≥0} : nnrpow a y = a ^ y := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma nnrpow_nonneg {a : A} {x : ℝ≥0} : 0 ≤ a ^ x := cfcₙ_predicate _ a
 
 grind_pattern nnrpow_nonneg => NonnegSpectrumClass ℝ A, a ^ x
 
+set_option backward.isDefEq.respectTransparency false in
 lemma nnrpow_def {a : A} {y : ℝ≥0} : a ^ y = cfcₙ (NNReal.nnrpow · y) a := rfl
 
 lemma nnrpow_eq_cfcₙ_real [T2Space A] [IsTopologicalRing A] (a : A)
@@ -112,6 +115,7 @@ lemma nnrpow_eq_cfcₙ_real [T2Space A] [IsTopologicalRing A] (a : A)
   have : 0 ≤ x := by grind
   simp [this]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma nnrpow_add {a : A} {x y : ℝ≥0} (hx : 0 < x) (hy : 0 < y) :
     a ^ (x + y) = a ^ x * a ^ y := by
   simp only [nnrpow_def]
@@ -123,16 +127,19 @@ lemma nnrpow_add {a : A} {x y : ℝ≥0} (hx : 0 < x) (hy : 0 < y) :
 lemma nnrpow_zero {a : A} : a ^ (0 : ℝ≥0) = 0 := by
   simp [nnrpow_def, cfcₙ_apply_of_not_map_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma nnrpow_one (a : A) (ha : 0 ≤ a := by cfc_tac) : a ^ (1 : ℝ≥0) = a := by
   simp only [nnrpow_def, NNReal.nnrpow_def, NNReal.coe_one, NNReal.rpow_one]
   change cfcₙ (id : ℝ≥0 → ℝ≥0) a = a
   rw [cfcₙ_id ℝ≥0 a]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma nnrpow_two (a : A) (ha : 0 ≤ a := by cfc_tac) : a ^ (2 : ℝ≥0) = a * a := by
   simp only [nnrpow_def, NNReal.nnrpow_def, NNReal.coe_ofNat, NNReal.rpow_ofNat, pow_two]
   change cfcₙ (fun z : ℝ≥0 => id z * id z) a = a * a
   rw [cfcₙ_mul id id a, cfcₙ_id ℝ≥0 a]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma nnrpow_three (a : A) (ha : 0 ≤ a := by cfc_tac) : a ^ (3 : ℝ≥0) = a * a * a := by
   simp only [nnrpow_def, NNReal.nnrpow_def, NNReal.coe_ofNat, NNReal.rpow_ofNat, pow_three]
   change cfcₙ (fun z : ℝ≥0 => id z * (id z * id z)) a = a * a * a

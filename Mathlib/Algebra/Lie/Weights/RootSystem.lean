@@ -74,6 +74,7 @@ def chainLength (α β : Weight K H L) : ℕ :=
 
 lemma chainLength_of_isZero (hα : α.IsZero) : chainLength α β = 0 := dif_pos hα
 
+set_option backward.isDefEq.respectTransparency false in
 lemma chainLength_nsmul {x} (hx : x ∈ rootSpace H (chainTop α β)) :
     chainLength α β • x = ⁅coroot α, x⁆ := by
   by_cases hα : α.IsZero
@@ -116,6 +117,7 @@ lemma rootSpace_neg_nsmul_add_chainTop_of_le {n : ℕ} (hn : n ≤ chainLength �
   simp only [← smul_neg, ne_eq, LieSubmodule.eq_bot_iff, not_forall]
   exact ⟨_, toEnd_pow_apply_mem hf hx n, prim.pow_toEnd_f_ne_zero_of_eq_nat rfl hn⟩
 
+set_option backward.isDefEq.respectTransparency false in
 lemma rootSpace_neg_nsmul_add_chainTop_of_lt (hα : α.IsNonZero) {n : ℕ} (hn : chainLength α β < n) :
     rootSpace H (-(n • α) + chainTop α β) = ⊥ := by
   by_contra e
@@ -257,6 +259,7 @@ lemma chainLength_of_eq_zsmul_add (β' : Weight K H L) (n : ℤ) (hβ' : (β' : 
       chainBotCoeff_of_eq_zsmul_add α β hα β' n hβ', sub_eq_add_neg, add_add_add_comm,
       neg_add_cancel, add_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma chainTopCoeff_zero_right [Nontrivial L] (hα : α.IsNonZero) :
     chainTopCoeff α (0 : Weight K H L) = 1 := by
   symm

@@ -323,6 +323,7 @@ theorem add_const [AddGroup ι] [Preorder ι] [AddRightMono ι]
   rw [h_eq]
   exact f.mono (sub_le_self j hi) _ (hτ (j - i))
 
+set_option backward.isDefEq.respectTransparency false in
 theorem add_const' [Add ι] [LinearOrder ι] [CanonicallyOrderedAdd ι] [Countable ι]
     [TopologicalSpace ι] [OrderTopology ι]
     {f : Filtration ι m} {τ : Ω → WithTop ι}
@@ -337,6 +338,7 @@ theorem add_const' [Add ι] [LinearOrder ι] [CanonicallyOrderedAdd ι] [Countab
     | coe a => simp; norm_cast
   exact h ▸ MeasurableSet.iUnion fun k => hτ.measurableSet_eq_le (le_of_add_le_left k.2)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem add [Add ι] [LinearOrder ι] [CanonicallyOrderedAdd ι] [Countable ι]
     [TopologicalSpace ι] [OrderTopology ι]
     {f : Filtration ι m} {τ π : Ω → WithTop ι}

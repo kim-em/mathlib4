@@ -140,12 +140,11 @@ variable (𝕜 : Type v) [RCLike 𝕜]
 
 open ContinuousLinearEquiv Submodule
 
-set_option backward.isDefEq.respectTransparency false in
-theorem coord_norm' {x : E} (h : x ≠ 0) : ‖(‖x‖ : 𝕜) • coord 𝕜 x h‖ = 1 := by
-  simp [-algebraMap_smul, norm_smul, mul_inv_cancel₀ (mt norm_eq_zero.mp h)]
+section Seminormed
 
 variable {E : Type u} [SeminormedAddCommGroup E] [NormedSpace 𝕜 E]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Corollary of Hahn-Banach. Given an element `x` of a normed space with `‖x‖ ≠ 0`, there
 exists an element of the dual space, of norm `1`, whose value on `x` is `‖x‖`. -/
 theorem exists_dual_vector (x : E) (h : ‖x‖ ≠ 0) : ∃ g : StrongDual 𝕜 E, ‖g‖ = 1 ∧ g x = ‖x‖ := by

@@ -776,6 +776,7 @@ theorem norm_mkPiAlgebraFin [NormOneClass A] :
 
 end
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem nnnorm_smulRight (f : ContinuousMultilinearMap 𝕜 E 𝕜) (z : G) :
     ‖f.smulRight z‖₊ = ‖f‖₊ * ‖z‖₊ := by
