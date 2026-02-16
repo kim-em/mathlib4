@@ -1,0 +1,109 @@
+FINITE FREE STAM INEQUALITY — Cauchy-Schwarz on critical point values
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Jensen/Cauchy-Schwarz via residue formula ===
+
+From Phi_eq_sum_roots_deriv:
+  Phi(p) = -1/4 * Σ_{j=1}^{n-1} p''(μ_j) / p(μ_j)
+
+where μ_j are roots of p' (critical points of p).
+
+Define: w_j = -p''(μ_j)/p(μ_j) > 0 (these are positive, as shown above).
+Then: Phi(p) = (1/4) Σ w_j, and invPhi(p) = 4 / (Σ w_j).
+
+Now: invPhi(p) + invPhi(q) = 4/(Σ w_j) + 4/(Σ v_k)
+where v_k = -q''(ν_k)/q(ν_k) > 0, ν_k roots of q'.
+
+And: invPhi(p⊞q) = 4/(Σ u_l)
+where u_l = -(p⊞q)''(ρ_l)/(p⊞q)(ρ_l) > 0, ρ_l roots of (p⊞q)'.
+
+We need: 4/(Σ u_l) ≥ 4/(Σ w_j) + 4/(Σ v_k)
+i.e.: 1/(Σ u_l) ≥ 1/(Σ w_j) + 1/(Σ v_k)
+
+This is equivalent to:
+  Σ u_l ≤ (Σ w_j)(Σ v_k) / (Σ w_j + Σ v_k)  (harmonic mean bound)
+
+Or equivalently: (Σ w_j + Σ v_k) ≤ (Σ w_j)(Σ v_k) / (Σ u_l)
+i.e.: 1/(Σ w_j) + 1/(Σ v_k) ≤ 1/(Σ u_l)  ... wait, that's the WRONG direction.
+
+Let me redo: We need Σ u_l ≤ harmonic_mean(Σ w_j, Σ v_k).
+
+Actually: 1/A ≥ 1/B + 1/C iff A ≤ BC/(B+C) = harmonic_mean(B,C)/2 ... no.
+
+1/A ≥ 1/B + 1/C iff 1/A ≥ (B+C)/(BC) iff BC ≥ A(B+C) iff BC/(B+C) ≥ A.
+
+So we need: Σ u_l ≤ (Σ w_j)(Σ v_k) / (Σ w_j + Σ v_k).
+
+This is a STRONG bound. It says the sum of critical-point weights for p⊞q
+is at most the harmonic mean of the sums for p and q individually.
+
+=== KEY QUESTION: Is Σ u_l ≤ Σ w_j + Σ v_k? ===
+
+This would be the weaker statement Phi(p⊞q) ≤ Phi(p) + Phi(q), giving
+invPhi(p⊞q) ≥ 1/(Phi(p)+Phi(q)) ≥ ... not what we need.
+
+We need the STRONGER harmonic mean bound. This typically comes from Jensen
+applied to the function f(x) = 1/x (which is convex).
+
+=== POSSIBLE APPROACH: Reformulate via weighted averages ===
+
+Let W = Σ w_j = 4·Phi(p), V = Σ v_k = 4·Phi(q), U = Σ u_l = 4·Phi(p⊞q).
+
+We need: U ≤ WV/(W+V).
+
+Since p⊞q has cumulants κ(p) + κ(q), the coefficients of p⊞q are determined.
+The critical points of (p⊞q)' are then determined.
+
+Idea: Can we write U as a function of W, V, and "cross terms" that give the bound?
+
+For CENTERED polynomials, κ₂ adds linearly. The "leading" contribution to Phi
+comes from the κ₂ (quadratic) term. If Phi ≈ C/κ₂ for some constant C, then
+invPhi ≈ κ₂/C, which is additive. The corrections from higher cumulants need
+to be bounded.
+
+=== CONCRETE APPROACH FOR n=4 ===
+
+For symmetric centered quartics (the case we're closest to proving):
+  p = X⁴ - AX² + c,  A > 0, 0 < c < A²/4
+  Phi = A(A² + 12c) / (2c(A² - 4c))  [from context]
+  invPhi = 2c(A² - 4c) / (A(A² + 12c))  [from context]
+
+Under boxplus: A → A+A', c → c+c'+AA'/6.
+
+Need: invPhi(A+A', c+c'+AA'/6) ≥ invPhi(A,c) + invPhi(A',c')
+
+This is a concrete inequality in 4 real variables (A,c,A',c') with constraints:
+  A, A' > 0
+  0 < c < A²/4
+  0 < c' < A'²/4
+  0 < c+c'+AA'/6 < (A+A')²/4
+
+Prove this algebraically! The context already has:
+  invPhi_sym_param_eq: invPhi(A,c) = A * f_aux(c/A²)
+  invPhi_sym_param_arg_diff: structure of the combined argument
+
+Use nlinarith, polyrith, or manual algebraic manipulation.
+
+=== LEAN SKETCH FOR SYMMETRIC QUARTIC ===
+
+```lean
+lemma invPhi_sym_quartic_superadditive (A A' c c' : ℝ)
+    (hA : A > 0) (hA' : A' > 0)
+    (hc : 0 < c) (hc' : 0 < c')
+    (hcA : c < A^2/4) (hc'A' : c' < A'^2/4)
+    (hcomb : c + c' + A*A'/6 < (A+A')^2/4) :
+    invPhi_sym_param (A+A') (c+c'+A*A'/6) ≥ invPhi_sym_param A c + invPhi_sym_param A' c' := by
+  -- Unfold invPhi_sym_param, use invPhi_sym_param_eq, algebraic manipulation
+  sorry
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. PRIORITY: Prove invPhi_sym_quartic_superadditive (symmetric n=4).
+4. If that works, extend to general n=4, then case-split.

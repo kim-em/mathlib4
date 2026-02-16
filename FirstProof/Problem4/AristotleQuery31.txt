@@ -1,0 +1,108 @@
+FINITE FREE STAM INEQUALITY — Prove n=4 case using quartic formulas
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Complete n=4, then case-split n ≤ 4 ===
+
+The context has n=2 and n=3 proven. It also has explicit Phi and invPhi formulas
+for SYMMETRIC quartics (X⁴ + aX² + c). The goal is to prove n=4.
+
+=== QUARTIC INFRASTRUCTURE IN CONTEXT ===
+
+For a symmetric quartic p = X⁴ + aX² + c with discriminant conditions:
+  Phi_symmetric_quartic_formula a c = -a * (12*c + a²) / (2*c * (a² - 4*c))
+  invPhi_symmetric_quartic_formula a c = 1 / (Phi_symmetric_quartic_formula a c)
+
+And the parametrization in terms of A = -a (> 0 for real roots) and c:
+  invPhi_sym_param A c = 2*c*(A² - 4*c) / (A*(12*c + A²))
+  invPhi_sym_param A c = A * f_aux(c/A²)
+
+where f_aux(k) = (2*k*(1 - 4*k)) / (12*k + 1)
+
+Key algebraic result:
+  invPhi_sym_param_arg_diff: For boxplus of symmetric quartics,
+  the "combined argument" K = (c+c'+A*A'/6)/(A+A')² satisfies:
+  K - k_avg = (A*A'/(A+A')²) * (1/6 - (k+k'))
+
+=== PLAN FOR n=4 PROOF ===
+
+STEP 1: Center both p and q using exists_shift_centered. Now p, q are centered
+  degree-4 monic polynomials: p = X⁴ + a₂X² + a₃X + a₄.
+
+STEP 2: FIRST handle the SYMMETRIC case (a₃ = 0):
+  When a₃ = 0: p = X⁴ + aX² + c (using a = a₂, c = a₄).
+  Under boxplus of centered symmetric quartics:
+    (p ⊞₄ q) has a_{p⊞q} = aₚ + a_q (by cumulant additivity of κ₂)
+    c_{p⊞q} = cₚ + c_q + aₚ·a_q/6 (from the cumulant-to-coefficient relation)
+
+  In the A-parametrization (A = -a, A' = -a'):
+    A_{p⊞q} = A + A'
+    c_{p⊞q} = c + c' + A*A'/6  (from the coefficient relation)
+
+  So invPhi(p⊞q) = (A+A') * f_aux(K) where K = (c+c'+A*A'/6)/(A+A')².
+
+  We need: (A+A') * f_aux(K) ≥ A * f_aux(k) + A' * f_aux(k')
+  where k = c/A², k' = c'/A'².
+
+  This is a WEIGHTED CONCAVITY statement for f_aux.
+
+  From invPhi_sym_param_arg_diff:
+    K = k_avg + correction, where
+    k_avg = (A*k + A'*k')/(A+A') (weighted average)
+    correction = (A*A'/(A+A')²) * (1/6 - (k+k'))
+
+  If f_aux is concave on the relevant interval, then:
+    (A+A') * f_aux(K) = (A+A') * f_aux(k_avg + correction)
+
+  For the symmetric quartic to have 4 distinct real roots:
+    discriminant > 0 ⟹ a < 0 and 0 < c < a²/4
+    In the A-parametrization: A > 0 and 0 < c < A²/4
+    So k = c/A² ∈ (0, 1/4).
+
+  f_aux(k) = 2k(1-4k)/(12k+1) on (0, 1/4).
+  f_aux'(k) = (-96k² - 8k + 2)/(12k+1)²
+  f_aux''(k) = (-192k - 8 + ...)/(12k+1)³ ... need to check sign.
+
+  From the context: f_aux_second_deriv gives info about the second derivative.
+  f_aux_increasing on (0, 1/12) and f_aux_decreasing on (1/12, 1/4).
+
+  So f_aux is NOT globally concave on (0, 1/4) — it's first increasing then decreasing.
+  But weighted concavity might still hold given the correction term structure.
+
+STEP 3: Prove the weighted inequality for f_aux.
+  This is a purely real-analysis / algebraic inequality. Key tools:
+  - f_aux_second_deriv, f_aux_increasing, f_aux_decreasing
+  - invPhi_sym_param_arg_diff (structure of the correction term)
+  - nlinarith, polyrith for algebraic manipulations
+
+STEP 4: Reduce general n=4 to the symmetric case + sorry, OR
+  prove for all centered quartics using the residue formula.
+
+=== LEAN SKETCH ===
+
+```lean
+theorem finite_free_stam_inequality ... := by
+  rcases n, hn with ⟨_ | _ | n, hn⟩
+  · omega
+  · omega
+  rcases n with _ | n
+  · exact finite_free_stam_inequality_n2 ...
+  rcases n with _ | n
+  · exact finite_free_stam_inequality_n3 ...
+  rcases n with _ | n
+  · -- n = 4 case
+    -- Center, reduce to symmetric, use quartic formula
+    sorry
+  · -- n ≥ 5
+    sorry
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. PRIORITY: Prove the symmetric quartic inequality using f_aux properties.
+4. Even proving just the n=4 symmetric case is valuable progress.

@@ -1,0 +1,117 @@
+FINITE FREE STAM INEQUALITY — General n via Phi as sum of -p''(μ)/p(μ)
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== THE KEY IDENTITY ===
+
+From Phi_eq_sum_roots_deriv:
+  Phi(p) = -1/4 * Σ_{μ ∈ roots(p')} p''(μ)/p(μ)
+
+At each critical point μ of p:
+- p'(μ) = 0 (by definition)
+- p(μ) ≠ 0 (since p has distinct roots and μ is between consecutive roots)
+- p''(μ) ≠ 0 (since μ is a simple root of p', which holds when p has distinct roots)
+
+=== APPROACH: Direct Schur-type inequality ===
+
+REFORMULATION: Let p be centered monic of degree n with distinct real roots.
+The n-1 critical points μ_1,...,μ_{n-1} satisfy:
+
+  4·Phi(p) = -Σ_j p''(μ_j)/p(μ_j) = Σ_j w_j where w_j = -p''(μ_j)/p(μ_j) > 0.
+
+Now we use the COEFFICIENT STRUCTURE of p''(μ)/p(μ).
+
+For a centered monic p = X^n + a₂X^{n-2} + ... + aₙ:
+  p(x) = x^n + a₂x^{n-2} + ... + aₙ
+  p'(x) = nx^{n-1} + (n-2)a₂x^{n-3} + ...
+  p''(x) = n(n-1)x^{n-2} + (n-2)(n-3)a₂x^{n-4} + ...
+
+At critical points: p'(μ) = 0, so μ satisfies:
+  nμ^{n-1} = -(n-2)a₂μ^{n-3} - (n-3)a₃μ^{n-4} - ... - aₙ₋₁
+
+SCALING OBSERVATION: If we scale p(x) → p(tx)/t^n, the roots scale by t,
+the critical points scale by t, and:
+  w_j = -p''(μ_j)/p(μ_j) → -p''(tμ_j)/(t²) / (p(tμ_j)/t^n) = t^{n-2} · w_j / t^n = w_j/t²
+
+So Phi scales as 1/t² under root scaling. This is consistent with
+Phi being a "second derivative" quantity.
+
+=== NEW IDEA: Use the residue formula to compute Phi of boxplus directly ===
+
+For p⊞q: we know all coefficients via cumulant additivity.
+The critical points of (p⊞q) are roots of (p⊞q)'.
+
+If we can express Σ -(p⊞q)''(ρ)/(p⊞q)(ρ) in terms of the COEFFICIENTS
+of p⊞q (hence in terms of κ(p)+κ(q)), we get a concrete formula.
+
+For the SYMMETRIC case this was done explicitly:
+  Phi_symmetric_quartic_formula gives Phi as a rational function of coefficients.
+
+For GENERAL degree n, the residue formula says:
+  4·Phi = -Σ residues of p''²/(p·p')
+
+The total residue (sum over ALL poles) of a rational function with
+deg(numerator) < deg(denominator) - 1 is 0. Here:
+  deg(p''²) = 2(n-2)
+  deg(p·p') = n + (n-1) = 2n-1
+  So deg(p''²) = 2n-4 < 2n-2 = deg(p·p') - 1 iff n ≥ 2.
+
+So: Σ_{λ: roots of p} Res + Σ_{μ: roots of p'} Res = 0.
+
+This gives: Σ_{μ} p''(μ)²/(p(μ)p''(μ)) = -Σ_{λ} p''(λ)²/(p'(λ)²)
+i.e.: Σ_μ p''(μ)/p(μ) = -Σ_λ (p''(λ)/p'(λ))²  ... wait:
+
+The residue at a simple root λ of p:
+  Res_{x=λ} p''(x)²/(p(x)p'(x)) = p''(λ)²/(p'(λ)·p'(λ)) = (p''(λ)/p'(λ))²
+
+The residue at a simple root μ of p':
+  Res_{x=μ} p''(x)²/(p(x)p'(x)) = p''(μ)²/(p(μ)·p''(μ)) = p''(μ)/p(μ)
+
+So: Σ_λ (p''(λ)/p'(λ))² + Σ_μ p''(μ)/p(μ) = 0
+Hence: Σ_μ p''(μ)/p(μ) = -Σ_λ (p''(λ)/p'(λ))²
+
+This proves that -Σ p''(μ)/p(μ) = Σ (p''(λ)/p'(λ))² = 4·Phi(p). ✓
+
+THIS IS JUST THE CONSISTENCY CHECK. The residue identity gives:
+  4·Phi(p) = Σ_λ (p''(λ)/p'(λ))² = -Σ_μ p''(μ)/p(μ)
+
+Both are ways to compute the same thing.
+
+=== THE REAL APPROACH: Relate p⊞q's weights to p and q's weights ===
+
+Define: W(p) = Σ_μ (-p''(μ)/p(μ)) = 4·Phi(p).
+
+For boxplus: W(p⊞q) = Σ_ρ (-(p⊞q)''(ρ)/(p⊞q)(ρ)).
+
+The key is that p⊞q is a POLYNOMIAL WHOSE COEFFICIENTS are known linear/polynomial
+functions of κ(p)+κ(q). So W(p⊞q) is a computable function of κ(p)+κ(q).
+
+STRATEGY: Parameterize by cumulants. Set α = κ(p), β = κ(q).
+Then W(α+β) ≤ W(α)·W(β)/(W(α)+W(β)) is the target inequality.
+
+Equivalently: 1/W(α+β) ≥ 1/W(α) + 1/W(β).
+
+If W is a "norm-like" function of the cumulant vector (positively homogeneous,
+subadditive), and 1/W is superadditive, this follows from convexity of 1/W.
+
+=== LEAN APPROACH ===
+
+Given the difficulty of the general case, focus on:
+
+1. Prove the residue identity as a lemma (both formulas equal)
+2. Express W(p) = 4·Phi(p) for centered polys via cumulants
+3. For n=4: compute W explicitly and verify the inequality
+4. For general n: attempt induction or concavity argument
+
+CASE SPLIT APPROACH:
+  n=2: done, n=3: done, n=4: prove via quartic formulas, n≥5: sorry
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Any new lemma about Phi/W in terms of cumulants is valuable.
+4. Proving n=4 would be a major step.

@@ -1,0 +1,98 @@
+FINITE FREE STAM INEQUALITY — Residue formula + induction on degree
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== KEY NEW TOOL: Residue formula for Phi ===
+
+The context now contains Phi_eq_sum_roots_deriv:
+
+  Phi(p) = -1/4 * Σ_{μ ∈ roots(p')} p''(μ) / p(μ)
+
+where the sum is over the n-1 critical points μ of p (roots of p').
+
+This relates Phi of a degree-n poly to evaluations at roots of p' (degree n-1).
+
+=== STRATEGY: Induction via derivative ===
+
+STEP 1: For the derivative p', define a modified "Phi-like" quantity.
+  p' has degree n-1 with roots μ_1,...,μ_{n-1} (critical points of p).
+  These interlace the roots of p (by Rolle's theorem, since p splits over ℝ).
+
+STEP 2: From the residue formula:
+  Phi(p) = -1/4 * Σ_j p''(μ_j) / p(μ_j)
+
+  Note: p''(μ_j) / p(μ_j) involves evaluating p at critical points.
+  If we could relate this to Phi(p'), we'd have a recursive formula.
+
+  Actually, p''(x)/p(x) at a root μ of p' can be written as:
+    p''(μ)/p(μ) = [p''(μ)/p'(μ)] / [p(μ)/p'(μ)]  ... but p'(μ) = 0!
+
+  Wait, the formula says Σ over roots of p'. At μ_j with p'(μ_j) = 0:
+    The residue of p''(x)²/(p(x)·p'(x)) at x = μ_j is p''(μ_j)²/(p(μ_j)·p''(μ_j)) = p''(μ_j)/p(μ_j)
+    (assuming μ_j is a simple root of p', which holds when p has distinct roots).
+
+  So Phi(p) = -1/4 * Σ_j p''(μ_j)/p(μ_j).
+
+STEP 3: Now consider boxplus. We need to show:
+  1/Phi(p⊞q) ≥ 1/Phi(p) + 1/Phi(q)
+
+  Using the residue formula:
+  Phi(p⊞q) = -1/4 * Σ_k (p⊞q)''(ρ_k) / (p⊞q)(ρ_k)
+  where ρ_k are roots of (p⊞q)'.
+
+STEP 4: Key question: How do the critical points of p⊞q relate to those of p and q?
+  (p⊞q)' = derivative of boxplus. Is there a formula for (p⊞q)' in terms of p' and q'?
+
+  From the coefficient definition of boxplus:
+    (p⊞q)(x) = Σ_k C(n,k) * scaled_coeff(p,k) * scaled_coeff(q,n-k) * x^k ... no, it's more complex.
+
+  Actually, derivatives and boxplus don't commute simply. But:
+  - Cumulants of p⊞q are sums: κ_k(p⊞q) = κ_k(p) + κ_k(q)
+  - Cumulants of p' relate to cumulants of p via: κ_k(p') = (n·κ_k(p))/(n-k) ... or similar.
+
+STEP 5: If we can express Phi in terms of cumulants using the residue formula,
+  and if the resulting expression is superadditive in cumulants, we're done.
+
+  From the residue formula, Phi depends on:
+  (a) The critical points μ_j (roots of p')
+  (b) The values p(μ_j) and p''(μ_j)
+
+  Both (a) and (b) are determined by the coefficients, hence by the cumulants.
+
+=== CONCRETE LEAN APPROACH ===
+
+For the actual proof, try a case-split approach enhanced by the residue formula:
+
+1. n = 2: use finite_free_stam_inequality_n2 (proven)
+2. n = 3: use finite_free_stam_inequality_n3 (proven)
+3. n = 4: Use the quartic formulas from context:
+   - Center the quartics
+   - For symmetric quartics (b=0): use Phi_symmetric_quartic_formula directly
+   - For general quartics: relate to symmetric case or use residue formula
+4. n ≥ 5: Use residue formula to attempt induction or sorry
+
+=== PLAN B ===
+
+If general n is still too hard:
+- Prove n=4 case using Phi_symmetric_quartic_formula + centering + residue formula
+- This extends our proven range to n ≤ 4
+
+=== INFRASTRUCTURE IN CONTEXT (do NOT re-prove) ===
+
+All 57+ declarations from context including:
+- Phi_eq_sum_roots_deriv (NEW residue formula)
+- splits_derivative, roots_mul_deriv_nodup (derivative lemmas)
+- Phi_symmetric_quartic_formula, invPhi_symmetric_quartic_formula (quartic formulas)
+- invPhi_sym_param_eq, invPhi_sym_param_arg_diff (quartic algebraic lemmas)
+- ff_kappa_additive, boxplus_comp_add_C, exists_shift_centered (general infrastructure)
+- finite_free_stam_inequality_n2, finite_free_stam_inequality_n3 (proven cases)
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Build NAMED intermediate lemmas toward the goal.
+4. Use the residue formula as the primary tool.

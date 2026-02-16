@@ -1,0 +1,102 @@
+FINITE FREE STAM INEQUALITY — Score decomposition via residue formula
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== KEY INSIGHT: Two formulations of Phi ===
+
+The context proves TWO formulas for Phi:
+
+1. Phi_derivative_form (sum over ROOTS of p):
+   Phi(p) = Σ_{λ ∈ roots(p)} (p''(λ)/(2p'(λ)))²
+
+2. Phi_eq_sum_roots_deriv (sum over CRITICAL POINTS of p):
+   Phi(p) = -1/4 * Σ_{μ ∈ roots(p')} p''(μ)/p(μ)
+
+These give different "handles" on Phi. The second is particularly powerful because:
+- It involves p''(μ)/p(μ) at points where p'(μ) = 0
+- At a critical point μ_j, p(μ_j) is a local extremum value
+- p''(μ_j) is the second derivative (tells if it's a max or min)
+
+=== STRATEGY: Bounds via critical point values ===
+
+For a monic degree-n polynomial p with distinct real roots λ_1 < ... < λ_n:
+- p' has n-1 roots μ_1,...,μ_{n-1} with λ_k < μ_k < λ_{k+1} (Rolle)
+- At μ_j: p(μ_j) = local extremum (alternating sign: p(μ_1) > 0, p(μ_2) < 0, ...)
+  Actually for monic: p(x) → +∞ as x → +∞.
+  Between λ_k and λ_{k+1}: p changes sign, so p(μ_j) has definite sign.
+  Specifically: p(μ_j) = (-1)^{n-1-j} |p(μ_j)| (the sign alternates).
+
+- p''(μ_j) at critical points: p''(μ_j) > 0 at local minima, < 0 at local maxima.
+  So p''(μ_j)/p(μ_j) < 0 always (the ratio is always negative at critical points).
+
+This means: -1/4 * Σ p''(μ_j)/p(μ_j) = 1/4 * Σ |p''(μ_j)/p(μ_j)| > 0. Good, Phi > 0.
+
+=== BOUNDING Phi(p⊞q) ===
+
+For p⊞q: the critical points ρ_k satisfy (p⊞q)'(ρ_k) = 0.
+The critical point values (p⊞q)(ρ_k) and (p⊞q)''(ρ_k) depend on the
+coefficients of p⊞q, which are determined by the cumulant sums.
+
+KEY QUESTION: Can we bound |(p⊞q)(ρ_k)| from below and |(p⊞q)''(ρ_k)| from above
+in terms of the corresponding quantities for p and q?
+
+If we could show:
+  |p''(μ_j)/p(μ_j)| ≤ |p''(μ_j)|/|p(μ_j)|  ... (trivial)
+
+and then that the critical point values of p⊞q are "larger" (in absolute value)
+than some combination of those of p and q, we'd get Phi(p⊞q) ≤ bound.
+
+=== ALTERNATIVE: Direct algebraic approach for small n ===
+
+For n=4 centered symmetric quartics (the most concrete case):
+  p = X⁴ + aX² + c, a < 0, 0 < c < a²/4
+  p' = 4X³ + 2aX = 2X(2X² + a)
+  Critical points: μ₀ = 0, μ₁ = √(-a/2), μ₂ = -√(-a/2)
+  p(0) = c
+  p(±√(-a/2)) = c - a²/4
+  p''(0) = 2a
+  p''(±√(-a/2)) = 12(-a/2) + 2a = -6a + 2a = -4a
+
+  So Phi = -1/4 * [2a/c + (-4a)/(c - a²/4) + (-4a)/(c - a²/4)]
+         = -1/4 * [2a/c + (-8a)/(c - a²/4)]
+         = -1/4 * [2a/c - 8a/(c - a²/4)]
+
+  This should match Phi_symmetric_quartic_formula from the context.
+  Verify: -a(12c + a²)/(2c(a² - 4c))
+  = -a(12c + a²)/(2c(a² - 4c))
+
+  From residue: -1/4 * [2a/c + -8a/(c - a²/4)]
+  = -1/4 * [2a/c + 8a/(a²/4 - c)]
+  = -1/4 * [2a(a²/4-c) + 8ac] / [c(a²/4-c)]
+  = -1/4 * [a²·a/2 - 2ac + 8ac] / [c(a²/4-c)]
+  = -1/4 * [a³/2 + 6ac] / [c(a²/4-c)]
+  = -1/4 * a(a² + 12c)/2 / [c(a² - 4c)/4]
+  = -1/4 * 4a(a² + 12c) / [2c(a² - 4c)]
+  = -a(a² + 12c) / [2c(a² - 4c)]
+  ✓ Matches!
+
+=== LEAN APPROACH ===
+
+1. Use the residue formula to compute Phi for n=4 centered (not just symmetric).
+   For p = X⁴ + aX² + bX + c:
+   p' = 4X³ + 2aX + b
+   Critical points are roots of p', a depressed cubic.
+
+2. Express Phi via the residue formula as a rational function of a, b, c.
+
+3. Under boxplus of centered quartics:
+   a_{p⊞q} = aₚ + a_q (from κ₂ additivity)
+   b_{p⊞q} = bₚ + b_q (from κ₃ additivity)
+   c_{p⊞q} = cₚ + c_q + aₚ·a_q/6 (from κ₄ additivity + correction)
+
+4. Show the invPhi inequality for the resulting expressions.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Build NAMED lemmas: Phi_quartic_centered, invPhi_quartic_centered, etc.
+4. If general quartic is too hard, prove symmetric quartic first.
