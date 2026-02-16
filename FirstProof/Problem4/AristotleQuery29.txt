@@ -1,0 +1,99 @@
+FINITE FREE STAM INEQUALITY — Vandermonde gradient / electrostatic approach
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Phi = ||∇ log Δ||² and convexity ===
+
+KEY IDENTITY: The Vandermonde determinant is Δ(λ) = ∏_{i<j} (λ_i - λ_j).
+The logarithmic gradient is:
+  ∂/∂λ_i log|Δ| = Σ_{j≠i} 1/(λ_i - λ_j) = S_i
+
+So Phi(p) = Σ_i S_i² = ||∇ log|Δ|||² (squared gradient norm of log Vandermonde).
+
+The function log|Δ| is well-studied in random matrix theory. Its Hessian is:
+  ∂²log|Δ|/∂λ_i² = -Σ_{j≠i} 1/(λ_i - λ_j)²
+  ∂²log|Δ|/∂λ_i∂λ_j = 1/(λ_i - λ_j)²  (for i ≠ j)
+
+This Hessian H has the property that H is negative semidefinite on the
+CENTERED subspace {v : Σ v_i = 0}. This is because log|Δ| is concave
+on the centered hyperplane (the Dyson gas equilibrium measure maximizes it).
+
+APPROACH: If we can show that under boxplus, the root configuration of p⊞q
+is a "convex combination" (in some precise sense) of the root configurations
+of p and q IN the centered hyperplane, then by concavity of log|Δ|:
+
+  log|Δ(p⊞q)| ≥ α·log|Δ(p)| + β·log|Δ(q)|
+
+and by properties of gradient norms under concave functions, we can bound Phi.
+
+CONCRETE FACT: For CENTERED polynomials, the discriminant Disc(p) = Δ²
+is related to the resultant Res(p, p'). The discriminant is a polynomial
+in the coefficients, and hence (via cumulant additivity) has a known
+expression in terms of the sum of cumulant vectors.
+
+APPROACH A: Score function decomposition
+Define the "score field" S_p(x) = p'(x)/p(x) = Σ_i 1/(x - λ_i).
+
+At roots of p⊞q (call them ρ_k):
+  S_{p⊞q}(ρ_k) = Σ_j 1/(ρ_k - ρ_j) where ρ_j are OTHER roots of p⊞q.
+
+Can we decompose this score in terms of scores related to p and q?
+If p⊞q = expected char poly of A + UBU^T (matrix model), then the roots
+of p⊞q are "averaged" versions of λ_i + μ_{σ(i)} for random permutations σ.
+
+The interlacing structure of finite free convolution means the roots of p⊞q
+are controlled by the roots of p and q. Specifically, if roots of p are
+λ_1 ≤ ... ≤ λ_n and roots of q are μ_1 ≤ ... ≤ μ_n, then roots of p⊞q
+satisfy certain interlacing with {λ_i + μ_j}.
+
+APPROACH B: Schur convexity
+Show that Phi is Schur-convex as a function of the root gaps (λ_i - λ_{i+1}).
+Then use the fact that boxplus "smooths out" root gaps (by majorization).
+
+APPROACH C: Direct variational argument
+  invPhi(p) = 1/||∇ log Δ||² = min_{||v||=1} 1/(v · ∇ log Δ)²
+  No, that's wrong. invPhi = 1/(Σ S_i²).
+
+  By Cauchy-Schwarz: (Σ a_i S_i)² ≤ (Σ a_i²)(Σ S_i²) = ||a||² · Phi
+  So for unit vector a: (a · S)² ≤ Phi, hence 1/Phi ≤ 1/(a·S)².
+  Choosing a = S/||S||: 1/Phi = 1/||S||² = 1/(S·S/||S||²·||S||²) = 1/||S||².
+
+This doesn't help. Let me think differently.
+
+APPROACH D: Jensen via empirical measure
+  Phi = n · E_μ[S²] where μ is the empirical root measure and S is the score.
+  invPhi = 1/(n · E[S²]).
+  By Jensen: E[S²] ≥ E[S]² = 0 (since Σ S_i = 0).
+  So Phi ≥ 0. Not useful.
+
+  Better: invPhi = 1/(n · E[S²]) = 1/(n · Var(S)) since E[S] = 0.
+  So invPhi(p⊞q) ≥ invPhi(p) + invPhi(q) iff 1/Var(S_{p⊞q}) ≥ 1/Var(S_p) + 1/Var(S_q).
+  This is: Var(S_p)·Var(S_q) ≥ Var(S_{p⊞q})·(Var(S_p) + Var(S_q)).
+  i.e.: Var(S_{p⊞q}) ≤ Var(S_p)·Var(S_q)/(Var(S_p)+Var(S_q)) = harmonic mean.
+
+  Is there an inequality Var(S_{p⊞q}) ≤ Var(S_p) + Var(S_q)?
+  That would only give 1/Var(S_{p⊞q}) ≥ 1/(Var(S_p)+Var(S_q)), which is WEAKER.
+  We need the harmonic mean bound which is stronger.
+
+=== LEAN APPROACH ===
+
+Given the theoretical complexity, the most practical Lean approach is:
+
+1. Case split: n=2 (done), n=3 (done), n=4 (try to prove), n≥5 (sorry)
+2. For n=4: Use Phi_derivative_form + centering + explicit coefficient manipulation
+3. For general n: Try to prove Phi ≤ (some bound) that gives the result
+
+=== INFRASTRUCTURE IN CONTEXT (do NOT re-prove) ===
+
+All infrastructure from context file.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Best outcome: general n proof via Vandermonde/score approach
+4. Good outcome: n=4 case proven
+5. Acceptable: any new structural lemma about Phi (Schur convexity, bounds, etc.)

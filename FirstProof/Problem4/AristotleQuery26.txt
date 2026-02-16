@@ -1,0 +1,110 @@
+FINITE FREE STAM INEQUALITY — Induction on n via derivative/critical points
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Relate Phi_n to Phi_{n-1} via derivatives ===
+
+KEY INSIGHT: If p has degree n with roots λ_1,...,λ_n, then p' has degree n-1
+with roots μ_1,...,μ_{n-1} that INTERLACE the λ_i (by Rolle's theorem).
+
+Define the "root-score" S_i = Σ_{j≠i} 1/(λ_i - λ_j) = p'(λ_i)/p(... wait, no.
+Actually S_i = (d/dx log p)|'s residue contribution.
+
+More precisely: p'(x)/p(x) = Σ_i 1/(x - λ_i), so p'(λ_i)/lim = Σ_{j≠i} 1/(λ_i - λ_j) = S_i.
+
+And Phi(p) = Σ S_i^2.
+
+Similarly for p': p''(x)/p'(x) = Σ_j 1/(x - μ_j) where μ_j are roots of p'.
+
+CRITICAL IDENTITY TO PROVE:
+  Σ_i S_i^2 = Σ_i Σ_{j≠i} 1/(λ_i - λ_j)^2 + Σ_i (Σ_{j≠i} 1/(λ_i - λ_j))^2 - ...
+
+Wait. Let me be more careful.
+
+S_i = Σ_{j≠i} 1/(λ_i - λ_j)
+
+Note that p''(λ_i)/(2p'(λ_i)) = (1/2) * Σ_{j≠i} [p'(λ_i)·(stuff)] ...
+
+Actually from Phi_derivative_form: Phi = Σ (p''(λ_i)/(2p'(λ_i)))^2.
+
+And p''(x) = Σ_{j} p'(x)/(x-λ_j) - p(x)·stuff, evaluated at x = λ_i gives:
+  p''(λ_i) = 2 Σ_{j≠i} p'(λ_i)/(λ_i - λ_j) · (1/(λ_i-λ_j)) ...
+
+No, let me use partial fractions directly:
+  p'(x) = Σ_i ∏_{j≠i} (x - λ_j)
+  p''(x) = Σ_i Σ_{k≠i} ∏_{j≠i,j≠k} (x - λ_j)
+
+At x = λ_i:
+  p'(λ_i) = ∏_{j≠i} (λ_i - λ_j)
+  p''(λ_i) = 2 Σ_{k≠i} ∏_{j≠i,j≠k} (λ_i - λ_j) = 2 p'(λ_i) · Σ_{k≠i} 1/(λ_i - λ_k)
+
+So p''(λ_i)/(2p'(λ_i)) = Σ_{k≠i} 1/(λ_i - λ_k) = S_i.
+
+Great! So Phi(p) = Σ_i S_i^2 where S_i = Σ_{j≠i} 1/(λ_i - λ_j).
+
+INDUCTION IDEA:
+The derivative p' has roots μ_1,...,μ_{n-1} interlacing λ_1,...,λ_n.
+Define Phi_{n-1}(p') = Σ_j T_j^2 where T_j = Σ_{k≠j} 1/(μ_j - μ_k).
+
+QUESTION: Is there an identity relating Σ S_i^2 to Σ T_j^2 + correction?
+
+If Phi_n(p) = Phi_{n-1}(p') + correction(p), and the correction is well-behaved
+under boxplus, we could use induction.
+
+KEY FACT ABOUT BOXPLUS AND DERIVATIVES:
+If p⊞q denotes the finite free convolution, what is (p⊞q)'?
+Since boxplus is defined on coefficients, (p⊞q)' is the formal derivative.
+But is there a nice relation to p' and q'?
+
+Actually: for the CONTINUOUS free convolution, the R-transform satisfies
+R_{μ⊞ν} = R_μ + R_ν. The Cauchy transform G satisfies 1/G = z - R(G).
+The derivative corresponds to "removing a root" or "differentiation of the Cauchy transform."
+
+For FINITE free convolution: The finite free cumulants κ_k satisfy
+κ_k(p⊞q) = κ_k(p) + κ_k(q). The relationship between cumulants of p and p'
+is via the "finite free derivative" or the binomial formula.
+
+=== LEAN APPROACH ===
+
+Step 1: Prove that S_i = p''(λ_i)/(2p'(λ_i)) = Σ_{j≠i} 1/(λ_i - λ_j).
+  (Should follow from Phi_derivative_form and the computation above.)
+
+Step 2: Try to express Phi(p) in terms of the roots of p' and the roots of p.
+  Use interlacing: between consecutive λ_i, λ_{i+1} lies exactly one μ_j.
+
+Step 3: Establish any recurrence Phi_n = f(Phi_{n-1}, extra_data).
+
+Step 4: Show the recurrence preserves the invPhi superadditivity.
+
+ALTERNATIVE: Instead of pure induction, use the identity
+  Σ_i S_i = Σ_i Σ_{j≠i} 1/(λ_i - λ_j) = 0  (by antisymmetry)
+
+and try Cauchy-Schwarz:
+  0 = (Σ S_i)^2 ≤ n · Σ S_i^2 = n · Phi(p)
+
+This just gives Phi ≥ 0, not useful.
+
+But a WEIGHTED Cauchy-Schwarz with carefully chosen weights might give the
+inequality we need. The weights should come from comparing p⊞q roots to p roots.
+
+=== PLAN B ===
+
+If induction is too hard, prove the n=4 case explicitly:
+- Center p and q
+- Express Phi for degree-4 centered polys in terms of coefficients
+- Use ff_kappa_additive for the coefficient relations
+- Show the inequality by algebraic manipulation
+
+=== INFRASTRUCTURE IN CONTEXT (do NOT re-prove) ===
+
+All infrastructure from context file.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Build NAMED intermediate lemmas.
+4. If full induction fails, prove n=4 case or any new structural lemma about Phi.

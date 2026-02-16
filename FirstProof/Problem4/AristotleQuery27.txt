@@ -1,0 +1,91 @@
+FINITE FREE STAM INEQUALITY — Interpolation / concavity in t
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Concavity along free convolution semigroup ===
+
+SETUP: For centered monic degree-n polynomials p and q with distinct real roots,
+define a one-parameter family by scaling cumulants:
+
+  p_t = polynomial with cumulants κ_k(p_t) = κ_k(p) + t · κ_k(q), for k = 2,...,n
+
+At t=0: p_0 = p (since κ_k(p_0) = κ_k(p))
+At t=1: p_1 = p ⊞_n q (by ff_kappa_additive)
+
+Define f(t) = 1/Phi(p_t) = invPhi(p_t).
+
+CLAIM: f is concave on [0,1] (or at least f(1) ≥ f(0) + f'(0) where f'(0) ≥ invPhi(q)).
+
+If we could show:
+  f(1) ≥ f(0) + g(1)  where g(t) = invPhi(q_t) with q_t having cumulants t·κ(q)
+and g(1) = invPhi(q), g(0) = invPhi(X^n) = ??? ... this doesn't quite work because
+X^n has all roots at 0 (not distinct).
+
+ALTERNATIVE FORMULATION:
+We want: invPhi(p⊞q) ≥ invPhi(p) + invPhi(q).
+
+By symmetry and cumulant additivity, this is equivalent to showing:
+  The function F(κ_2,...,κ_n) = 1/Phi(poly with cumulants κ_2,...,κ_n)
+is SUPERADDITIVE: F(a+b) ≥ F(a) + F(b) for all valid cumulant vectors a, b.
+
+A function is superadditive if it is concave AND F(0) ≤ 0. But F(0) is invPhi of
+X^n which has all roots at 0 — undefined. So this doesn't directly apply.
+
+BETTER: F is superadditive if F is concave and F(0+) = 0 (in the limit as
+cumulants go to 0, Phi → ∞ so invPhi → 0). We need to check:
+1. F is concave on the valid cone of cumulant vectors
+2. F(0+) = 0
+
+For (2): as cumulants → 0, the polynomial approaches X^n, roots coalesce at 0,
+and Phi → ∞ (since 1/(λ_i-λ_j)² → ∞), so invPhi → 0. Good.
+
+For (1): F is concave iff the Hessian of F is negative semidefinite.
+  F = 1/Phi, so ∂²F/∂κ_i∂κ_j = (2(∂Phi/∂κ_i)(∂Phi/∂κ_j) - Phi(∂²Phi/∂κ_i∂κ_j))/Phi³
+
+This requires:
+  2 (∇Phi)(∇Phi)^T ≥ Phi · Hess(Phi)  (in PSD sense)
+
+=== LEAN APPROACH ===
+
+This is hard to formalize directly for general n. Instead:
+
+APPROACH 1: Prove concavity of invPhi along cumulant lines for small n.
+  - n=2: invPhi = -2κ_2 (linear, hence both convex and concave). ✓
+  - n=3: invPhi is concave in (κ_2, κ_3)? Prove this.
+  - n=4: invPhi is concave in (κ_2, κ_3, κ_4)? Prove this.
+  If these hold, we build evidence for the general pattern.
+
+APPROACH 2: Use the Vandermonde / log-discriminant connection.
+  log Δ(λ) = Σ_{i<j} log|λ_i - λ_j| where Δ is the Vandermonde.
+  Phi = ||∇ log Δ||² (gradient norm squared).
+  1/||∇f||² is concave when f is convex and ||∇f|| > 0.
+  log Δ is concave on {roots in convex position}?
+  Actually Δ² is the square of the Vandermonde, and log(Δ²) = 2·Σ log|λ_i-λ_j|.
+  The Hessian of log Δ² has been studied — it's related to the Dyson gas.
+
+APPROACH 3: Prove the n=4 case directly.
+  For centered degree-4: p = X⁴ + aX² + bX + c.
+  Cumulants: κ_2 = a/6, κ_3 = b/24, κ_4 = (c - a²/12)/24 (or similar).
+  Express Phi in terms of a, b, c (or κ_2, κ_3, κ_4).
+  Show invPhi is superadditive using cumulant additivity.
+
+  The context already has partial n=4 results from Q11:
+  stam_H_decomposition and related.
+
+=== INFRASTRUCTURE IN CONTEXT (do NOT re-prove) ===
+
+All infrastructure from context file including cumulant algebra, n=2 proof,
+n=3 general proof, centering, shift invariance, etc.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. PRIORITY ORDER:
+   a. Prove general n if possible via concavity argument
+   b. Failing that, prove n=4 case
+   c. Failing that, prove any new structural property of Phi/invPhi
+4. Build NAMED intermediate lemmas.

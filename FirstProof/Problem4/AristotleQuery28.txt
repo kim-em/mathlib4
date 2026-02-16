@@ -1,0 +1,92 @@
+FINITE FREE STAM INEQUALITY — Prove n=4 case explicitly
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Complete n=4 case, then case-split n ≤ 4 ===
+
+We have n=2 and n=3 proven. Proving n=4 would give us n ≤ 4.
+
+For CENTERED degree-4 monic polynomial: p = X⁴ + aX² + bX + c
+Roots: λ₁, λ₂, λ₃, λ₄ with λ₁+λ₂+λ₃+λ₄ = 0 (centered).
+
+Power sums:
+  e₁ = 0 (centered)
+  e₂ = -a (elementary sym poly, with sign convention)
+  p₂ = Σλᵢ² = -2a
+  p₃ = Σλᵢ³ = -3b  (by Newton's identity: p₃ = -3e₃ + ... since e₁ = 0)
+  p₄ = Σλᵢ⁴ = 2a² - 4c  (by Newton's identity)
+
+Score at root λᵢ:
+  Sᵢ = Σ_{j≠i} 1/(λᵢ - λⱼ) = p''(λᵢ)/(2p'(λᵢ))
+  p'(x) = 4x³ + 2ax + b
+  p''(x) = 12x² + 2a
+  Sᵢ = (12λᵢ² + 2a) / (2(4λᵢ³ + 2aλᵢ + b)) = (6λᵢ² + a) / (4λᵢ³ + 2aλᵢ + b)
+
+Phi = Σᵢ Sᵢ² = Σᵢ (6λᵢ² + a)² / (4λᵢ³ + 2aλᵢ + b)²
+
+Under boxplus of centered quartics:
+  (p ⊞₄ q) is centered with coefficients:
+  a_{p⊞q} = aₚ + a_q  (by boxplus_centered_coeff_add or cumulant additivity)
+  b_{p⊞q} = bₚ + b_q  (by cumulant additivity of κ₃)
+  c_{p⊞q} = cₚ + c_q + (aₚ·a_q)/6  ... or similar correction from cumulant to coefficient
+
+Wait — the coefficients are NOT simply additive for k ≥ 3 (only cumulants are).
+The cumulants for degree 4 are:
+  κ₂ ∝ a (coefficient of X²)
+  κ₃ ∝ b (coefficient of X)
+  κ₄ = function(a, c) — involves a correction from a²
+
+So under boxplus:
+  κ₂(p⊞q) = κ₂(p) + κ₂(q)  →  a_{p⊞q} = aₚ + a_q
+  κ₃(p⊞q) = κ₃(p) + κ₃(q)  →  b_{p⊞q} = bₚ + b_q
+  κ₄(p⊞q) = κ₄(p) + κ₄(q)  →  c_{p⊞q} = cₚ + c_q + f(aₚ, a_q)
+
+The EXACT formula for c_{p⊞q} in terms of cₚ, c_q, aₚ, a_q comes from
+the cumulant-to-coefficient relation (scaled_coeff_boxplus in context).
+
+=== LEAN APPROACH ===
+
+Step 1: Case split on n in the main theorem.
+  - n = 0, 1: omega
+  - n = 2: use finite_free_stam_inequality_n2
+  - n = 3: use finite_free_stam_inequality_n3
+  - n = 4: prove below
+  - n ≥ 5: sorry
+
+Step 2: For n = 4, center both polynomials using exists_shift_centered.
+
+Step 3: Express Phi for centered quartics.
+  Need: Phi_quartic_centered (p : ℝ[X]) (hp : centered degree-4 monic with distinct roots) :
+    Phi p = [explicit formula in terms of p.coeff 2, p.coeff 1, p.coeff 0]
+
+Step 4: Express boxplus coefficients via cumulant additivity.
+  Need: The exact coefficient formula for (p ⊞₄ q).coeff k for k = 0, 1, 2.
+
+Step 5: Show invPhi(p⊞q) ≥ invPhi(p) + invPhi(q) for the quartic case.
+  This will require algebraic manipulation, likely Cauchy-Schwarz or AM-HM.
+
+The context already has PARTIAL n=4 results from previous queries:
+- invPhi_superadditive_hyperbolic_symmetric_quartic (symmetric case)
+- stam_H_decomposition, stam_Num_nonneg (from Q11)
+
+Use these or build on them.
+
+=== PLAN B ===
+
+If n=4 is too hard in general, prove it for SYMMETRIC quartics (b=0):
+  p = X⁴ + aX² + c
+This reduces the complexity significantly and is already partially done.
+
+=== INFRASTRUCTURE IN CONTEXT (do NOT re-prove) ===
+
+All infrastructure from context file.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. PRIORITY: Get n=4 case working, or at minimum n=4 symmetric case.
+4. Build NAMED intermediate lemmas for the quartic Phi formula.

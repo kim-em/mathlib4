@@ -1,0 +1,86 @@
+FINITE FREE STAM INEQUALITY — Residue formula for Phi + concavity
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Residue formula makes Phi a rational function of coefficients ===
+
+KEY INSIGHT: Phi(p) has a residue representation:
+  Phi(p) = (1/4) * Res_x [ p''(x)^2 / (p'(x) * p(x)) ]
+
+This is because at each root λ_i of p, the residue of p''(x)^2/(p'(x)·p(x)) is
+  p''(λ_i)^2 / (p'(λ_i) · p'(λ_i)) = (p''(λ_i)/p'(λ_i))^2
+and Phi = Σ (p''(λ_i)/(2p'(λ_i)))^2 = (1/4) Σ (p''(λ_i)/p'(λ_i))^2.
+
+Since the sum of all residues of a rational function with enough decay equals
+the total residue (sum = 0 for the full contour at infinity), Phi can be computed
+purely from the COEFFICIENTS of p via the polynomials p, p', p''.
+
+PLAN:
+1. Prove the residue formula: Phi(p) = (1/4) Σ_i Res_{x=λ_i} [p''(x)^2 / (p'(x) p(x))]
+   This follows from Phi_derivative_form (already proven).
+
+2. Express Phi as a rational function of the coefficients a_0,...,a_n.
+   For a CENTERED monic polynomial (a_{n-1} = 0):
+   - The coefficients a_k are polynomial functions of the free cumulants κ_j
+   - Under boxplus, κ_j(p⊞q) = κ_j(p) + κ_j(q) (proven: ff_kappa_additive)
+   - So the coefficients of p⊞q are known functions of κ_j(p) + κ_j(q)
+
+3. Show invPhi is CONCAVE along the linear path t ↦ κ(p) + t·κ(q).
+   Since this path is exactly κ(p ⊞_n (t·q)), concavity at t=0 and t=1
+   gives: invPhi(p⊞q) ≥ invPhi(p) + invPhi(q).
+
+   Actually, we need SUPERADDITIVITY of invPhi. This follows if:
+   invPhi(p⊞q) ≥ invPhi(p) + invPhi(q)
+
+   Equivalently: 1/Phi(p⊞q) ≥ 1/Phi(p) + 1/Phi(q)
+   Equivalently: Phi(p)Phi(q) ≥ Phi(p⊞q)(Phi(p) + Phi(q))  ... NO, wrong direction.
+
+   Actually: 1/Phi is superadditive iff Phi is "subharmonic-mean":
+   Phi(p⊞q) ≤ Phi(p)Phi(q)/(Phi(p)+Phi(q))
+
+4. Alternative: define f(t) = 1/Phi(p_t) where p_t has cumulants κ(p) + t·κ(q).
+   Show f is concave. Then f(1) ≥ f(0) + f'(0) ≥ f(0) + ...
+   No — we need f(1) ≥ f(0) + g(0) where g comes from q alone. This needs more.
+
+5. BETTER: Use the HARMONIC MEAN inequality approach.
+   For non-negative a, b: a + b ≤ (a+b)²/(a+b) but we need the other direction.
+
+   Actually the correct formulation: if Phi(p⊞q) ≤ H(Phi(p), Phi(q)) for some
+   function H, and 1/H(a,b) ≥ 1/a + 1/b, we're done.
+
+6. SIMPLEST PATH: Try to prove that for centered polys:
+   Phi(p⊞q) ≤ Phi(p) + Phi(q) - (some non-negative correction)
+   where the correction is strong enough to give the harmonic bound.
+
+=== CONCRETE LEAN APPROACH ===
+
+Step 1: Prove Phi_residue_formula: Phi(p) = (1/4) * ∑ r in p.roots, (p''.eval r / p'.eval r)^2
+  (This is essentially Phi_derivative_form rewritten.)
+
+Step 2: For centered polys, express Phi in terms of power sums of roots.
+  s_k = Σ λ_i^k. These relate to coefficients by Newton's identities.
+
+Step 3: Show that under boxplus of centered polys, the power sums satisfy
+  s_k(p⊞q) = s_k(p) + s_k(q) for k = 2,...,n (by cumulant additivity).
+
+Step 4: Express Phi in terms of s_2,...,s_n and prove the inequality.
+
+=== INFRASTRUCTURE IN CONTEXT (do NOT re-prove) ===
+
+All infrastructure from context file including ff_kappa_additive, Phi_derivative_form,
+boxplus_comp_add_C, exists_shift_centered, invPhi_comp_add_C,
+finite_free_stam_inequality_n2, finite_free_stam_inequality_n3,
+conjecture_n_3_reduced, and all cumulant algebra.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Build NAMED intermediate lemmas toward the goal.
+4. If full proof is too hard, prove partial results:
+   - Phi as a function of power sums/cumulants
+   - Any monotonicity or convexity property of Phi
+   - The n=4 case via this approach
