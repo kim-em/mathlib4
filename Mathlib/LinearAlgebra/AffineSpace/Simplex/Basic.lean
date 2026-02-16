@@ -351,6 +351,7 @@ lemma restrict_reindex {m n : ℕ} (s : Affine.Simplex k P n) (e : Fin (n + 1) �
     (s.reindex e).restrict S (s.reindex_range_points e ▸ hS) = (s.restrict S hS).reindex e :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 lemma face_restrict {n : ℕ} (s : Affine.Simplex k P n) {S : AffineSubspace k P}
     (hS : affineSpan k (Set.range s.points) ≤ S) {fs : Finset (Fin (n + 1))} {m : ℕ}
     (h : #fs = m + 1) :
@@ -362,6 +363,7 @@ lemma face_restrict {n : ℕ} (s : Affine.Simplex k P n) {S : AffineSubspace k P
   simp_rw [Affine.Simplex.face_points]
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma faceOpposite_restrict {n : ℕ} [NeZero n] (s : Affine.Simplex k P n) {S : AffineSubspace k P}
     (hS : affineSpan k (Set.range s.points) ≤ S) (i : Fin (n + 1)) :
     letI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
@@ -443,6 +445,7 @@ lemma setInterior_map (I : Set k) {n : ℕ} (s : Simplex k P n) {f : P →ᵃ[k]
       rw [s.map_points, Set.range_comp, ← AffineSubspace.map_span, AffineSubspace.mem_map]
       exact ⟨q, (Set.mem_of_mem_of_subset hq s.setInterior_subset_affineSpan), hqp⟩
 
+set_option backward.isDefEq.respectTransparency false in
 lemma setInterior_restrict (I : Set k) {n : ℕ} (s : Simplex k P n) {S : AffineSubspace k P}
     (hS : affineSpan k (Set.range s.points) ≤ S) :
     letI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
@@ -606,12 +609,14 @@ lemma closedInterior_map {n : ℕ} (s : Simplex k P n) {f : P →ᵃ[k] P₂} (h
     (s.map f hf).closedInterior = f '' s.closedInterior :=
   s.setInterior_map _ hf
 
+set_option backward.isDefEq.respectTransparency false in
 lemma interior_restrict {n : ℕ} (s : Simplex k P n) {S : AffineSubspace k P}
     (hS : affineSpan k (Set.range s.points) ≤ S) :
     letI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
     (s.restrict S hS).interior = S.subtype ⁻¹' s.interior :=
   s.setInterior_restrict _ hS
 
+set_option backward.isDefEq.respectTransparency false in
 lemma closedInterior_restrict {n : ℕ} (s : Simplex k P n) {S : AffineSubspace k P}
     (hS : affineSpan k (Set.range s.points) ≤ S) :
     letI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance

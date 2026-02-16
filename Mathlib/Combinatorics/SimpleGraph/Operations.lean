@@ -184,6 +184,7 @@ lemma disjoint_edge {u v : V} : Disjoint G (edge u v) ↔ ¬G.Adj u v := by
     simp [edge_self_eq_bot]
   simp [← disjoint_edgeSet, edge_edgeSet_of_ne h]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma sdiff_edge {u v : V} (h : ¬G.Adj u v) : G \ edge u v = G := by
   simp [disjoint_edge, h]
 

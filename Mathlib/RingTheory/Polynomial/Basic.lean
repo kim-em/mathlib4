@@ -917,6 +917,7 @@ instance isNoetherianRing [Finite σ] [IsNoetherianRing R] :
     @isNoetherianRing_of_ringEquiv (MvPolynomial (Fin (Fintype.card σ)) R) _ _ _
       (renameEquiv R (Fintype.equivFin σ).symm).toRingEquiv isNoetherianRing_fin
 
+set_option backward.isDefEq.respectTransparency false in
 theorem map_mvPolynomial_eq_eval₂ {S : Type*} [CommSemiring S] [Finite σ]
     (ϕ : MvPolynomial σ R →+* S) (p : MvPolynomial σ R) :
     ϕ p = MvPolynomial.eval₂ (ϕ.comp MvPolynomial.C) (fun s => ϕ (MvPolynomial.X s)) p := by

@@ -140,6 +140,7 @@ theorem HasSubst.smul_X (a : A) (t : τ) :
 theorem HasSubst.smul_X' (a : A) : HasSubst (a • X : R⟦X⟧) :=
   HasSubst.X'.smul' _
 
+set_option backward.isDefEq.respectTransparency false in
 lemma HasSubst.eventually_coeff_pow_eq_zero {f : A⟦X⟧} (hf : HasSubst f) (n : ℕ) :
     ∀ᶠ m in .atTop, ∀ n' ≤ n, coeff n' (f ^ m) = 0 := by
   obtain ⟨k, hk⟩ := id hf
