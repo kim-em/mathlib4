@@ -45,50 +45,8 @@ open scoped Pointwise
 
 open MulAction Finset Set Equiv Equiv.Perm
 
-@[simp]
-theorem mem_iff {s : Finset α} :
-    s ∈ powersetCard α n ↔ s.card = n := by
-  rw [powersetCard, Set.mem_setOf_eq]
-
-instance : SetLike (powersetCard α n) α := SetLike.instSubtype
-
-instance : PartialOrder (Set.powersetCard α n) := .ofSetLike (Set.powersetCard α n) α
-
-@[simp]
-theorem coe_coe {s : powersetCard α n} :
-    ((s : Finset α) : Set α) = s := rfl
-
-theorem mem_coe_iff {s : Set.powersetCard α n} {a : α} : a ∈ (s : Finset α) ↔ a ∈ s := .rfl
-
-theorem card_eq (s : Set.powersetCard α n) : (s : Finset α).card = n :=
-  s.prop
-
-theorem ncard_eq (s : Set.powersetCard α n) : (s : Set α).ncard = n := by
-  rw [← coe_coe, Set.ncard_coe_finset, s.prop]
-
-theorem coe_nonempty_iff {s : Set.powersetCard α n} :
-    (s : Set α).Nonempty ↔ 1 ≤ n := by
-  rw [← Set.powersetCard.coe_coe, Finset.coe_nonempty, ← one_le_card, s.prop]
-
-theorem coe_nontrivial_iff {s : Set.powersetCard α n} :
-    (s : Set α).Nontrivial ↔ 1 < n := by
-  rw [← coe_coe, Finset.nontrivial_coe, ← one_lt_card_iff_nontrivial, card_eq]
-
-theorem eq_iff_subset : s = t ↔ (s : Finset α) ⊆ (t : Finset α) := by
-  rw [Finset.subset_iff_eq_of_card_le (t.prop.trans_le s.prop.ge), Subtype.ext_iff]
-
-set_option backward.isDefEq.respectTransparency false in
-theorem exists_mem_notMem (hn : 1 ≤ n) (hα : n < ENat.card α) {a b : α} (hab : a ≠ b) :
-    ∃ s : powersetCard α n, a ∈ s ∧ b ∉ s := by
-  have ha' : n ≤ Set.encard {b}ᶜ := by
-    rwa [← (Set.encard_add_encard_compl {b}).trans (Set.encard_univ α), Set.encard_singleton,
-      add_comm, ENat.lt_add_one_iff' (ENat.coe_ne_top n)] at hα
-  obtain ⟨s, has, has', hs⟩ :=
-    Set.exists_superset_subset_encard_eq (s := {a}) (by simp [Ne.symm hab]) (by simpa) ha'
-  have : Set.Finite s := Set.finite_of_encard_eq_coe hs
-  exact ⟨⟨Set.Finite.toFinset this, by
-    rwa [mem_iff, ← ENat.coe_inj, ← this.encard_eq_coe_toFinset_card]⟩,
-      by simpa using has, by simpa using has'⟩
+variable (G : Type*) [Group G] {α : Type*} [MulAction G α]
+  {n : ℕ} {s t : Set.powersetCard α n}
 
 section
 
@@ -203,74 +161,6 @@ theorem mulActionHom_of_embedding_surjective :
 
 end
 
-variable (α n)
-
-set_option backward.isDefEq.respectTransparency false in
-theorem coe_finset [Fintype α] :
-    powersetCard α n = Finset.powersetCard n (Finset.univ : Finset α) := by
-  ext; simp
-
-instance [Finite α] : Finite (powersetCard α n) := by
-  have : Fintype α := Fintype.ofFinite α
-  simpa [coe_finset] using Subtype.finite
-
-protected theorem card :
-    Nat.card (powersetCard α n) = (Nat.card α).choose n := by
-  classical
-  cases fintypeOrInfinite α
-  · simp [coe_finset]
-  · rcases n with _ | n
-    · simp [powersetCard]
-    · rcases finite_or_infinite (powersetCard α (n + 1)) with hc | hc
-      · refine (Infinite.false (α := (powersetCard α (n + 1) → powersetCard α (n + 1))) ?_).elim
-        have : FaithfulSMul (Perm α) (powersetCard α (n + 1)) :=
-          faithfulSMul (Nat.le_add_left 1 n) (by simp)
-        exact (Infinite.false (α := (powersetCard α (n + 1) → powersetCard α (n + 1)))
-          (Infinite.of_injective _ (smul_left_injective' (M := Perm α)))).elim
-      · simp
-
-variable {α n}
-
-set_option backward.isDefEq.respectTransparency false in
-/-- If `0 < n < ENat.card α`, then `powersetCard α n` is nontrivial. -/
-theorem nontrivial (h1 : 0 < n) (h2 : n < ENat.card α) :
-    Nontrivial (powersetCard α n) := by
-  classical
-  have h : Nontrivial α :=
-    (ENat.one_lt_card_iff_nontrivial α).mp (lt_of_le_of_lt (Nat.one_le_cast.mpr h1) h2)
-  have : FaithfulSMul (Perm α) (powersetCard α n) := faithfulSMul h1 h2
-  have h := (smul_left_injective' (M := Perm α) (α := powersetCard α n)).nontrivial
-  contrapose! h
-  infer_instance
-
-set_option backward.isDefEq.respectTransparency false in
-/-- A variant of `Set.powersetCard.nontrivial` that uses `Nat.card`. -/
-theorem nontrivial' (h1 : 0 < n) (h2 : n < Nat.card α) :
-    Nontrivial (powersetCard α n) := by
-  have : Finite α := Nat.finite_of_card_ne_zero (ne_zero_of_lt h2)
-  apply nontrivial h1
-  simp [ENat.card_eq_coe_natCard α, h2]
-
-theorem eq_empty_iff [Finite α] :
-    powersetCard α n = ∅ ↔ Nat.card α < n := by
-  rw [← Set.ncard_eq_zero, ← _root_.Nat.card_coe_set_eq, powersetCard.card, Nat.choose_eq_zero_iff]
-
-theorem nontrivial_iff [Finite α] :
-    Nontrivial (powersetCard α n) ↔ 0 < n ∧ n < Nat.card α := by
-  rw [← Finite.one_lt_card_iff_nontrivial, powersetCard.card, Nat.one_lt_iff_ne_zero_and_ne_one,
-    ne_eq, Nat.choose_eq_zero_iff, ne_eq, Nat.choose_eq_one_iff]
-  grind
-
-variable (α) in
-theorem infinite (h : 0 < n) [Infinite α] : Infinite (powersetCard α n) := by
-  apply Or.resolve_left
-  · rwa [← Nat.card_eq_zero, powersetCard.card,
-      Nat.card_eq_zero_of_infinite, Nat.choose_eq_zero_iff]
-  · suffices Nontrivial (powersetCard α n) by
-      exact not_isEmpty_of_nonempty ↑(powersetCard α n)
-    apply nontrivial h
-    simp
-
 variable [DecidableEq α]
 
 @[to_additive isPretransitive_of_isMultiplyPretransitive']
@@ -365,7 +255,6 @@ theorem isPreprimitive_perm {n : ℕ} (h_one_le : 1 ≤ n) (hn : n < Nat.card α
   -- `Nat.card α ≠ 2 * s.ncard` because `Nat.card α ≠ 2 * s`.
   · rwa [ncard_eq]
 
-set_option backward.isDefEq.respectTransparency false in
 /-- If `3 ≤ Nat.card α`, then `alternatingGroup α` acts transitively on `Set.powersetCard α n`.
 
 If `Nat.card α ≤ 2`, then `alternatinGroup α` is trivial, and
@@ -395,7 +284,6 @@ theorem isPretransitive_alternatingGroup [Fintype α] (hα : 3 ≤ Nat.card α) 
   have := alternatingGroup.isMultiplyPretransitive α
   apply isMultiplyPretransitive_of_le (n := Nat.card α - 2) <;> grind
 
-set_option backward.isDefEq.respectTransparency false in
 /-- The action of `alternatingGroup α` on `Set.powersetCard α n` is preprimitive
 provided `1 ≤ n < Nat.card α` and `Nat.card α ≠ 2 * n`. -/
 theorem isPreprimitive_alternatingGroup [Fintype α] {n : ℕ}

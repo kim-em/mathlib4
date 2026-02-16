@@ -258,6 +258,7 @@ theorem AffineIndependent.indicator_eq_of_affineCombination_eq {p : ι → P}
     Set.indicator (↑s₁) w₁ = Set.indicator (↑s₂) w₂ :=
   (affineIndependent_iff_indicator_eq_of_affineCombination_eq k p).1 ha s₁ s₂ w₁ w₂ hw₁ hw₂ h
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given an affinely independent family of points, two affine combinations (with sum of weights 1)
 are equal if and only if their weights are pointwise equal. -/
 lemma AffineIndependent.affineCombination_eq_iff_eq {p : ι → P} (ha : AffineIndependent k p)

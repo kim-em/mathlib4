@@ -645,10 +645,12 @@ variable [HasZeroMorphisms C] {β : Type w} [DecidableEq β] (f : β → C) [Has
 def Pi.ι (b : β) : f b ⟶ ∏ᶜ f :=
   Pi.lift (Function.update (fun _ ↦ 0) b (𝟙 _))
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp), grind =]
 lemma Pi.ι_π_eq_id (b : β) : Pi.ι f b ≫ Pi.π f b = 𝟙 _ := by
   simp [Pi.ι]
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc, grind =]
 lemma Pi.ι_π_of_ne {b c : β} (h : b ≠ c) : Pi.ι f b ≫ Pi.π f c = 0 := by
   simp [Pi.ι, Function.update_of_ne h.symm]
@@ -671,10 +673,12 @@ variable [HasZeroMorphisms C] {β : Type w} [DecidableEq β] (f : β → C) [Has
 def Sigma.π (b : β) : ∐ f ⟶ f b :=
   Limits.Sigma.desc (Function.update (fun _ ↦ 0) b (𝟙 _))
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp), grind =]
 lemma Sigma.ι_π_eq_id (b : β) : Sigma.ι f b ≫ Sigma.π f b = 𝟙 _ := by
   simp [Sigma.π]
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc, grind =]
 lemma Sigma.ι_π_of_ne {b c : β} (h : b ≠ c) : Sigma.ι f b ≫ Sigma.π f c = 0 := by
   simp [Sigma.π, Function.update_of_ne h]
