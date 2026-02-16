@@ -434,6 +434,7 @@ section Bind
 
 variable {P : Finpartition a} {Q : ∀ i ∈ P.parts, Finpartition i}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given a finpartition `P` of `a` and finpartitions of each part of `P`, this yields the
 finpartition of `a` obtained by juxtaposing all the subpartitions. -/
 @[simps! parts]

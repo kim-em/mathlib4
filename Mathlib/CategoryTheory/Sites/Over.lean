@@ -251,6 +251,7 @@ open CategoryTheory Limits
 
 variable {C : Type u'} [Category* C] [HasBinaryProducts C] {J : GrothendieckTopology C}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem coverPreserving_over_star (X : C) :
     CoverPreserving J (J.over X) (Over.star X) where
   cover_preserve {U} S hs := by

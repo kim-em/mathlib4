@@ -47,8 +47,11 @@ section GroupWithZero
 variable [GroupWithZero G₀] [SemilatticeSup G₀] {s : Finset ι} {a : G₀}
 
 set_option backward.isDefEq.respectTransparency false in
-lemma sup'_mul₀ [MulPosReflectLT G₀] (ha : 0 < a) (f : ι → G₀) (s : Finset ι) (hs) :
-    s.sup' hs f * a = s.sup' hs fun i ↦ f i * a := map_finset_sup' (OrderIso.mulRight₀ _ ha) hs f
+lemma sup'_mul₀ [MulPosReflectLT G₀] (ha : 0 ≤ a) (f : ι → G₀) (s : Finset ι) (hs) :
+    s.sup' hs f * a = s.sup' hs fun i ↦ f i * a := by
+  by_cases! h : 0 = a
+  · simp [← h]
+  exact map_finset_sup' (OrderIso.mulRight₀ _ (lt_of_le_of_ne ha h)) hs f
 
 set_option backward.isDefEq.respectTransparency false in
 set_option linter.docPrime false in
@@ -59,9 +62,11 @@ lemma mul₀_sup' [PosMulReflectLT G₀] (ha : 0 ≤ a) (f : ι → G₀) (s : F
   exact map_finset_sup' (OrderIso.mulLeft₀ _ (lt_of_le_of_ne ha h)) hs f
 
 set_option backward.isDefEq.respectTransparency false in
-lemma sup'_div₀ [MulPosReflectLT G₀] (ha : 0 < a) (f : ι → G₀) (s : Finset ι) (hs) :
-    s.sup' hs f / a = s.sup' hs fun i ↦ f i / a :=
-  map_finset_sup' (OrderIso.divRight₀ _ ha) hs f
+lemma sup'_div₀ [MulPosReflectLT G₀] (ha : 0 ≤ a) (f : ι → G₀) (s : Finset ι) (hs) :
+    s.sup' hs f / a = s.sup' hs fun i ↦ f i / a := by
+  by_cases! h : 0 = a
+  · simp [← h]
+  exact map_finset_sup' (OrderIso.divRight₀ _ (lt_of_le_of_ne ha h)) hs f
 
 end GroupWithZero
 

@@ -63,10 +63,12 @@ lemma isTopologicalBasis (hu : IsOpenCover u)
 
 end IsOpenCover
 
+set_option backward.isDefEq.respectTransparency false in
 lemma Opens.IsBasis.isOpenCover {S : Set (Opens X)} (hS : Opens.IsBasis S) :
     IsOpenCover (fun U : S ↦ (U : Opens X)) :=
   top_le_iff.mp (subset_trans hS.2.superset (by simp))
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Given an open cover and a basis,
 the set of basis elements contained in any of the covers is still a cover. -/
 lemma Opens.IsBasis.isOpenCover_mem_and_le {S : Set (Opens X)} (hS : Opens.IsBasis S)

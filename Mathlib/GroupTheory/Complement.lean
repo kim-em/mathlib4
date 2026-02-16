@@ -269,6 +269,7 @@ lemma isComplement_range_right {f : Quotient (QuotientGroup.rightRel H) → G}
   rintro ⟨-, q₁, rfl⟩ ⟨-, q₂, rfl⟩ h
   exact Subtype.ext <| congr_arg f <| ((hf q₁).symm.trans h).trans (hf q₂)
 
+set_option backward.isDefEq.respectTransparency false in
 @[to_additive]
 lemma exists_isComplement_left (H : Subgroup G) (g : G) : ∃ S, IsComplement S H ∧ g ∈ S := by
   classical

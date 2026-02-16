@@ -129,6 +129,7 @@ lemma eq_of_isomorphisms_descendsAlong [(MorphismProperty.isomorphisms C).Descen
     ext <;> simp [pullback.condition]
   simpa [this] using equalizer.ι_of_eq H
 
+set_option backward.isDefEq.respectTransparency false in
 lemma faithful_overPullback_of_isomorphisms_descendAlong
     [(MorphismProperty.isomorphisms C).DescendsAlong P] [P.IsStableUnderBaseChange]
     [HasPullbacks C] [HasEqualizers C] {S T : C} {f : T ⟶ S} (hf : P f) :
