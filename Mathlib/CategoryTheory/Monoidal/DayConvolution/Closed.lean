@@ -26,6 +26,8 @@ the Day convolution monoidal structure.
 
 @[expose] public section
 
+set_option backward.isDefEq.respectTransparency false
+
 universe v₁ v₂ u₁ u₂
 
 namespace CategoryTheory.MonoidalCategory
@@ -94,6 +96,7 @@ attribute [reassoc] hπ
 
 variable {F : C ⥤ V} {G : C ⥤ V} {H : C ⥤ V}
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If we have a map `G ⟶ G'` and a `DayConvolutionInternalHom F G' H'`, then
 there is a unique map `H ⟶ H'` induced by functoriality of ends and functoriality
 of `internalHomDiagramFunctor F`. -/
@@ -127,6 +130,7 @@ def map (ℌ : DayConvolutionInternalHom F G H) {G' : C ⥤ V} {H' : C ⥤ V}
       Wedge.IsLimit.lift_ι_assoc (ℌ'.isLimitWedge c)]
     simp [← Functor.map_comp]
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp)]
 lemma map_app_comp_π (ℌ : DayConvolutionInternalHom F G H)
     {G' : C ⥤ V} {H' : C ⥤ V} (f : G ⟶ G')

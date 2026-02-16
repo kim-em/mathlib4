@@ -57,6 +57,7 @@ commute with the maps in the diagram (the green arrows), which is just a lengthy
 
 @[expose] public section
 
+set_option backward.isDefEq.respectTransparency false
 
 noncomputable section
 

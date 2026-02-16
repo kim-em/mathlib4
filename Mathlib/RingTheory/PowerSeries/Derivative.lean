@@ -177,6 +177,7 @@ there is currently no instance of `Inv R⟦X⟧` for more general base rings `R`
 
 variable (A : Type*) [CommRing A]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The derivative of g^n equals n * g^(n-1) * g'. -/
 theorem derivative_pow (g : A⟦X⟧) (n : ℕ) :
     d⁄dX A (g ^ n) = n * g ^ (n - 1) * d⁄dX A g := by
@@ -188,6 +189,7 @@ theorem derivative_pow (g : A⟦X⟧) (n : ℕ) :
     · simp
     · simp only [add_tsub_cancel_right, pow_succ]; push_cast; ring
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Chain rule for polynomials viewed as power series.  Use `derivative_subst` instead. -/
 private theorem derivative_subst_coe (p : Polynomial A) {g : A⟦X⟧} (hg : HasSubst g) :
     d⁄dX A ((p : A⟦X⟧).subst g) = (d⁄dX A (p : A⟦X⟧)).subst g * d⁄dX A g := by

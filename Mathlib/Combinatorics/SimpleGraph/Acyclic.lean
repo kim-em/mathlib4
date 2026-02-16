@@ -357,11 +357,6 @@ lemma isTree_iff_minimal_connected : IsTree G ↔ Minimal Connected G := by
   simp only [edges_map, Hom.coe_ofLE, Sym2.map_id, List.map_id_fun, id_eq] at this
   simp [this, p.adj_of_mem_edges]
 
-/-- Every connected graph has a spanning tree. -/
-lemma Connected.exists_isTree_le [Finite V] (h : G.Connected) : ∃ T ≤ G, IsTree T := by
-  obtain ⟨T, hTG, hmin⟩ := {H : SimpleGraph V | H.Connected}.toFinite.exists_le_minimal h
-  exact ⟨T, hTG, isTree_of_minimal_connected hmin⟩
-
 set_option backward.isDefEq.respectTransparency false in
 /--
 Adding an edge to an acyclic graph preserves acyclicity if the endpoints are not reachable.
@@ -381,7 +376,6 @@ theorem isAcyclic_add_edge_iff_of_not_reachable (x y : V) (hxy : ¬ G.Reachable 
     simpa [eneq] using Walk.edges_subset_edgeSet c he)
   exact hG c' (Walk.IsCycle.transfer (qc := hc) ..)
 
-set_option backward.isDefEq.respectTransparency false in
 /--
 The reachability relation of a maximal acyclic subgraph agrees with that of the larger graph.
 -/
@@ -460,7 +454,6 @@ theorem Connected.maximal_le_isAcyclic_iff_isTree {T : SimpleGraph V} (hG : G.Co
       exact hG.preconnected
     rw [hT', hG]
 
-set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem maximal_isAcyclic_iff_isTree [Nonempty V] {T : SimpleGraph V} :
     Maximal IsAcyclic T ↔ T.IsTree := by

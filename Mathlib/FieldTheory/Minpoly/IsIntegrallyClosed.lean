@@ -222,6 +222,7 @@ theorem equivAdjoin_toAlgHom (hx : IsIntegral R x) : equivAdjoin hx = Minpoly.to
 @[simp]
 theorem coe_equivAdjoin (hx : IsIntegral R x) : ⇑(equivAdjoin hx) = Minpoly.toAdjoin R x := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The `PowerBasis` of `adjoin R {x}` given by `x`. See `Algebra.adjoin.powerBasis` for a version
 over a field. -/
 def _root_.Algebra.adjoin.powerBasis' (hx : IsIntegral R x) :

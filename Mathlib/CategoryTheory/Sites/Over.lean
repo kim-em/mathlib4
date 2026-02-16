@@ -394,7 +394,6 @@ lemma over_toGrothendieck_eq_toGrothendieck_comap_forget (X : C) :
 
 end
 
-set_option backward.isDefEq.respectTransparency false in
 instance {X : C} (f : Over X) :
     f.iteratedSliceEquiv.inverse.IsDenseSubsite (J.over _) ((J.over _).over _) where
   functorPushforward_mem_iff := by
