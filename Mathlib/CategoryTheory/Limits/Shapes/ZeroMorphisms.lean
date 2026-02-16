@@ -645,22 +645,18 @@ variable [HasZeroMorphisms C] {β : Type w} [DecidableEq β] (f : β → C) [Has
 def Pi.ι (b : β) : f b ⟶ ∏ᶜ f :=
   Pi.lift (Function.update (fun _ ↦ 0) b (𝟙 _))
 
-set_option backward.isDefEq.respectTransparency false in
-@[reassoc (attr := simp)]
+@[reassoc (attr := simp), grind =]
 lemma Pi.ι_π_eq_id (b : β) : Pi.ι f b ≫ Pi.π f b = 𝟙 _ := by
   simp [Pi.ι]
 
-set_option backward.isDefEq.respectTransparency false in
-@[reassoc]
+@[reassoc, grind =]
 lemma Pi.ι_π_of_ne {b c : β} (h : b ≠ c) : Pi.ι f b ≫ Pi.π f c = 0 := by
   simp [Pi.ι, Function.update_of_ne h.symm]
 
 @[reassoc]
 lemma Pi.ι_π (b c : β) :
     Pi.ι f b ≫ Pi.π f c = if h : b = c then eqToHom (congrArg f h) else 0 := by
-  split_ifs with h
-  · subst h; simp
-  · simp [Pi.ι_π_of_ne f h]
+  grind [CategoryTheory.eqToHom_refl]
 
 instance (b : β) : Mono (Pi.ι f b) where
   right_cancellation _ _ e := by simpa using congrArg (· ≫ Pi.π f b) e
@@ -675,22 +671,18 @@ variable [HasZeroMorphisms C] {β : Type w} [DecidableEq β] (f : β → C) [Has
 def Sigma.π (b : β) : ∐ f ⟶ f b :=
   Limits.Sigma.desc (Function.update (fun _ ↦ 0) b (𝟙 _))
 
-set_option backward.isDefEq.respectTransparency false in
-@[reassoc (attr := simp)]
+@[reassoc (attr := simp), grind =]
 lemma Sigma.ι_π_eq_id (b : β) : Sigma.ι f b ≫ Sigma.π f b = 𝟙 _ := by
   simp [Sigma.π]
 
-set_option backward.isDefEq.respectTransparency false in
-@[reassoc]
+@[reassoc, grind =]
 lemma Sigma.ι_π_of_ne {b c : β} (h : b ≠ c) : Sigma.ι f b ≫ Sigma.π f c = 0 := by
   simp [Sigma.π, Function.update_of_ne h]
 
 @[reassoc]
 theorem Sigma.ι_π (b c : β) :
     Sigma.ι f b ≫ Sigma.π f c = if h : b = c then eqToHom (congrArg f h) else 0 := by
-  split_ifs with h
-  · subst h; simp
-  · simp [Sigma.ι_π_of_ne f h]
+  grind [CategoryTheory.eqToHom_refl]
 
 instance (b : β) : Epi (Sigma.π f b) where
   left_cancellation _ _ e := by simpa using congrArg (Sigma.ι f b ≫ ·) e

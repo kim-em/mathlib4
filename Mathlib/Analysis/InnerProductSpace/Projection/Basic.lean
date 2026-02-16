@@ -252,13 +252,6 @@ theorem starProjection_minimal {U : Submodule 𝕜 E} [U.HasOrthogonalProjection
   rw [starProjection_apply, U.norm_eq_iInf_iff_inner_eq_zero (Submodule.coe_mem _)]
   exact starProjection_inner_eq_zero _
 
-/-- The orthogonal projections onto equal subspaces are coerced back to the same point in `E`. -/
-@[deprecated "As there are no subtypes causing dependent type issues, there is no need for this
-result as `simp` will suffice" (since := "2025-07-12")]
-theorem eq_starProjection_of_eq_submodule {K' : Submodule 𝕜 E} [K'.HasOrthogonalProjection]
-    (h : K = K') (u : E) : K.starProjection u = K'.starProjection u := by
-  simp [h]
-
 /-- The orthogonal projection sends elements of `K` to themselves. -/
 @[simp]
 theorem orthogonalProjection_mem_subspace_eq_self (v : K) : K.orthogonalProjection v = v := by
@@ -481,10 +474,6 @@ theorem starProjection_comp_starProjection_eq_zero_iff {U V : Submodule 𝕜 E}
 theorem orthogonalProjection_orthogonal_apply_eq_zero
     [Kᗮ.HasOrthogonalProjection] {v : E} (hv : v ∈ K) : Kᗮ.orthogonalProjection v = 0 :=
   orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero (K.le_orthogonal_orthogonal hv)
-
-@[deprecated (since := "2025-07-22")] alias
-  orthogonalProjection_mem_subspace_orthogonal_precomplement_eq_zero :=
-  orthogonalProjection_orthogonal_apply_eq_zero
 
 theorem starProjection_orthogonal_apply_eq_zero
     [Kᗮ.HasOrthogonalProjection] {v : E} (hv : v ∈ K) :

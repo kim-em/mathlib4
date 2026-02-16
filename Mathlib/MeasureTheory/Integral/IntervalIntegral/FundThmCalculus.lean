@@ -1186,6 +1186,18 @@ theorem integral_deriv_eq_sub' (f) (hderiv : deriv f = f')
   rw [hderiv]
   exact hcont.intervalIntegrable
 
+/-- Fundamental theorem of calculus-2: If `f : ℝ → E` is differentiable at every `x` in `(a, b)` and
+its derivative is integrable on `[a, b]`, then `∫ y in a..b, deriv f y` equals `f b - f a`. -/
+theorem integral_deriv_eq_sub_uIoo
+    (hcont : ContinuousOn f [[a, b]]) (hderiv : ∀ x ∈ uIoo a b, DifferentiableAt ℝ f x)
+    (hint : IntervalIntegrable (deriv f) volume a b) : ∫ y in a..b, deriv f y = f b - f a := by
+  rcases le_total a b with hab | hab
+  · simp only [uIcc_of_le, hab, uIoo_of_le] at hcont hderiv
+    rw [integral_eq_sub_of_hasDerivAt_of_le hab hcont (fun x hx => (hderiv x hx).hasDerivAt) hint]
+  · simp only [uIcc_of_ge, hab, uIoo_of_ge] at hcont hderiv
+    rw [integral_symm, integral_eq_sub_of_hasDerivAt_of_le hab hcont
+        (fun x hx => (hderiv x hx).hasDerivAt) hint.symm, neg_sub]
+
 /-- A variant of `intervalIntegral.integral_deriv_eq_sub`, the Fundamental theorem
 of calculus, involving integrating over the unit interval. -/
 lemma integral_unitInterval_deriv_eq_sub [RCLike 𝕜] [NormedSpace 𝕜 E] [IsScalarTower ℝ 𝕜 E]

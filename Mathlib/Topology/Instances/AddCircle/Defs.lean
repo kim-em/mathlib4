@@ -268,11 +268,7 @@ theorem card_torsion_le_of_isSMulRegular_int (n : ℤ) (h0 : n ≠ 0) (hn : IsSM
     {x : AddCircle p | n • x = 0}.encard ≤ n.natAbs := by
   convert card_torsion_le_of_isSMulRegular p _
     (Int.natAbs_ne_zero.mpr h0) (IsSMulRegular.natAbs_iff.mpr hn) using 1
-  conv_lhs => rw [← n.sign_mul_natAbs]
-  obtain h | h | h := n.sign_trichotomy
-  · simp [h]
-  · exact (h0 <| by simpa using h).elim
-  · simp [h]
+  simp
 
 theorem finite_torsion_of_isSMulRegular_int (n : ℤ) (hn : IsSMulRegular 𝕜 n) :
     {x : AddCircle p | n • x = 0}.Finite := by
@@ -622,11 +618,6 @@ lemma not_isOfFinAddOrder_iff_forall_rat_ne_div {a : 𝕜} :
 lemma isOfFinAddOrder_iff_exists_rat_eq_div {a : 𝕜} :
     IsOfFinAddOrder (a : AddCircle p) ↔ ∃ q : ℚ, (q : 𝕜) = a / p := by
   simpa using not_isOfFinAddOrder_iff_forall_rat_ne_div.not_right
-
-@[deprecated not_isOfFinAddOrder_iff_forall_rat_ne_div (since := "2025-08-13")]
-theorem addOrderOf_coe_eq_zero_iff_forall_rat_ne_div {a : 𝕜} :
-    addOrderOf (a : AddCircle p) = 0 ↔ ∀ q : ℚ, (q : 𝕜) ≠ a / p := by
-  simp [not_isOfFinAddOrder_iff_forall_rat_ne_div]
 
 variable (p)
 
