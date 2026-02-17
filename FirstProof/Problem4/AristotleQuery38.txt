@@ -1,0 +1,86 @@
+FINITE FREE STAM INEQUALITY — General n via electrostatic/log-concavity
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Log-concavity of discriminant under free convolution ===
+
+For a monic polynomial p with distinct real roots λ₁ < ... < λₙ:
+  Φ(p) = Σᵢ (p''(λᵢ)/(2p'(λᵢ)))² = Σᵢ (Σⱼ≠ᵢ 1/(λᵢ-λⱼ))²
+
+The discriminant is: Δ(p) = Π_{i<j} (λᵢ-λⱼ)²
+And: log Δ(p) = Σ_{i<j} 2·log|λᵢ-λⱼ|
+
+ELECTROSTATIC INTERPRETATION:
+The roots behave like charged particles on a line.
+The "energy" is E(p) = -log Δ(p) = -Σ_{i<j} log(λᵢ-λⱼ)²
+The "force" on particle i is: Fᵢ = Σⱼ≠ᵢ 2/(λᵢ-λⱼ)
+And: Φ(p) = (1/4) Σᵢ Fᵢ²
+
+So: Φ(p) = (1/4) ||∇E||² (squared gradient of energy)
+
+THE STAM INEQUALITY says: 1/||∇E(p⊞q)||² ≥ 1/||∇E(p)||² + 1/||∇E(q)||²
+
+This is a CAUCHY-SCHWARZ TYPE inequality for gradient norms under addition.
+
+In the classical information-theoretic setting:
+  1/I(X+Y) ≥ 1/I(X) + 1/I(Y)  where I = Fisher information
+This follows from the Cramér-Rao bound or from convexity of Fisher information.
+
+ANALOGY: The free convolution p⊞q is the "free" analogue of X+Y.
+The functional Φ is the "free Fisher information."
+The Stam inequality should follow from an analogous convexity/information inequality.
+
+=== APPROACH: Direct Cauchy-Schwarz on score functions ===
+
+Define the score function: s_p(x) = p'(x)/p(x) = Σᵢ 1/(x-λᵢ)
+Then: s_p'(x) = -Σᵢ 1/(x-λᵢ)² = -p''(x)/p(x) + (p'(x)/p(x))²
+
+At roots λᵢ: s_p(λᵢ) is undefined but p'(λᵢ)/p(λᵢ) makes sense in the limit.
+Actually: lim_{x→λᵢ} (x-λᵢ)·s_p(x) = 1, so s_p has simple poles at roots.
+
+FROM THE RESIDUE FORMULA (Phi_eq_sum_roots_deriv):
+  Φ(p) = -1/4 · Σ_μ p''(μ)/p(μ)  where μ ranges over critical points of p.
+
+IDEA: Relate the critical point values of p⊞q to those of p and q using
+the Cauchy-Schwarz inequality applied to the root structure.
+
+For boxplus with cumulant additivity:
+  κ_k(p⊞q) = κ_k(p) + κ_k(q)
+
+The coefficients of p⊞q are polynomial functions of the κ_k(p)+κ_k(q).
+The critical points and their values are algebraic functions of the coefficients.
+
+=== CONCRETE LEAN APPROACH ===
+
+Use the centered reduction:
+```
+theorem finite_free_stam_inequality ... := by
+  -- Step 1: Center both p and q
+  -- (use exists_shift_centered + invPhi_comp_add_C + boxplus_comp_add_C)
+  -- Step 2: Reduce to centered case
+  -- (use finite_free_stam_inequality_centered_sufficient)
+  -- Step 3: Case split on n
+  rcases n with _ | _ | n
+  · omega  -- n = 0
+  · omega  -- n = 1
+  rcases n with _ | n
+  · exact centered_n2_case ...  -- n = 2
+  rcases n with _ | n
+  · exact centered_n3_case ...  -- n = 3
+  -- n ≥ 4: attempt general argument or sorry
+```
+
+For the GENERAL case (n ≥ 4), try:
+  - Express Φ via the residue formula
+  - Use Cauchy-Schwarz: (Σ aᵢbᵢ)² ≤ (Σ aᵢ²)(Σ bᵢ²) applied to the critical point sums
+  - The "weights" at critical points of p⊞q decompose via the convolution structure
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Assembling the case split n=2,3 from existing proofs is valuable even without n≥4.
+4. For general n, any partial progress (e.g., a useful lemma about Φ and convolution) helps.

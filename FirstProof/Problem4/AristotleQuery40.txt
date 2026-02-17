@@ -1,0 +1,96 @@
+FINITE FREE STAM INEQUALITY — Direct nlinarith proof of f_aux weighted inequality
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== THE KEY ALGEBRAIC INEQUALITY ===
+
+For symmetric quartics, the entire proof reduces to:
+
+THEOREM (invPhi_sym_quartic_superadditive):
+For t ∈ (0,1), x ∈ (0,1/4), y ∈ (0,1/4):
+  f_aux(t²x + (1-t)²y + t(1-t)/6) ≥ t·f_aux(x) + (1-t)·f_aux(y)
+
+where f_aux(k) = 2k(1-4k)/(12k+1).
+
+PROOF STRATEGY: Clear denominators and prove the resulting polynomial inequality.
+
+Let Z = t²x + (1-t)²y + t(1-t)/6. All denominators are positive:
+  12x + 1 > 0 (since x > 0)
+  12y + 1 > 0 (since y > 0)
+  12Z + 1 > 0 (since Z > 0)
+
+After clearing denominators, we need to show:
+
+  2Z(1-4Z)(12x+1)(12y+1) ≥ t·2x(1-4x)(12Z+1)(12y+1) + (1-t)·2y(1-4y)(12Z+1)(12x+1)
+
+Equivalently:
+  2Z(1-4Z)(12x+1)(12y+1) - t·2x(1-4x)(12Z+1)(12y+1) - (1-t)·2y(1-4y)(12Z+1)(12x+1) ≥ 0
+
+This is a POLYNOMIAL in t, x, y (after substituting Z = t²x + (1-t)²y + t(1-t)/6).
+
+LEAN PROOF SKETCH:
+```lean
+lemma f_aux_weighted_ineq (t x y : ℝ)
+    (ht0 : 0 < t) (ht1 : t < 1)
+    (hx0 : 0 < x) (hx1 : x < 1/4)
+    (hy0 : 0 < y) (hy1 : y < 1/4) :
+    f_aux (t^2 * x + (1-t)^2 * y + t*(1-t)/6) ≥ t * f_aux x + (1-t) * f_aux y := by
+  unfold f_aux
+  rw [ge_iff_le, div_add_div _ _ (ne_of_gt (by nlinarith)) (ne_of_gt (by nlinarith))]
+  rw [div_le_div_iff (by nlinarith) (by nlinarith)]
+  -- Now it's a polynomial inequality
+  nlinarith [sq_nonneg (x - y), sq_nonneg t, sq_nonneg (1 - t),
+             sq_nonneg (t*x - (1-t)*y), sq_nonneg (t*(1-4*x)),
+             sq_nonneg ((1-t)*(1-4*y)),
+             mul_pos ht0 (sub_pos.2 ht1),
+             mul_pos hx0 hy0,
+             mul_nonneg ht0.le (sub_pos.2 ht1).le]
+```
+
+If nlinarith doesn't close it directly, try:
+1. polyrith (may find the exact combination)
+2. Manual SOS hints: provide specific square terms as auxiliary lemmas
+3. Break into cases: WLOG x ≤ y (by poly_diff_symmetry), then use t as parameter
+
+THEN USE THIS TO PROVE THE SYMMETRIC QUARTIC CASE:
+
+```lean
+lemma invPhi_sym_quartic_superadditive (A A' c c' : ℝ)
+    (hA : A > 0) (hA' : A' > 0)
+    (hc : 0 < c) (hc' : 0 < c')
+    (hcA : c < A^2/4) (hc'A' : c' < A'^2/4) :
+    invPhi_sym_param (A+A') (c+c'+A*A'/6) ≥ invPhi_sym_param A c + invPhi_sym_param A' c' := by
+  rw [invPhi_sym_param_eq _ _ (by linarith), invPhi_sym_param_eq _ _ (by linarith),
+      invPhi_sym_param_eq _ _ (by linarith)]
+  -- Now: (A+A')*f_aux(K) ≥ A*f_aux(k) + A'*f_aux(k')
+  -- Set t = A/(A+A'), use f_aux_weighted_ineq
+  set t := A / (A + A') with ht_def
+  have ht0 : 0 < t := div_pos hA (by linarith)
+  have ht1 : t < 1 := div_lt_one_of_lt (by linarith) (by linarith)
+  -- K = t²·k + (1-t)²·k' + t(1-t)/6 by invPhi_sym_param_arg_diff
+  -- Apply f_aux_weighted_ineq
+  have := f_aux_weighted_ineq t (c/A^2) (c'/A'^2) ht0 ht1
+    (div_pos hc (sq_pos_of_pos hA)) (by rwa [div_lt_div_iff (sq_pos_of_pos hA)])
+    (div_pos hc' (sq_pos_of_pos hA')) (by rwa [div_lt_div_iff (sq_pos_of_pos hA')])
+  linarith [mul_le_mul_of_nonneg_left this (by linarith : (0:ℝ) ≤ A + A')]
+```
+
+FINALLY: Assemble the main theorem:
+```lean
+theorem finite_free_stam_inequality ... := by
+  -- Case split: n=2 (done), n=3 (done), n=4 symmetric (via above), n≥5 sorry
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. The MAIN TARGET is f_aux_weighted_ineq — this is a polynomial inequality.
+4. nlinarith with square term hints is the most likely approach to work.
+5. Even if the full polynomial inequality is too hard for nlinarith, try:
+   - Splitting into sub-cases (t ≤ 1/2, t > 1/2; x ≤ y, x > y)
+   - Providing more refined square term hints
+   - Using polyrith

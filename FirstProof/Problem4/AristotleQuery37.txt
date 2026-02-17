@@ -1,0 +1,85 @@
+FINITE FREE STAM INEQUALITY — Perspective function approach for n=4 and general n
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== KEY INSIGHT: Perspective functions ===
+
+From the context:
+  g_aux(u) = (8u² - 2u)/(12u + 1)
+  g_aux_convex_on: ConvexOn ℝ (Set.Ici 0) g_aux
+  F_aux(a,c) = a * g_aux(c/a²)
+  F_aux = -invPhi_sym_param (up to sign)
+
+PERSPECTIVE FUNCTION THEOREM:
+If g : ℝ → ℝ is convex on [0,∞), then the perspective function
+  P(a, c) = a * g(c/a)
+is jointly convex on {(a,c) : a > 0}.
+
+More generally, if g is convex and positively homogeneous of degree 0
+(which c/a² is NOT — it's degree -1 in a), we need a modified statement.
+
+Actually: F_aux(a,c) = a * g_aux(c/a²). Set u = c/a².
+For the perspective: if h(u) = a * g(u) where u = c/a², then
+  F_aux(λa₁ + μa₂, λc₁ + μc₂)  with λ + μ = 1
+is NOT simply bounded by λF_aux(a₁,c₁) + μF_aux(a₂,c₂) because
+c/a² is NOT linear in (a,c).
+
+CORRECT APPROACH: Direct computation.
+
+For symmetric quartics under boxplus:
+  A_{new} = A + A',  c_{new} = c + c' + AA'/6
+
+invPhi_sym_param(A+A', c+c'+AA'/6) vs invPhi_sym_param(A,c) + invPhi_sym_param(A',c')
+
+Using invPhi_sym_param(A,c) = 2c(A²-4c)/(A(A²+12c)):
+
+Need: 2(c+c'+AA'/6)((A+A')²-4(c+c'+AA'/6)) / ((A+A')((A+A')²+12(c+c'+AA'/6)))
+      ≥ 2c(A²-4c)/(A(A²+12c)) + 2c'(A'²-4c')/(A'(A'²+12c'))
+
+This is a concrete rational inequality in 4 positive real variables.
+
+APPROACH 1: Clear denominators (all positive), get polynomial inequality, use nlinarith.
+
+APPROACH 2: Use the substitution k = c/A², k' = c'/A'², t = A/(A+A') to reduce
+to the f_aux inequality:
+  f_aux(t²k + (1-t)²k' + t(1-t)/6) ≥ t·f_aux(k) + (1-t)·f_aux(k')
+
+Then prove this using f_aux_concave + monotonicity analysis.
+
+APPROACH 3: Use g_aux convexity creatively.
+  invPhi_sym_param(A,c) = -F_aux(A,c) = -A·g_aux(c/A²)
+  Note g_aux(u) = 8u²/(12u+1) - 2u/(12u+1).
+  The first term is convex (composition of convex with affine), the second is concave.
+  So g_aux being convex means the first term dominates.
+
+=== FOR GENERAL n ===
+
+The centered reduction (finite_free_stam_inequality_centered_sufficient) shows:
+it suffices to prove the inequality for centered polynomials.
+
+For centered degree-n polynomials, the coefficients a₂,...,aₙ are the free parameters.
+Under boxplus of centered polys, a_k(p⊞q) depends on a_k(p), a_k(q), and lower cumulants.
+
+CONJECTURE: invPhi is a concave function of the coefficient vector (a₂,...,aₙ) for centered polys.
+If true, then since boxplus maps (a(p), a(q)) → a(p⊞q) with cumulant additivity,
+the superadditivity follows from concavity + the structure of the cumulant-to-coefficient map.
+
+For n=2: invPhi = -1/(2a₂), which is concave in a₂ for a₂ < 0. ✓
+For n=3: invPhi = -a₂(9a₃²+4a₂³)/(18(4a₂³+27a₃²)), check concavity.
+For n=4 symmetric: invPhi_sym_param = 2c(A²-4c)/(A(A²+12c)), check concavity in (A,c).
+
+=== LEAN APPROACH ===
+
+1. Prove the symmetric n=4 inequality algebraically (any of the 3 approaches above).
+2. Prove general n=4 by reducing to centered case + handling the cubic coefficient.
+3. Attempt general n via concavity of invPhi in cumulant coordinates.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. The algebraic inequality IS provable — it's a concrete computation.
+4. nlinarith with auxiliary inequalities should work.

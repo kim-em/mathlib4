@@ -1,0 +1,131 @@
+FINITE FREE STAM INEQUALITY — Assemble case split + prove algebraic quartic inequality
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Two-pronged approach ===
+
+PRONG 1: Assemble the proven cases into a case-split theorem.
+PRONG 2: Close the n=4 symmetric quartic via direct algebra.
+
+=== PRONG 1: Case split assembly ===
+
+The context has:
+  - finite_free_stam_inequality_n2: n=2 case proved
+  - finite_free_stam_inequality_n3: n=3 general case proved
+  - finite_free_stam_inequality_centered_n2: centered n=2 proved
+  - finite_free_stam_inequality_centered_n3: centered n=3 proved
+  - finite_free_stam_inequality_centered_sufficient: reduces to centered case
+
+Write this assembly:
+```lean
+theorem finite_free_stam_inequality (n : ℕ) (hn : n ≥ 2) ... := by
+  -- Use the direct n=2 and n=3 proofs
+  interval_cases n
+  · exact finite_free_stam_inequality_n2 ...
+  · exact finite_free_stam_inequality_n3 ...
+  · -- n = 4: apply centered reduction, then symmetric quartic
+    sorry
+  · -- n ≥ 5: sorry for now
+    sorry
+```
+
+Wait: interval_cases needs a finite range. Better:
+```lean
+  rcases Nat.eq_or_gt_of_le hn with rfl | h3
+  · exact finite_free_stam_inequality_n2 ...
+  rcases Nat.eq_or_gt_of_le h3 with rfl | h4
+  · exact finite_free_stam_inequality_n3 ...
+  -- Now n ≥ 4
+  sorry
+```
+
+=== PRONG 2: Algebraic quartic inequality ===
+
+For the symmetric quartic case, we need:
+  f_aux(Z) ≥ t·f_aux(x) + (1-t)·f_aux(y)
+where Z = t²x + (1-t)²y + t(1-t)/6, t ∈ (0,1), x,y ∈ (0,1/4).
+
+This is equivalent to poly_diff(t,x,y) ≥ 0 where:
+  poly_diff(t,x,y) = numerator of [f_aux(Z) - t·f_aux(x) - (1-t)·f_aux(y)]
+  after clearing positive denominators.
+
+APPROACH: Expand poly_diff as a polynomial in t, x, y and show it's non-negative
+using nlinarith with appropriate auxiliary terms (squares, products of non-negative terms).
+
+From context, poly_diff has symmetry: poly_diff(t,x,y) = poly_diff(1-t,y,x).
+So WLOG t ≤ 1/2 (i.e., A ≤ A').
+
+SUBSTITUTE s = t - 1/2, so s ∈ (-1/2, 0] by WLOG.
+Then poly_diff_subst(s,x,y) = poly_diff(1/2-s, x, y).
+
+The polynomial should factor or have an SOS (sum of squares) decomposition.
+
+KEY SIMPLIFICATION: At t = 1/2 (equal weights):
+  Z = x/4 + y/4 + 1/24
+  We need: f_aux(x/4 + y/4 + 1/24) ≥ (f_aux(x) + f_aux(y))/2
+  This is a 2-variable inequality which should be easier.
+
+EVEN SIMPLER: At t = 1/2 and x = y (identical quartics):
+  Z = x/2 + 1/24
+  Need: f_aux(x/2 + 1/24) ≥ f_aux(x)
+  This should follow from f_aux increasing near the origin and the +1/24 shift.
+
+=== LEAN APPROACH ===
+
+1. Define the numerator polynomial explicitly.
+2. Show it equals a sum of squares + non-negative terms.
+3. Use nlinarith or polyrith.
+
+ALTERNATIVE: Rather than SOS, use the CASE ANALYSIS approach:
+- f_aux_ineq_easy_case covers case x+y ≤ 1/6, Z ≤ 1/12
+- f_aux_ineq_case2_easy covers case x+y > 1/6, Z ≥ 1/12
+- For the remaining cases, prove directly using monotonicity + concavity bounds.
+
+Specifically for the remaining case x+y ≤ 1/6, Z > 1/12:
+  Since Z > 1/12 and f_aux is decreasing past 1/12:
+  f_aux(Z) ≥ f_aux(1/4)  ... but f_aux(1/4) = 0 which is too weak.
+
+  Better: Z ≤ tx + (1-t)y + t(1-t)/6 ≤ 1/6 + 1/24 = 5/24
+  And f_aux(Z) ≥ f_aux(5/24) = 2·(5/24)·(1-5/6)/(12·5/24+1) = ... > 0
+  Meanwhile t·f_aux(x) + (1-t)·f_aux(y) ≤ max(f_aux(x), f_aux(y)) ≤ f_aux(1/12)
+  This doesn't immediately help.
+
+  CORRECT approach for x+y ≤ 1/6:
+  Z = t²x + (1-t)²y + t(1-t)/6 ≥ t(1-t)/6  (since x,y ≥ 0)
+  Also Z ≤ max(x,y) + 1/24 < 1/4 + 1/24 (in the valid range)
+
+  The concavity of f_aux on (0,∞) gives:
+  f_aux(weighted_avg + correction) ≥ f_aux(weighted_avg) + correction·f_aux'(weighted_avg)
+    when correction > 0 and the function is concave.
+
+  Wait: for a concave function, f(a+δ) ≥ f(a) + δ·f'(a) but also f(a+δ) ≤ f(a) + δ·f'(a)
+  when a+δ > a... No: concavity gives f(a+δ) ≤ f(a) + δ·f'(a). That's the WRONG direction.
+
+  So when the correction is POSITIVE (x+y < 1/6), Z > weighted_avg, and concavity
+  gives f_aux(Z) ≤ f_aux(weighted_avg) + correction·f_aux'(weighted_avg).
+  But we need f_aux(Z) ≥ t·f_aux(x) + (1-t)·f_aux(y), which by concavity
+  ≤ f_aux(weighted_avg). So we need f_aux(Z) ≥ f_aux(weighted_avg),
+  which holds iff Z is on the same side of the maximum as weighted_avg, or closer to max.
+
+  Since both Z and weighted_avg are in (0, 1/4), and f_aux achieves max at 1/12:
+  If weighted_avg ≤ 1/12: then Z ≥ weighted_avg and Z might cross 1/12.
+    If Z ≤ 1/12: f_aux(Z) ≥ f_aux(weighted_avg) by increasing. ✓
+    If Z > 1/12: need f_aux(Z) ≥ f_aux(weighted_avg).
+      Since f_aux(1/12) ≥ f_aux(weighted_avg) and f_aux(Z) ≥ f_aux(?) ...
+      This requires showing Z isn't too far past 1/12.
+
+  KEY: For x+y ≤ 1/6, the correction = t(1-t)(1/6 - (x+y)) ≥ 0.
+  And weighted_avg = tx + (1-t)y ≤ max(x,y) < 1/4.
+  So Z = weighted_avg + correction ≤ max(x,y) + t(1-t)/6 < 1/4 + 1/24.
+
+  Use nlinarith with numerical bounds on f_aux values at key points.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Even assembling n=2+n=3 case split with sorry for n≥4 is progress.
+4. Closing the algebraic quartic inequality is the TOP PRIORITY.

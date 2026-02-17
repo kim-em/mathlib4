@@ -1,0 +1,81 @@
+FINITE FREE STAM INEQUALITY — Close n=4 symmetric quartic case
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== STRATEGY: Complete the n=4 symmetric quartic inequality ===
+
+The context contains ALL the pieces needed to close the n=4 symmetric case:
+
+1. f_aux(k) = 2k(1-4k)/(12k+1) on (0, 1/4)
+2. invPhi_sym_param(A,c) = A * f_aux(c/A²)
+3. f_aux_concave: ConcaveOn ℝ (Set.Ioi 0) f_aux  ← KEY
+4. f_aux_increasing on (0, 1/12], f_aux_decreasing on [1/12, 1/4)
+5. invPhi_sym_param_arg_diff: K = weighted_avg + correction
+   where K = (c+c'+AA'/6)/(A+A')², correction = AA'/(A+A')² * (1/6 - (k+k'))
+6. f_aux_ineq_easy_case: proved when x+y ≤ 1/6 AND Z ≤ 1/12
+7. f_aux_ineq_case2_easy: proved when x+y > 1/6 AND Z ≥ 1/12
+
+THE TARGET INEQUALITY (for symmetric quartics):
+  (A+A') * f_aux(K) ≥ A * f_aux(k) + A' * f_aux(k')
+
+Setting t = A/(A+A'), this is:
+  f_aux(t²k + (1-t)²k' + t(1-t)/6) ≥ t * f_aux(k) + (1-t) * f_aux(k')
+
+WHAT REMAINS: Two missing cases in the case split:
+Case 3: x+y ≤ 1/6 AND Z > 1/12  (prove this can't happen, or handle it)
+Case 4: x+y > 1/6 AND Z < 1/12  (prove this can't happen, or handle it)
+
+For Case 3: If x+y ≤ 1/6, then Z = t²x + (1-t)²y + t(1-t)/6.
+  Z = t²x + (1-t)²y + t(1-t)/6
+  ≤ max(x,y) + t(1-t)/6  (since t² + (1-t)² ≤ 1)
+  When x+y ≤ 1/6, both x,y < 1/6, so Z < 1/6 + 1/24 = 5/24 < 1/4.
+  But Z > 1/12? This CAN happen. Need a different argument here.
+
+ALTERNATIVE APPROACH: Use f_aux_concave directly.
+  Since f_aux is concave on (0,∞), and K ≥ tx + (1-t)y when x+y ≤ 1/6
+  (because the correction is positive), we need:
+  f_aux(K) ≥ f_aux(tx + (1-t)y)  when K ≥ tx + (1-t)y and K ≤ 1/12
+
+  But f_aux is increasing on (0, 1/12], so if K ≤ 1/12 and K ≥ weighted_avg:
+    f_aux(K) ≥ f_aux(weighted_avg) ≥ t*f_aux(x) + (1-t)*f_aux(y)  by concavity.
+
+  If K > 1/12: use the fact that f_aux(1/12) = max, and both tx+(1-t)y < 1/6,
+  so the concavity bound f_aux(weighted_avg) ≥ t*f_aux(x)+(1-t)*f_aux(y) holds,
+  and we need f_aux(K) ≥ f_aux(weighted_avg).
+  But K > 1/12 and weighted_avg < 1/6, so we need the unimodal structure.
+
+CLEANEST APPROACH: Prove f_aux(K) ≥ t*f_aux(x) + (1-t)*f_aux(y) directly by
+showing K is "closer to 1/12" than the weighted average, using the correction term.
+
+Or: Use g_aux_convex_on. Since F_aux(a,c) = a * g_aux(c/a²) and g_aux is convex,
+the perspective function a * g_aux(c/a²) is convex in (a,c) for a > 0.
+The perspective of a convex function is convex!
+
+So invPhi_sym_param(A,c) = -F_aux(A,c) = A * f_aux(c/A²) is CONCAVE as a
+function of (A,c) for A > 0, which directly gives:
+  invPhi_sym_param(A+A', c+c'+AA'/6)
+  ≥ invPhi_sym_param(A, c) + invPhi_sym_param(A', c')  ...
+
+Wait, we need to account for the AA'/6 term. This isn't pure additivity in (A,c).
+
+=== LEAN APPROACH ===
+
+OPTION A: Complete the case split from f_aux_ineq_easy_case and f_aux_ineq_case2_easy.
+  Prove the two remaining cases or show they're vacuous.
+
+OPTION B: Use the perspective function approach with g_aux_convex_on.
+  Prove invPhi_sym_param is concave in (A,c), then handle the AA'/6 correction.
+
+OPTION C: Direct algebraic proof via poly_diff.
+  Show poly_diff(t,x,y) ≥ 0 for all t ∈ (0,1), x,y ∈ (0,1/4).
+  poly_diff is a polynomial — use nlinarith or SOS decomposition.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. PRIORITY: Close the n=4 symmetric quartic case using the existing lemmas.
+4. Build toward the full n=4 case and ultimately general n.
