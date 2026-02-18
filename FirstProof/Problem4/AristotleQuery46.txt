@@ -1,0 +1,124 @@
+FINITE FREE STAM INEQUALITY — Case 4 via concavity sub-cases
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+
+=== CASE 4: CLEAN PROOF VIA CONCAVITY ===
+
+We need: f_aux(Z) ≥ t·f_aux(x) + (1-t)·f_aux(y)
+where Z = t²x + (1-t)²y + t(1-t)/6, with x+y > 1/6 and Z < 1/12.
+
+Let W = tx + (1-t)y be the weighted average.
+Then Z = W + t(1-t)(1/6 - (x+y)) = W - t(1-t)(x+y - 1/6).
+Since x+y > 1/6: Z < W.
+
+SUB-CASE A: W ≥ 1/12
+  Since f_aux is concave on (0, ∞):
+    f_aux(W) ≥ t·f_aux(x) + (1-t)·f_aux(y)  ... (concavity)
+
+  Since f_aux is decreasing on [1/12, 1/4) and Z < 1/12 ≤ W:
+    f_aux(Z) ≥ f_aux(1/12) ≥ f_aux(W)  ... (Z in increasing region, W in decreasing)
+    Wait: Z < 1/12 means f_aux(Z) < f_aux(1/12) (since f_aux is increasing to 1/12).
+    And W ≥ 1/12 means f_aux(W) ≤ f_aux(1/12) (since f_aux is decreasing from 1/12).
+    So f_aux(Z) and f_aux(W) are both ≤ f_aux(1/12).
+
+    More precisely, f_aux is symmetric-ish around 1/12:
+    Need to compare f_aux(1/12 - δ) vs f_aux(1/12 + ε) for appropriate δ, ε.
+
+    Actually, just use concavity differently:
+    f_aux concave on (0, ∞), with Z < 1/12 ≤ W, both in (0, 1/4).
+
+    Since f_aux is concave:
+      f_aux(Z) ≥ f_aux(W) + f_aux'(W)·(Z - W)
+    Since W ≥ 1/12, f_aux'(W) ≤ 0 (past the maximum).
+    Since Z - W < 0: f_aux'(W)·(Z - W) ≥ 0.
+    Therefore: f_aux(Z) ≥ f_aux(W) ≥ t·f_aux(x) + (1-t)·f_aux(y). ✓✓✓
+
+  THIS WORKS! Sub-case A is done by:
+  1. Concavity gives f_aux(W) ≥ weighted average of f_aux values
+  2. Concavity tangent line gives f_aux(Z) ≥ f_aux(W) (since past the max, moving left helps)
+
+SUB-CASE B: W < 1/12
+  Now both Z < W < 1/12. Since f_aux is increasing on (0, 1/12]:
+    f_aux(Z) < f_aux(W).
+  And concavity gives f_aux(W) ≥ t·f_aux(x) + (1-t)·f_aux(y).
+  But f_aux(Z) < f_aux(W), so we can't directly conclude.
+
+  Can Sub-case B actually occur?
+  W = tx + (1-t)y < 1/12 with x+y > 1/6.
+  From case4_structure: x > 1/12, y < 1/12, t < 1/2.
+  W = tx + (1-t)y < 1/12 means t(x - 1/12) < (1-t)(1/12 - y).
+
+  Let x = 1/12 + α (α > 0), y = 1/12 - β (β > 0), α > β (from x+y > 1/6).
+  Then W < 1/12 iff tα < (1-t)β.
+  Since α > β and t < 1/2 < 1-t: tα < (1-t)β is possible when t is small enough.
+
+  E.g.: x = 1/8 (α = 1/24), y = 1/24 (β = 1/24). But α = β, so x+y = 1/6, not > 1/6.
+  E.g.: x = 0.15 (α = 1/12-0.15... wait, 1/12 ≈ 0.0833, so x = 0.15 means α ≈ 0.0667).
+       y = 0.02 (β ≈ 0.0633). α > β ✓. x+y = 0.17 > 1/6 ✓.
+       W < 1/12 needs t·0.0667 < (1-t)·0.0633.
+       At t = 0.48: 0.032 < 0.033 → just barely ✓. And Z?
+
+  So Sub-case B does occur. Need a different argument.
+
+  FOR SUB-CASE B: Try poly_diff ≥ 0 directly.
+  In this region: t is small, x is moderate (just above 1/12), y is small.
+  The polynomial should be analyzable.
+
+  OR: Use the P_poly_d decomposition.
+  P_poly_d = c₀ + c₁·d + c₂·d² + c₃·d³ with d = y - x < 0.
+  We know c₀ ≥ 0, c₂ > 0, c₃ > 0.
+  Group: P_poly_d = (c₀ + c₂·d²) + d·(c₁ + c₃·d²)
+  Since d < 0: need to show c₀ + c₂·d² ≥ |d|·|c₁ + c₃·d²|.
+
+  In Sub-case B, the constraints are very specific:
+  0 < t < tα/((1-t)β+tα) (to ensure W < 1/12)
+  This restricts the range enough that nlinarith might work.
+
+=== LEAN APPROACH ===
+
+```lean
+lemma poly_diff_nonneg_case4 (t x y : ℝ) ... := by
+  -- Split on whether W = tx + (1-t)y ≥ 1/12
+  by_cases hW : t * x + (1 - t) * y ≥ 1 / 12
+  · -- Sub-case A: W ≥ 1/12
+    -- Use f_aux concavity tangent line: since f_aux'(W) ≤ 0 and Z < W,
+    -- f_aux(Z) ≥ f_aux(W) by concavity.
+    -- And f_aux(W) ≥ t*f_aux(x) + (1-t)*f_aux(y) by concavity.
+    -- Convert to poly_diff via f_aux_ineq_of_poly_diff_nonneg (inverse direction).
+    sorry
+  · -- Sub-case B: W < 1/12
+    -- Direct polynomial computation
+    sorry
+```
+
+For Sub-case A, the CLEANER path is to prove f_aux_ineq directly rather than via poly_diff:
+
+```lean
+lemma f_aux_ineq_case4a (t x y : ℝ)
+    (ht : 0 < t) (ht1 : t < 1)
+    (hx : 0 < x) (hx1 : x < 1/4)
+    (hy : 0 < y) (hy1 : y < 1/4)
+    (hW : t * x + (1 - t) * y ≥ 1/12)
+    (hZ : t^2 * x + (1 - t)^2 * y + t * (1 - t) / 6 < 1/12) :
+    f_aux (t^2 * x + (1 - t)^2 * y + t * (1 - t) / 6) ≥ t * f_aux x + (1 - t) * f_aux y := by
+  -- Step 1: f_aux(W) ≥ t*f_aux(x) + (1-t)*f_aux(y) by concavity
+  have h_concave := f_aux_concave.2 (show x ∈ Set.Ioi 0 from hx) (show y ∈ Set.Ioi 0 from hy)
+    ht.le (sub_pos.2 ht1).le (by linarith)
+  -- Step 2: f_aux(Z) ≥ f_aux(W) because Z < 1/12 ≤ W and f_aux concave with max at 1/12
+  -- f_aux is increasing on (0, 1/12], so f_aux(Z) ≤ f_aux(1/12)
+  -- f_aux is decreasing on [1/12, ∞), so f_aux(W) ≤ f_aux(1/12) when W ≥ 1/12
+  -- But we need f_aux(Z) ≥ f_aux(W), not the other way.
+  -- Use tangent line: f_aux(Z) ≥ f_aux(W) + f_aux'(W)*(Z-W)
+  -- f_aux'(W) ≤ 0 since W ≥ 1/12, and Z-W < 0, so f_aux'(W)*(Z-W) ≥ 0
+  sorry
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Sub-case A (W ≥ 1/12) is solvable via concavity tangent line argument.
+4. Sub-case B (W < 1/12) needs direct polynomial analysis.
+5. PROVE BOTH if possible.

@@ -1,0 +1,93 @@
+FINITE FREE STAM INEQUALITY — Case 4 via polynomial SOS / nlinarith
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+
+=== THE LAST CASE ===
+
+Need: poly_diff(t,x,y) ≥ 0 when x+y > 1/6, Z < 1/12, t ∈ (0,1), x,y ∈ (0,1/4).
+
+poly_diff(t,x,y) = 2Z(1-4Z)(12x+1)(12y+1) - t·2x(1-4x)(12Z+1)(12y+1) - (1-t)·2y(1-4y)(12Z+1)(12x+1)
+
+where Z = t²x + (1-t)²y + t(1-t)/6.
+
+SUBSTITUTION: Let u = t, a = x, b = y (with a+b > 1/6, Z < 1/12).
+By case4_structure: WLOG a > 1/12, b < 1/12, u < 1/2.
+
+PARAMETRIZE the Case 4 constraints:
+  a = 1/12 + α  where α > 0 and α < 1/6 (so a < 1/4)
+  b = 1/12 - β  where β > 0 and β < 1/12 (so b > 0)
+  Constraint: (1/12 + α) + (1/12 - β) > 1/6, i.e., α > β
+  u ∈ (0, 1/2)
+
+With this parametrization, poly_diff becomes a polynomial in (u, α, β) with:
+  u ∈ (0, 1/2), α ∈ (0, 1/6), β ∈ (0, 1/12), α > β
+
+TRY: nlinarith with appropriate auxiliary terms.
+
+Since poly_diff is a polynomial of degree 7 in (t, x, y) after substituting Z,
+the parametrized version is also polynomial. Try:
+
+```lean
+lemma poly_diff_nonneg_case4 (t x y : ℝ)
+    (ht : 0 < t) (ht1 : t < 1/2)
+    (hx : 1/12 < x) (hx1 : x < 1/4)
+    (hy : 0 < y) (hy1 : y < 1/12)
+    (hsum : x + y > 1/6) :
+    poly_diff t x y ≥ 0 := by
+  unfold poly_diff
+  set Z := t^2 * x + (1 - t)^2 * y + t * (1 - t) / 6
+  -- poly_diff is a polynomial in t, x, y after expanding Z
+  -- Use nlinarith with carefully chosen auxiliary square terms
+  nlinarith [sq_nonneg (x - y), sq_nonneg t, sq_nonneg (1 - 2*t),
+             sq_nonneg (1 - 4*x), sq_nonneg (1 - 4*y),
+             sq_nonneg (x - 1/12), sq_nonneg (1/12 - y),
+             mul_pos ht (sub_pos.2 ht1),
+             mul_pos (sub_pos.2 hx) (sub_pos.2 (show y < 1/12 from hy1)),
+             sq_nonneg (t * (x - y)),
+             sq_nonneg ((1-t) * x - t * y),
+             sq_nonneg (t * (1-2*t) * (x - 1/12)),
+             mul_pos ht hy,
+             mul_nonneg (sub_nonneg.2 ht1.le) hy.le]
+```
+
+If nlinarith fails directly, try POLYRITH or break into sub-cases:
+  Sub-case 4a: t ≤ 1/4
+  Sub-case 4b: 1/4 < t < 1/2
+
+Or try the P_poly_d approach: since d = y - x < 0:
+  P_poly_d = c₀ + c₁·d + c₂·d² + c₃·d³
+  = c₀ + c₂·d² + d·(c₁ + c₃·d²)
+  where c₀ ≥ 0, c₂ > 0, c₃ > 0.
+  Since d < 0: d·(c₁ + c₃·d²) = |d|·(-c₁ - c₃·d²) (if c₁ > 0) or = |d|·(|c₁| - c₃·d²)
+
+Actually the P_poly_d expansion uses d = y - x with y = x + d.
+In Case 4: d = y - x < 0 (since x > 1/12 > y... wait, x > 1/12 and y < 1/12, so d = y - x < 0).
+
+P_poly_d(t, x, d) with d < 0:
+  = c₀ + c₁·d + c₂·d² + c₃·d³
+
+Group as: c₀ + c₂·d² + d·(c₁ + c₃·d²)
+Since d < 0, need c₁ + c₃·d² ≤ 0 for the d·(...) term to be ≥ 0.
+Or: c₀ + c₂·d² ≥ |d|·|c₁ + c₃·d²|
+
+=== ALTERNATIVE: BRUTE FORCE ===
+
+Expand poly_diff fully as a polynomial in t, x, y (substituting Z).
+It's degree 7. Write it as sum of monomials, then use nlinarith with
+all products of non-negative factors from the constraints.
+
+The constraints give us:
+  t > 0, 1/2 - t > 0, x - 1/12 > 0, 1/4 - x > 0, y > 0, 1/12 - y > 0, x + y - 1/6 > 0
+
+Products of these 7 factors (up to degree 7) give many non-negative terms.
+Feed these as hints to nlinarith.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. CLOSE CASE 4. This is THE last piece.
+4. If poly_diff_nonneg_case4 is proved, combine with Cases 1-3 to get f_aux_weighted_ineq.
+5. Then: invPhi_sym_quartic_superadditive → n=4 symmetric → general n=4 → general n.

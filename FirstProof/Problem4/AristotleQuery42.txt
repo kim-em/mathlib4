@@ -1,0 +1,114 @@
+FINITE FREE STAM INEQUALITY — Close Case 4 of f_aux inequality
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== THE LAST REMAINING CASE ===
+
+From the context, we have 3 of 4 cases of the f_aux inequality PROVEN:
+  f_aux(Z) ≥ t·f_aux(x) + (1-t)·f_aux(y)
+where Z = t²x + (1-t)²y + t(1-t)/6, f_aux(k) = 2k(1-4k)/(12k+1)
+
+- Case 1 (x+y ≤ 1/6, Z ≤ 1/12): f_aux_ineq_easy_case ✓
+- Case 2 (x+y > 1/6, Z ≥ 1/12): f_aux_ineq_case2_easy ✓
+- Case 3 (x+y ≤ 1/6, Z > 1/12): poly_diff_nonneg_case3 ✓
+
+REMAINING: Case 4 (x+y > 1/6, Z < 1/12)
+
+From case4_structure: in Case 4, WLOG x > 1/12 and y < 1/12 and t < 1/2.
+
+=== STRATEGY FOR CASE 4 ===
+
+In Case 4: x+y > 1/6, Z < 1/12, and from the structure lemma:
+  WLOG x > 1/12, y < 1/12, t < 1/2 (by poly_diff_symmetry)
+
+KEY OBSERVATIONS:
+1. Z = t²x + (1-t)²y + t(1-t)/6
+2. W = tx + (1-t)y = weighted average
+3. Z - W = t(1-t)(1/6 - (x+y)) < 0 (since x+y > 1/6)
+4. So Z < W (the correction shifts LEFT because x+y > 1/6)
+
+Since Z < 1/12 and f_aux is increasing on (0, 1/12]:
+  f_aux(Z) is "small" — close to f_aux values near 0
+
+But we need f_aux(Z) ≥ t·f_aux(x) + (1-t)·f_aux(y).
+
+Since t < 1/2, the weight on f_aux(y) is larger ((1-t) > 1/2).
+And y < 1/12 means f_aux(y) is also in the increasing region.
+While x > 1/12 means f_aux(x) could be in the decreasing region.
+
+APPROACH 1: poly_diff direct computation.
+  poly_diff(t,x,y) is a polynomial in t,x,y after clearing denominators.
+  In Case 4, we have additional constraints that restrict the domain.
+  Try nlinarith with appropriate square terms.
+
+APPROACH 2: Reduce to the boundary.
+  When Z = 0: f_aux(0) = 0, so need 0 ≥ t·f_aux(x) + (1-t)·f_aux(y).
+  But f_aux(x) and f_aux(y) are positive for x,y ∈ (0, 1/4), so this fails!
+  So Z = 0 is impossible (Z > 0 always since t,x,y > 0).
+
+  Actually Z = t²x + (1-t)²y + t(1-t)/6 > t(1-t)/6 > 0 always.
+
+APPROACH 3: Use P_poly_d decomposition from Q40.
+  P_poly_d(t,x,d) = c₀(t,x) + c₁(t,x)·d + c₂(t,x)·d² + c₃(t,x)·d³
+  where d = y - x.
+  We know: c₀ ≥ 0, c₂ > 0, c₃ > 0.
+  In Case 4: x > 1/12, y < 1/12, so d = y - x < 0.
+  So d < 0, d² > 0, d³ < 0.
+  P_poly_d = c₀ + c₁·d + c₂·d² + c₃·d³
+  Since d < 0 and c₃ > 0: c₃·d³ < 0 (bad)
+  Since d < 0 and c₁·d: depends on sign of c₁.
+  Since d² > 0 and c₂ > 0: c₂·d² > 0 (good)
+
+  For WLOG t < 1/2, x > 1/12, y < 1/12:
+  |d| = x - y < 1/4 (bounded)
+  Key: show c₂·d² + c₃·d³ = d²(c₂ + c₃·d) ≥ 0 since d > -1/4 and c₂/c₃ > 1/4
+  Then P_poly_d ≥ c₀ + c₁·d ≥ 0.
+
+  This requires bounding c₁ and showing c₁·d ≥ 0 when d < 0 (i.e., c₁ ≤ 0).
+  Or: show the quadratic c₀ + c₁·d + c₂·d² ≥ 0 by discriminant.
+
+APPROACH 4: Direct. In Case 4, WLOG x > 1/12, y < 1/12, t < 1/2.
+  Set u = 1/12 - y > 0 and v = x - 1/12 > 0.
+  Express poly_diff in terms of t, u, v and show it's ≥ 0.
+
+=== LEAN APPROACH ===
+
+```lean
+lemma poly_diff_nonneg_case4 (t x y : ℝ)
+    (ht : 0 < t) (ht1 : t < 1)
+    (hx : 0 < x) (hx1 : x < 1/4)
+    (hy : 0 < y) (hy1 : y < 1/4)
+    (hsum : x + y > 1/6)
+    (hZ : t^2 * x + (1 - t)^2 * y + t * (1 - t) / 6 < 1/12) :
+    poly_diff t x y ≥ 0 := by
+  -- From case4_structure: WLOG x > 1/12, y < 1/12, t < 1/2
+  -- (use poly_diff_symmetry to handle the other case)
+  sorry
+```
+
+Then combine all 4 cases:
+```lean
+lemma f_aux_weighted_ineq (t x y : ℝ)
+    (ht : 0 < t) (ht1 : t < 1)
+    (hx : 0 < x) (hx1 : x < 1/4)
+    (hy : 0 < y) (hy1 : y < 1/4) :
+    f_aux (t^2*x + (1-t)^2*y + t*(1-t)/6) ≥ t * f_aux x + (1-t) * f_aux y := by
+  by_cases hsum : x + y ≤ 1/6
+  · by_cases hZ : t^2*x + (1-t)^2*y + t*(1-t)/6 ≤ 1/12
+    · exact f_aux_ineq_easy_case ...  -- Case 1
+    · exact f_aux_ineq_of_poly_diff_nonneg ... (poly_diff_nonneg_case3 ...)  -- Case 3
+  · by_cases hZ : t^2*x + (1-t)^2*y + t*(1-t)/6 ≥ 1/12
+    · exact f_aux_ineq_case2_easy ...  -- Case 2
+    · exact f_aux_ineq_of_poly_diff_nonneg ... (poly_diff_nonneg_case4 ...)  -- Case 4
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. TOP PRIORITY: Close Case 4 (poly_diff_nonneg_case4).
+4. ALSO: Assemble all 4 cases into f_aux_weighted_ineq.
+5. If Case 4 is too hard, at least provide partial progress.

@@ -1,0 +1,117 @@
+FINITE FREE STAM INEQUALITY — Case 4 via substitution and monotone bounds
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+
+=== CASE 4: x+y > 1/6, Z < 1/12 ===
+
+From case4_structure: WLOG x > 1/12, y < 1/12, t < 1/2.
+
+SUBSTITUTION APPROACH:
+  Set x = 1/12 + α, y = 1/12 - β with α > β > 0 (so x+y > 1/6).
+  Also α < 1/6 (so x < 1/4) and β < 1/12 (so y > 0).
+
+Then:
+  Z = t²(1/12+α) + (1-t)²(1/12-β) + t(1-t)/6
+    = 1/12 + t²α - (1-t)²β + [t² + (1-t)² - 1 + 2t(1-t)]/12 · 0
+
+  Actually, let's compute more carefully:
+  Z = t²(1/12+α) + (1-t)²(1/12-β) + t(1-t)/6
+    = t²/12 + t²α + (1-t)²/12 - (1-t)²β + t(1-t)/6
+    = [t² + (1-t)² + 2t(1-t)]/12 + t²α - (1-t)²β
+    = 1/12 + t²α - (1-t)²β
+
+  So Z < 1/12 iff t²α < (1-t)²β.
+  Since t < 1/2: (1-t) > t, so (1-t)² > t².
+  And α > β, so t²α > t²β.
+  Need: t²α < (1-t)²β, i.e., (t/(1-t))² < β/α.
+
+  Since α > β: β/α < 1, so (t/(1-t))² < 1, i.e., t < 1/2. ✓ (already known)
+
+Now the inequality becomes:
+  f_aux(1/12 + t²α - (1-t)²β) ≥ t·f_aux(1/12+α) + (1-t)·f_aux(1/12-β)
+
+Let δ = t²α - (1-t)²β (which is negative in Case 4).
+
+For small |δ|, Taylor expand around 1/12:
+  f_aux(1/12 + δ) ≈ f_aux(1/12) + δ·f_aux'(1/12) + δ²/2·f_aux''(1/12)
+
+  f_aux'(1/12) = 0 (since 1/12 is the maximum)
+  f_aux''(1/12) = -64/(12·1/12+1)³ = -64/8 = -8 (from f_aux_second_deriv)
+
+So f_aux(1/12+δ) ≈ f_aux(1/12) - 4δ²
+
+Similarly:
+  t·f_aux(1/12+α) + (1-t)·f_aux(1/12-β)
+  ≈ t·[f_aux(1/12) - 4α²] + (1-t)·[f_aux(1/12) - 4β²]
+  = f_aux(1/12) - 4(tα² + (1-t)β²)
+
+We need: -4δ² ≥ -4(tα² + (1-t)β²)
+i.e., δ² ≤ tα² + (1-t)β²
+i.e., (t²α - (1-t)²β)² ≤ tα² + (1-t)β²
+
+This is TRUE by Cauchy-Schwarz!
+  (t²α - (1-t)²β)² = (t·tα - (1-t)·(1-t)β)²
+  ≤ (t·1 + (1-t)·1)·(t·t²α² + (1-t)·(1-t)²β²)  ... No, that's not quite right.
+
+Actually: (t²α - (1-t)²β)² ≤ (t⁴ + (1-t)⁴)·(α² + β²) by Cauchy-Schwarz on (t², (1-t)²) and (α, β).
+
+Hmm, this doesn't match. Let me try differently.
+
+CLEANER APPROACH: Use concavity of f_aux directly.
+  f_aux is concave on (0, ∞).
+  So f_aux(Z) ≥ f_aux(W) + f_aux'(W)·(Z - W) where W = tx + (1-t)y.
+  Also: f_aux(W) ≥ t·f_aux(x) + (1-t)·f_aux(y) by concavity.
+
+  If Z ≥ W, done. But in Case 4, Z < W.
+  So f_aux(Z) ≥ f_aux(W) + f_aux'(W)·(Z - W)
+             ≥ [t·f_aux(x) + (1-t)·f_aux(y)] + f_aux'(W)·(Z - W)
+
+  Need: f_aux'(W)·(Z - W) ≥ 0.
+  Since Z - W = t(1-t)(1/6 - (x+y)) < 0 (in Case 4).
+  Need: f_aux'(W) ≤ 0, i.e., W ≥ 1/12.
+
+  Is W ≥ 1/12? W = tx + (1-t)y with x > 1/12 and y could be < 1/12.
+  Not necessarily W ≥ 1/12 (depends on t and relative sizes).
+
+  But if W ≥ 1/12, we're done! So split into sub-cases:
+  Case 4a: W ≥ 1/12 → done by concavity + monotonicity of f_aux'
+  Case 4b: W < 1/12 → Z < W < 1/12, both in increasing region.
+    f_aux(Z) < f_aux(W), so need a finer argument.
+
+For Case 4b (W < 1/12, Z < 1/12):
+  This means tx + (1-t)y < 1/12 but x+y > 1/6.
+  Since x > 1/12 and y < 1/12: tx + (1-t)y < 1/12 means t·(x - 1/12) < (1-t)·(1/12 - y).
+  i.e., t is very small (heavy weight on y which is < 1/12).
+
+  In this case, both Z and W are in (0, 1/12) where f_aux is increasing AND concave.
+  On (0, 1/12), f_aux is concave and increasing, so f_aux is "sub-linear" from the origin.
+
+  Specifically: for 0 < a < b < 1/12:
+    f_aux(a)/a ≥ f_aux(b)/b  (by concavity through origin since f_aux(0) = 0)
+
+=== LEAN APPROACH ===
+
+Try the sub-case split:
+```lean
+lemma poly_diff_nonneg_case4 ... := by
+  -- Sub-case 4a: W = tx + (1-t)y ≥ 1/12
+  by_cases hW : t * x + (1 - t) * y ≥ 1/12
+  · -- f_aux concave: f_aux(W) ≥ t*f_aux(x) + (1-t)*f_aux(y)
+    -- f_aux' ≤ 0 at W: f_aux(Z) ≥ f_aux(W) + f_aux'(W)*(Z-W) ≥ f_aux(W)
+    -- since Z < W and f_aux'(W) ≤ 0
+    sorry
+  · -- Sub-case 4b: W < 1/12
+    -- Both Z < W < 1/12
+    -- Use fine analysis in (0, 1/12) where f_aux is increasing and concave
+    sorry
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. CLOSE CASE 4. Use the sub-case split on W ≥ 1/12 vs W < 1/12.
+4. Case 4a should follow from concavity + f_aux_decreasing.
+5. Case 4b needs a finer argument.

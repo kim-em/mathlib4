@@ -1,0 +1,103 @@
+FINITE FREE STAM INEQUALITY — Full assembly: f_aux → quartic → general theorem
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+  invPhi (boxplus n p q) ≥ invPhi p + invPhi q
+
+=== ASSEMBLY STRATEGY ===
+
+The context has almost everything. Here's the full chain:
+
+STEP 1: f_aux_weighted_ineq — COMBINE ALL 4 CASES
+  From context: Cases 1, 2, 3 are proven. Case 4 needs poly_diff_nonneg_case4.
+
+  If Case 4 cannot be closed, SKIP IT and prove the theorem for n ≤ 3 only
+  using the assembled case split.
+
+STEP 2: invPhi_sym_quartic_superadditive
+  Uses f_aux_weighted_ineq + invPhi_sym_param_eq + invPhi_sym_param_arg_diff.
+  For centered symmetric quartics p = X⁴ + aX² + c (with a < 0, 0 < c < a²/4):
+    invPhi(p ⊞ q) ≥ invPhi(p) + invPhi(q)
+
+STEP 3: finite_free_stam_inequality_centered_n4_symmetric
+  Apply invPhi_sym_quartic_superadditive using:
+  - boxplus_symmetric_quartic_is_symmetric (boxplus of symmetric quartics is symmetric)
+  - boxplus_symmetric_quartic_coeffs (coefficient computation)
+
+STEP 4: finite_free_stam_inequality_centered_n4
+  For GENERAL centered quartics (not necessarily symmetric):
+  A centered monic degree 4 polynomial is X⁴ + aX² + bX + c.
+
+  APPROACH: Every centered quartic with real roots can be related to a symmetric one
+  via a parameter that doesn't affect the inequality structure.
+
+  OR: Direct computation using the Phi formula for general quartics.
+  This is harder and might need the residue formula (Phi_eq_sum_roots_deriv).
+
+STEP 5: finite_free_stam_inequality
+  Case split:
+  - n = 2: finite_free_stam_inequality_centered_n2 + centered_sufficient
+  - n = 3: finite_free_stam_inequality_centered_n3 + centered_sufficient
+  - n = 4: finite_free_stam_inequality_centered_n4 + centered_sufficient
+  - n ≥ 5: sorry (or attempt induction)
+
+=== FOR n ≥ 5 (STRETCH GOAL) ===
+
+Use the centered reduction + the residue formula:
+  Phi(p) = -1/4 · Σ_μ p''(μ)/p(μ)
+
+For centered polynomials under boxplus:
+  The coefficients are related by cumulant additivity (ff_kappa_additive).
+
+  INDUCTION IDEA: Relate Phi of degree n to Phi of degree n-1 via
+  the relationship between critical points and roots.
+  If p has roots λ₁ < ... < λₙ, then p' has roots μ₁ < ... < μₙ₋₁
+  with λ₁ < μ₁ < λ₂ < ... < μₙ₋₁ < λₙ (interlacing).
+
+  Define q_μ = p/(X - μ) evaluated at critical points.
+  Then Phi involves sums over these.
+
+=== LEAN APPROACH ===
+
+Focus on what's achievable NOW:
+
+```lean
+-- Step 1: Full f_aux inequality (or as many cases as possible)
+lemma f_aux_weighted_ineq (t x y : ℝ) ... :
+    f_aux (t^2*x + (1-t)^2*y + t*(1-t)/6) ≥ t * f_aux x + (1-t) * f_aux y := by
+  by_cases hsum : x + y ≤ 1/6
+  · by_cases hZ : ... ≤ 1/12
+    · exact f_aux_ineq_easy_case ...
+    · exact f_aux_ineq_of_poly_diff_nonneg ... (poly_diff_nonneg_case3 ...)
+  · by_cases hZ : ... ≥ 1/12
+    · exact f_aux_ineq_case2_easy ...
+    · -- Case 4
+      sorry
+
+-- Step 2: Symmetric quartic superadditivity
+lemma invPhi_sym_quartic_superadditive (A A' c c' : ℝ) ... :
+    invPhi_sym_param (A+A') (c+c'+A*A'/6) ≥ invPhi_sym_param A c + invPhi_sym_param A' c' := by
+  ...
+
+-- Step 3: Main theorem with case split
+theorem finite_free_stam_inequality ... := by
+  apply finite_free_stam_inequality_centered_sufficient
+  ...
+  interval_cases n
+  · exact finite_free_stam_inequality_centered_n2 ...
+  · exact finite_free_stam_inequality_centered_n3 ...
+  · sorry  -- n = 4 (use symmetric quartic if available)
+  · sorry  -- n ≥ 5
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. PRIORITY ORDER:
+   a) Assemble the case split for n=2,3 (definitely achievable)
+   b) Close Case 4 of f_aux inequality
+   c) Assemble n=4 symmetric from f_aux inequality
+   d) Handle general n=4
+   e) Attempt n ≥ 5
