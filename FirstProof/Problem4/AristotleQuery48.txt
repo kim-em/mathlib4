@@ -1,0 +1,60 @@
+FINITE FREE STAM INEQUALITY — Assembly: n=2, n=3, n=4 symmetric
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+
+=== AVAILABLE FROM CONTEXT ===
+
+The context file contains PROVEN results including:
+- f_aux_weighted_ineq: the key f_aux inequality (all 4 cases)
+- f_aux_ineq_global: unconditional version (no case hypotheses needed)
+- invPhi_sym_quartic_superadditive: for symmetric quartics
+- finite_free_stam_inequality_centered_sufficient_v2: reduces general to centered
+- finite_free_stam_inequality_centered_n2: n=2 done
+- boxplus_comp_add_C: shift commutativity for general n
+- invPhi_eq_invPhi_cubic_centered_formula: cubic invPhi formula
+- Phi_derivative_form: Phi in terms of p''/p' at critical points
+- All coefficient formulas, cumulant additivity, boxplus definitions
+
+=== TASK: ASSEMBLE THE MAIN THEOREM ===
+
+STEP 1: Prove finite_free_stam_inequality_centered_n3
+  - A centered monic cubic is X³ + aX + b
+  - boxplus of two centered cubics: X³ + (a₁+a₂)X + (b₁+b₂) (by cumulant additivity)
+  - Use invPhi_eq_invPhi_cubic_centered_formula to express each invPhi
+  - The inequality reduces to: invPhi_cubic_centered_formula(a₁+a₂, b₁+b₂) ≥ invPhi_cubic_centered_formula(a₁,b₁) + invPhi_cubic_centered_formula(a₂,b₂)
+  - This is: -(4(a₁+a₂)³ + 27(b₁+b₂)²) / (18(a₁+a₂)²) ≥ sum
+  - Proved via Cauchy-Schwarz type inequality (b²/a² is convex in (a,b))
+
+STEP 2: Prove finite_free_stam_inequality_centered_n4_symmetric
+  - A centered monic symmetric quartic is X⁴ + AX² + C
+  - boxplus of two: X⁴ + (A₁+A₂)X² + (C₁+C₂+A₁A₂/6)
+  - Use invPhi_sym_quartic_superadditive directly
+  - Need to verify the coefficient formula matches boxplus output
+  - Use boxplus_symmetric_quartic_coeffs from context
+
+STEP 3: Prove the main theorem for n = 2, 3 at minimum
+```lean
+theorem finite_free_stam_inequality (n : ℕ) (hn : n ≥ 2) ... := by
+  -- Reduce to centered case
+  apply finite_free_stam_inequality_centered_sufficient_v2 n hn
+  intro p q hp_cent hq_cent ...
+  -- Case split on n
+  interval_cases n  -- or omega + match
+  · -- n = 2
+    exact finite_free_stam_inequality_centered_n2 p q hp_cent hq_cent ...
+  · -- n = 3
+    exact finite_free_stam_inequality_centered_n3 p q hp_cent hq_cent ...
+  · -- n ≥ 4
+    sorry
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. Use interval_cases or omega for the case split.
+4. n=2 is already done in context. Focus on n=3.
+5. For n=4: at minimum prove the symmetric case.
+6. The main theorem with n=2,3 proven and n≥4 sorry is ACCEPTABLE as intermediate progress.

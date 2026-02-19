@@ -1,0 +1,92 @@
+FINITE FREE STAM INEQUALITY — Main theorem assembly (n ≤ 4 + sorry for n ≥ 5)
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+
+=== STRATEGY: ASSEMBLE EVERYTHING ===
+
+We have all the pieces. Now put them together.
+
+WHAT'S PROVEN IN CONTEXT:
+- finite_free_stam_inequality_centered_sufficient_v2: general → centered reduction
+- finite_free_stam_inequality_centered_n2: n=2 ✓
+- invPhi_cubic_centered_formula + invPhi_eq_invPhi_cubic_centered_formula: n=3 Phi formula
+- f_aux_weighted_ineq / f_aux_ineq_global: the key analytic inequality ✓
+- invPhi_sym_quartic_superadditive: symmetric quartic superadditivity ✓
+- boxplus_comp_add_C: shift commutativity ✓
+
+WHAT NEEDS TO BE PROVED HERE:
+1. finite_free_stam_inequality_centered_n3 (connect cubic formula to superadditivity)
+2. finite_free_stam_inequality_centered_n4 (at least for symmetric quartics)
+3. Main theorem with case split
+
+=== n=3 PROOF OUTLINE ===
+
+For centered cubics p = X³ + aX + b:
+- boxplus(3, p₁, p₂) = X³ + (a₁+a₂)X + (b₁+b₂) [coefficients add for centered]
+- invPhi(p) = invPhi_cubic_centered_formula(a, b) = -(4a³ + 27b²)/(18a²)
+- Need: -(4(a₁+a₂)³ + 27(b₁+b₂)²)/(18(a₁+a₂)²) ≥ -(4a₁³+27b₁²)/(18a₁²) + -(4a₂³+27b₂²)/(18a₂²)
+- The a-cubed terms cancel perfectly
+- Reduces to: a₁²a₂²(b₁+b₂)² ≤ (a₁+a₂)²(a₂²b₁² + a₁²b₂²)
+- This is: (a₁²b₂ - a₂²b₁)² ≥ 0 after expansion (plus positive correction from a₁a₂ > 0)
+
+=== n=4 SYMMETRIC PROOF OUTLINE ===
+
+For centered symmetric quartics p = X⁴ + AX² + C:
+- boxplus(4, p₁, p₂) = X⁴ + (A₁+A₂)X² + (C₁+C₂+A₁A₂/6) [from boxplus_symmetric_quartic_coeffs]
+- invPhi_sym_quartic_superadditive gives the inequality directly
+- Need to verify: if p is centered symmetric quartic, then is_centered 4 p
+- Need to verify: boxplus of two centered symmetric quartics gives the right form
+- Need: a way to extract A, C from a centered polynomial (using Polynomial.coeff)
+
+=== MAIN THEOREM ASSEMBLY ===
+
+```lean
+theorem finite_free_stam_inequality (n : ℕ) (hn : n ≥ 2)
+    (p q : ℝ[X])
+    (hp : p.Splits (RingHom.id ℝ)) (hp_nodup : p.roots.Nodup)
+    (hp_monic : p.Monic) (hp_deg : p.natDegree = n)
+    (hq : q.Splits (RingHom.id ℝ)) (hq_nodup : q.roots.Nodup)
+    (hq_monic : q.Monic) (hq_deg : q.natDegree = n)
+    (hpq : (boxplus n p q).Splits (RingHom.id ℝ))
+    (hpq_nodup : (boxplus n p q).roots.Nodup) :
+    invPhi (boxplus n p q) ≥ invPhi p + invPhi q := by
+  -- Step 1: Reduce to centered case
+  have h_cent := finite_free_stam_inequality_centered_sufficient_v2 n hn
+  apply h_cent
+  intro p' q' hp'_cent hq'_cent hp'_splits hp'_nodup hq'_splits hq'_nodup hpq'_splits hpq'_nodup
+  -- Step 2: Case split on n
+  match n, hn with
+  | 2, _ => exact finite_free_stam_inequality_centered_n2 p' q' hp'_cent hq'_cent
+              hp'_splits hp'_nodup hq'_splits hq'_nodup hpq'_splits hpq'_nodup
+  | 3, _ => exact finite_free_stam_inequality_centered_n3 p' q' hp'_cent hq'_cent
+              hp'_splits hp'_nodup hq'_splits hq'_nodup hpq'_splits hpq'_nodup
+  | n + 4, _ => sorry -- n ≥ 4: future work
+```
+
+If finite_free_stam_inequality_centered_sufficient_v2 returns a goal involving hn : n ≥ 2,
+then the case split should work with `interval_cases n` or `omega` to handle n=2,3.
+
+For n=4 if possible, add a third case.
+
+=== ALTERNATIVE: USE omega ===
+
+```lean
+  -- If interval_cases doesn't work for unbounded n:
+  by_cases h2 : n = 2
+  · subst h2; exact finite_free_stam_inequality_centered_n2 ...
+  by_cases h3 : n = 3
+  · subst h3; exact finite_free_stam_inequality_centered_n3 ...
+  · -- n ≥ 4
+    sorry
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. PRIORITY: Get n=2 + n=3 assembled into the main theorem.
+4. If n=4 (or n=4 symmetric) can be added, great.
+5. A theorem with sorry only for n ≥ 4 (or n ≥ 5) is SIGNIFICANT PROGRESS.
+6. Make sure the centered_sufficient lemma connects properly to the main theorem signature.

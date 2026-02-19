@@ -1,0 +1,98 @@
+FINITE FREE STAM INEQUALITY — General n via Phi derivative form
+
+=== GOAL ===
+
+Prove finite_free_stam_inequality for ALL n ≥ 2.
+
+=== KEY INSIGHT: Phi DERIVATIVE FORM ===
+
+From context (Phi_derivative_form):
+  Phi(p) = Σ_{μ ∈ roots(p')} (p''(μ) / (2·p'(μ)))²
+
+where μ ranges over the n-1 critical points of the degree-n monic polynomial p.
+
+Wait — p'(μ) = 0 at critical points! So this formula must mean:
+  Phi(p) = Σ_{μ ∈ roots(p')} (p''(μ))² / (2·p'(μ))²
+
+which diverges. The correct formula is the RESIDUE form:
+  Phi(p) = -1/4 · Σ_{μ ∈ roots(p')} p''(μ)/p(μ)
+
+This is Phi_eq_sum_roots_deriv from the context.
+
+=== APPROACH: SUPERADDITIVITY VIA CUMULANT ADDITIVITY ===
+
+For centered polynomials under boxplus:
+  boxplus_n(p, q) has cumulants κ_k(p⊞q) = κ_k(p) + κ_k(q) for k ≥ 2.
+
+Define F(κ₂, κ₃, ..., κₙ) = invPhi(p) where p is the centered polynomial with cumulants κ₂, ..., κₙ.
+
+The Stam inequality says: F(κ₂+κ₂', ..., κₙ+κₙ') ≥ F(κ₂, ..., κₙ) + F(κ₂', ..., κₙ')
+i.e., F is SUPERADDITIVE in the cumulant vector.
+
+Known cases:
+  n=2: F(κ₂) = κ₂ (linear, hence superadditive trivially)
+  n=3: F(κ₂, κ₃) = -κ₂ - 27κ₃²/(8κ₂²)  [from cubic formula]
+         This is superadditive because -κ₂ is additive and κ₃²/κ₂² is subadditive.
+  n=4 sym: F(κ₂, 0, κ₄) = invPhi_sym_param(...)  [proven]
+
+CONJECTURE: F is superadditive for ALL n because:
+  1. F has a "leading" term that is additive (proportional to κ₂)
+  2. Higher-order terms involve ratios κₖ/κ₂^(k/2) which are subadditive by Cauchy-Schwarz
+
+=== PROVING FOR GENERAL n ===
+
+Strategy A: Express invPhi in cumulants, prove superadditivity term by term.
+  - Need: invPhi as explicit function of cumulants for general n
+  - Hard: the formula gets complicated for large n
+
+Strategy B: Use the matrix inequality approach.
+  - The Hessian of invPhi with respect to cumulants is negative semidefinite
+  - This would imply concavity, which is STRONGER than superadditivity
+  - But this may not be true (we need superadditivity, not concavity)
+
+Strategy C: Induction on n.
+  - Base: n=2 (proven), n=3 (proven)
+  - Step: Given superadditivity for degree n, prove for degree n+1
+  - Relate Phi_{n+1} to Phi_n via the connection between roots and critical points
+  - Use interlacing: if p has roots λ₁ < ... < λₙ₊₁, then p' has roots μ₁ < ... < μₙ
+    with λ₁ < μ₁ < λ₂ < ... < μₙ < λₙ₊₁
+
+Strategy D: Direct from the residue formula.
+  Phi(p) = -1/4 · Σ_{μ} p''(μ)/p(μ)
+
+  Under boxplus: p⊞q has roots related to p and q's roots.
+  The critical points of p⊞q interlace with the roots of p⊞q.
+
+  Need: Phi(p⊞q) ≤ 1/(1/Phi(p) + 1/Phi(q))
+  i.e., 1/Phi(p⊞q) ≥ 1/Phi(p) + 1/Phi(q)
+
+=== LEAN APPROACH ===
+
+Focus on what's concretely provable:
+
+```lean
+-- If we can't prove general n, at least prove n=5 or show the pattern
+
+-- Express Phi for degree 5 centered symmetric polynomial X⁵ + aX³ + cX
+-- Compute the critical points (roots of 5X⁴ + 3aX² + c)
+-- Express Phi in terms of a, c
+-- Prove superadditivity for the symmetric n=5 case
+
+-- OR: Prove the main theorem for n ≤ 4 and leave n ≥ 5 as sorry
+theorem finite_free_stam_inequality (n : ℕ) (hn : n ≥ 2) ... := by
+  apply finite_free_stam_inequality_centered_sufficient_v2 n hn
+  intro p q ...
+  match n, hn with
+  | 2, _ => exact finite_free_stam_inequality_centered_n2 ...
+  | 3, _ => exact finite_free_stam_inequality_centered_n3 ...
+  | 4, _ => exact finite_free_stam_inequality_centered_n4 ...
+  | n + 5, _ => sorry  -- general n ≥ 5
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. This is the HARDEST query — general n.
+4. ANY progress is valuable: n=5 formula, induction framework, or partial general n result.
+5. If general n seems impossible, at least close n ≤ 4.

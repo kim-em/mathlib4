@@ -1,0 +1,76 @@
+FINITE FREE STAM INEQUALITY — General n=4 (non-symmetric quartics)
+
+=== GOAL ===
+
+Prove finite_free_stam_inequality for n = 4 (all centered monic quartics, not just symmetric).
+
+=== APPROACH ===
+
+A centered monic quartic is p = X⁴ + aX² + bX + c.
+
+KEY INSIGHT: The Phi functional for a quartic depends on all three parameters (a, b, c).
+For SYMMETRIC quartics (b=0), we have invPhi_sym_quartic_superadditive from context.
+
+For GENERAL quartics, we need to handle the cubic coefficient b.
+
+APPROACH 1: Symmetrization argument
+  If p = X⁴ + aX² + bX + c has roots λ₁ < λ₂ < λ₃ < λ₄, then
+  p_sym(X) = p(X)·p(-X) / leading term has roots ±λ₁, ..., ±λ₄ (doubled degree).
+
+  But this changes the degree, so it doesn't directly help.
+
+APPROACH 2: Direct computation via Phi_derivative_form
+  Phi(p) = Σ_{μ} (p''(μ)/(2p'(μ)))² where μ ranges over roots of p'.
+
+  For p = X⁴ + aX² + bX + c:
+    p' = 4X³ + 2aX + b (three critical points μ₁ < μ₂ < μ₃)
+    p'' = 12X² + 2a
+
+  Phi = Σᵢ (12μᵢ² + 2a)² / (4·(4μᵢ³ + 2aμᵢ + b))²
+      = Σᵢ (6μᵢ² + a)² / (4μᵢ³ + 2aμᵢ + b)²
+
+  invPhi = 1/Phi
+
+APPROACH 3: Perturbation from symmetric case
+  Write b as a perturbation parameter. For small b, invPhi is close to the symmetric case.
+  The first-order correction in b vanishes by symmetry (b → -b sends roots to their negatives).
+  So invPhi(a, b, c) = invPhi(a, 0, c_eff) + O(b⁴) for some effective c_eff.
+
+  This suggests: invPhi of a general quartic ≥ invPhi of the "symmetrized" quartic.
+  If true, the inequality for general quartics follows from the symmetric case.
+
+APPROACH 4: Direct formula using Newton's identities
+  Express Phi in terms of power sums p_k = Σ λᵢᵏ.
+  For centered quartics: p₁ = 0, p₂ = -2a, p₃ = -3b, p₄ = 2a² - 4c.
+
+  Phi = Σᵢ (Σⱼ≠ᵢ 1/(λᵢ-λⱼ))²
+
+  By Newton's identities, this can be expressed in terms of a, b, c.
+
+=== LEAN APPROACH ===
+
+Try to prove a lemma that reduces general n=4 to the symmetric case:
+
+```lean
+lemma invPhi_quartic_ge_symmetric (a b c : ℝ)
+    (h_splits : (X^4 + C a * X^2 + C b * X + C c).Splits (RingHom.id ℝ))
+    (h_nodup : ...) :
+    invPhi (X^4 + C a * X^2 + C b * X + C c) ≥
+    invPhi (X^4 + C a * X^2 + C c_eff) := by
+  sorry
+
+-- Then:
+lemma finite_free_stam_inequality_centered_n4 (p q : ℝ[X])
+    (hp : is_centered 4 p) (hq : is_centered 4 q) ... := by
+  sorry
+```
+
+OR: Compute invPhi directly for the general quartic and prove superadditivity.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. The symmetric quartic case IS ALREADY PROVEN in context. Build on it.
+4. If direct general quartic is too hard, prove partial results (e.g., invPhi formula for general quartic).
+5. Any progress toward general n=4 is valuable.

@@ -1,0 +1,114 @@
+FINITE FREE STAM INEQUALITY — n=3 centered cubic assembly
+
+=== GOAL ===
+
+Prove the single sorry: finite_free_stam_inequality for all n ≥ 2.
+Focus specifically on closing the n=3 case via the centered cubic reduction.
+
+=== WHAT WE HAVE ===
+
+From context:
+- finite_free_stam_inequality_centered_sufficient_v2: reduces main theorem to centered case
+- finite_free_stam_inequality_centered_n2: n=2 DONE
+- invPhi_cubic_centered_formula (a b : ℝ) : ℝ := -(4 * a^3 + 27 * b^2) / (18 * a^2)
+- invPhi_eq_invPhi_cubic_centered_formula: invPhi of centered cubic = invPhi_cubic_centered_formula
+
+=== TASK: PROVE n=3 ===
+
+A centered monic cubic is p = X³ + aX + b (note: X² coefficient is 0 since centered).
+
+For p₁ = X³ + a₁X + b₁ and p₂ = X³ + a₂X + b₂:
+  boxplus(3, p₁, p₂) should have coefficients related to cumulant additivity.
+
+  For cubics: κ₂ = -a/3 (from relation between coefficients and cumulants)
+  κ₃ = 2b/3 (or similar)
+
+  Cumulant additivity: κ₂(p⊞q) = κ₂(p) + κ₂(q), κ₃(p⊞q) = κ₃(p) + κ₃(q)
+
+  This means: a(p⊞q) = a₁ + a₂, b(p⊞q) = b₁ + b₂
+  (the X² and X coefficients of centered cubics add under boxplus)
+
+Actually, compute boxplus(3, p₁, p₂) directly:
+  boxplus_coeff(3, p₁, p₂, k) = Σⱼ (C(3,j)·C(3,k-j)/C(3,k)) · coeff(p₁,j) · coeff(p₂,k-j)
+
+  For k=1 (X coefficient): involves coeff(p₁,1)=a₁ and coeff(p₂,1)=a₂
+  The formula gives: (C(3,1)·C(3,0)/C(3,1))·a₁·1 + (C(3,0)·C(3,1)/C(3,1))·1·a₂ = a₁ + a₂
+
+  For k=0 (constant): similarly b₁ + b₂
+
+So boxplus(3, p₁, p₂) = X³ + (a₁+a₂)X + (b₁+b₂). ✓
+
+Now the inequality becomes:
+  invPhi_cubic_centered_formula(a₁+a₂, b₁+b₂) ≥
+  invPhi_cubic_centered_formula(a₁, b₁) + invPhi_cubic_centered_formula(a₂, b₂)
+
+i.e., -(4(a₁+a₂)³ + 27(b₁+b₂)²) / (18(a₁+a₂)²) ≥
+     -(4a₁³ + 27b₁²)/(18a₁²) + -(4a₂³ + 27b₂²)/(18a₂²)
+
+Simplify: -(4A³ + 27B²)/(18A²) where A = a₁+a₂, B = b₁+b₂
+
+Cross-multiplying by -18a₁²a₂²A² (positive since a < 0 for real-rooted cubics):
+  a₁²a₂²(4A³ + 27B²) ≤ A²[a₂²(4a₁³ + 27b₁²) + a₁²(4a₂³ + 27b₂²)]
+
+LHS: 4a₁²a₂²A³ + 27a₁²a₂²B²
+RHS: 4A²a₁³a₂² + 4A²a₁²a₂³ + 27A²(a₂²b₁² + a₁²b₂²)
+
+The b-terms: Need 27a₁²a₂²(b₁+b₂)² ≤ 27A²(a₂²b₁² + a₁²b₂²)
+  i.e., a₁²a₂²(b₁+b₂)² ≤ (a₁+a₂)²(a₂²b₁² + a₁²b₂²)
+
+This follows from Cauchy-Schwarz: (a₁·a₂b₁/a₁ + a₂·a₁b₂/a₂)² ≤ ...
+Actually: (a₂b₁ + a₁b₂)² ≤ (a₂² + a₁²)(b₁² + b₂²) by C-S, but we need
+a₁²a₂²(b₁+b₂)² ≤ (a₁+a₂)²(a₂²b₁² + a₁²b₂²)
+
+By Cauchy-Schwarz on vectors (a₂b₁, a₁b₂) and (1, 1):
+  (a₂b₁ + a₁b₂)² ≤ 2(a₂²b₁² + a₁²b₂²)
+  And (a₁+a₂)² ≥ ... hmm, not quite.
+
+Better: Expand both sides.
+  LHS: a₁²a₂²(b₁² + 2b₁b₂ + b₂²)
+  RHS: (a₁² + 2a₁a₂ + a₂²)(a₂²b₁² + a₁²b₂²)
+     = a₁²a₂²b₁² + a₁⁴b₂² + 2a₁a₂(a₂²b₁² + a₁²b₂²) + a₂⁴b₁² + a₁²a₂²b₂²
+
+  RHS - LHS = a₁⁴b₂² + a₂⁴b₁² + 2a₁a₂(a₂²b₁² + a₁²b₂²) - 2a₁²a₂²b₁b₂
+            = a₁⁴b₂² + a₂⁴b₁² + 2a₁a₂³b₁² + 2a₁³a₂b₂² - 2a₁²a₂²b₁b₂
+            = (a₁²b₂ - a₂²b₁)² + 2a₁a₂(a₁b₂ - a₂b₁)² ??? Check.
+
+Since a₁, a₂ < 0 for real-rooted cubics, 2a₁a₂ > 0. So RHS - LHS ≥ 0 if we can show it's a sum of squares times positive things.
+
+This is doable with nlinarith!
+
+The a-terms: 4a₁²a₂²(a₁+a₂)³ vs 4(a₁+a₂)²(a₁³a₂² + a₁²a₂³)
+  = 4(a₁+a₂)²·a₁²a₂²·(a₁+a₂) = 4a₁²a₂²(a₁+a₂)³
+
+So the a-terms are EQUAL! Only the b-terms matter.
+
+=== LEAN APPROACH ===
+
+```lean
+lemma n3_b_ineq (a₁ a₂ b₁ b₂ : ℝ) (ha₁ : a₁ < 0) (ha₂ : a₂ < 0) :
+    a₁^2 * a₂^2 * (b₁ + b₂)^2 ≤ (a₁ + a₂)^2 * (a₂^2 * b₁^2 + a₁^2 * b₂^2) := by
+  nlinarith [sq_nonneg (a₁^2 * b₂ - a₂^2 * b₁), sq_nonneg (a₁ * b₂ - a₂ * b₁),
+             sq_nonneg a₁, sq_nonneg a₂, sq_nonneg b₁, sq_nonneg b₂,
+             mul_pos (neg_pos.2 ha₁) (neg_pos.2 ha₂)]
+
+lemma finite_free_stam_inequality_centered_n3 (p q : ℝ[X])
+    (hp : is_centered 3 p) (hq : is_centered 3 q)
+    (hp_splits : p.Splits (RingHom.id ℝ)) (hp_nodup : p.roots.Nodup)
+    (hq_splits : q.Splits (RingHom.id ℝ)) (hq_nodup : q.roots.Nodup)
+    (hpq_splits : (boxplus 3 p q).Splits (RingHom.id ℝ))
+    (hpq_nodup : (boxplus 3 p q).roots.Nodup) :
+    invPhi (boxplus 3 p q) ≥ invPhi p + invPhi q := by
+  -- Extract coefficients: p = X³ + a₁X + b₁, q = X³ + a₂X + b₂
+  -- Compute boxplus(3, p, q) = X³ + (a₁+a₂)X + (b₁+b₂)
+  -- Apply invPhi_eq_invPhi_cubic_centered_formula to each
+  -- Reduce to n3_b_ineq
+  sorry
+```
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context.
+2. Single sorry: finite_free_stam_inequality.
+3. CLOSE n=3 centered case. The math works out — it's algebraic.
+4. The key insight: a-terms cancel, b-terms follow from nlinarith.
+5. After n=3 is proven, assemble the main theorem for n=2,3 via interval_cases.
