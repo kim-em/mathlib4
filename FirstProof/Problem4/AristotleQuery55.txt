@@ -1,0 +1,112 @@
+FINITE FREE STAM INEQUALITY — Score identity and contraction via heat flow
+
+=== GOAL ===
+
+Fill the single sorry: finite_free_stam_inequality for ALL n ≥ 2.
+
+=== STRATEGY: SCORE IDENTITY + CONTRACTION ===
+
+Reference: Garza-Vargas, Srivastava, Stier (arXiv:2602.15822), Lemma 3.2 + §4.1.
+
+The proof has three key ingredients:
+
+1. SCORE IDENTITY (Lemma 3.2):
+   (a+b) · J(γ) = D_Ω(a·J(α) ⊕ b·J(β))
+   where γ = roots(p⊞q), α = roots(p), β = roots(q),
+   J(α)ᵢ = Σ_{j≠i} 1/(αᵢ-αⱼ) is the score vector,
+   and D_Ω is the Jacobian of the root map.
+
+2. CONTRACTION (from variance identity + positivity):
+   ||D_Ω(w)||² ≤ ||w||² for w orthogonal to (1,...,1,1,...,1)
+
+3. COMBINING: From 1 + 2:
+   (a+b)²||J(γ)||² ≤ a²||J(α)||² + b²||J(β)||²
+   i.e., (a+b)²·Phi(p⊞q) ≤ a²·Phi(p) + b²·Phi(q)
+
+=== SCORE IDENTITY PROOF SKETCH ===
+
+The score identity is proved via heat flow dynamics:
+
+For t ≥ 0, define heat flow: p_t(x) = e^{t/2 · ∂²ₓ} p(x).
+This preserves real-rootedness.
+
+Key fact: if α(t) are ordered roots of p_t, then α'(0) = J(α)
+(root velocity equals score vector; this is Lemma 2.5).
+
+Heat flow commutes with boxplus:
+  (p ⊞_n q)_t = p_{at} ⊞_n q_{bt}  when t scales as (a+b)t
+
+More precisely: (p ⊞_n q)_{(a+b)t} = p_{at} ⊞_n q_{bt}
+
+Therefore: γ((a+b)t) = Ω(α(at), β(bt))
+
+Differentiating at t=0:
+  (a+b)·γ'(0) = D_Ω(a·α'(0), b·β'(0))
+  (a+b)·J(γ) = D_Ω(a·J(α), b·J(β))
+
+=== LEAN APPROACH ===
+
+Since formalizing the full heat flow machinery is challenging, consider:
+
+OPTION A: State the score identity as an axiom (with sorry) and use it.
+
+OPTION B: Define the heat flow e^{t/2·∂²} as an operator on polynomials:
+  heat_flow t p = Σ_{k≥0} (t/2)^k / k! · (∂²ₓ)^k p
+  For polynomials, this is a finite sum.
+
+```lean
+/-- Heat flow operator on polynomials. -/
+noncomputable def heat_flow (t : ℝ) (p : ℝ[X]) : ℝ[X] :=
+  ∑ k ∈ Finset.range (p.natDegree + 1),
+    C ((t / 2) ^ k / k.factorial) * Polynomial.derivative^[2*k] p
+
+/-- Heat flow commutes with boxplus (key commutativity). -/
+lemma heat_flow_boxplus_comm (n : ℕ) (a b t : ℝ) (p q : ℝ[X])
+    (hp_deg : p.natDegree = n) (hq_deg : q.natDegree = n) :
+    heat_flow ((a + b) * t) (boxplus n p q) =
+    boxplus n (heat_flow (a * t) p) (heat_flow (b * t) q) := by
+  sorry
+
+/-- The Phi contraction inequality.
+    This combines the score identity, variance identity, and positivity. -/
+lemma phi_contraction (n : ℕ) (hn : n ≥ 2) (a b : ℝ)
+    (p q : ℝ[X])
+    (hp : p.Splits (RingHom.id ℝ)) (hp_nodup : p.roots.Nodup)
+    (hp_monic : p.Monic) (hp_deg : p.natDegree = n)
+    (hq : q.Splits (RingHom.id ℝ)) (hq_nodup : q.roots.Nodup)
+    (hq_monic : q.Monic) (hq_deg : q.natDegree = n)
+    (hpq : (boxplus n p q).Splits (RingHom.id ℝ))
+    (hpq_nodup : (boxplus n p q).roots.Nodup) :
+    (a + b) ^ 2 * Phi (boxplus n p q) ≤ a ^ 2 * Phi p + b ^ 2 * Phi q := by
+  sorry
+```
+
+=== PRIORITY ===
+
+The MOST VALUABLE output is phi_contraction, even with sorry sub-lemmas.
+
+If the full heat flow approach is too complex, at least:
+1. State heat_flow_boxplus_comm (with sorry) — this is the KEY commutativity
+2. State score_identity (with sorry) — the chain rule consequence
+3. State contraction_on_orthogonal (with sorry) — from variance identity + positivity
+4. Derive phi_contraction from 2 + 3
+5. Derive finite_free_stam_inequality from phi_contraction (Cauchy-Schwarz)
+
+=== HEAT FLOW COMMUTATIVITY ===
+
+The commutativity e^{(a+b)t/2·∂²}(p⊞q) = (e^{at/2·∂²}p) ⊞ (e^{bt/2·∂²}q)
+follows from:
+  boxplus n p q = p̂(∂)q  where p̂ is the "hat transform"
+  e^{t∂²/2} commutes with ∂
+  Therefore e^{t∂²/2}(p̂(∂)q) = p̂(∂)(e^{t∂²/2}q)
+
+In terms of the hat polynomial: e^{t∂²/2}p = p ⊞ H_n(√t·x)
+where H_n is the Hermite polynomial.
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context
+2. Single sorry target: finite_free_stam_inequality
+3. Focus on the CHAIN of lemmas: heat flow comm → score identity → contraction → Stam
+4. Each lemma can have sorry; the VALUE is the correct decomposition
+5. Use existing boxplus infrastructure wherever possible

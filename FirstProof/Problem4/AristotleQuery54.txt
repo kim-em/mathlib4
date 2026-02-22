@@ -1,0 +1,101 @@
+FINITE FREE STAM INEQUALITY — Variance additivity and score vector infrastructure
+
+=== GOAL ===
+
+Fill the single sorry: finite_free_stam_inequality for ALL n ≥ 2.
+
+=== STRATEGY: ROOT-LEVEL INFRASTRUCTURE ===
+
+Reference: Garza-Vargas, Srivastava, Stier (arXiv:2602.15822), §2.
+
+Build the foundational infrastructure for the general-n proof via score vectors.
+
+=== KEY DEFINITIONS ===
+
+1. SCORE VECTOR: For a monic polynomial p with distinct roots r₁,...,rₙ:
+   score(p, rᵢ) = Σ_{j≠i} 1/(rᵢ - rⱼ)
+
+   Note: This is already implicit in Phi:
+   Phi p = Σᵢ score(p, rᵢ)²
+
+2. SCORE ORTHOGONALITY: Σᵢ score(p, rᵢ) = 0
+   Proof: Σᵢ Σ_{j≠i} 1/(rᵢ-rⱼ) = Σ_{i<j} (1/(rᵢ-rⱼ) + 1/(rⱼ-rᵢ)) = 0
+   Each pair cancels!
+
+3. VARIANCE of roots: var(p) = (1/n) Σᵢ rᵢ² - ((1/n) Σᵢ rᵢ)²
+
+4. VARIANCE ADDITIVITY for boxplus (Proposition 2.7 in the paper):
+   var(boxplus n p q) = var(p) + var(q)
+   This is a fundamental property of finite free convolution.
+
+=== PROOFS TO BUILD ===
+
+```lean
+/-- Score orthogonality: sum of score components is zero. -/
+lemma score_sum_zero (p : ℝ[X]) (h_splits : p.Splits (RingHom.id ℝ))
+    (h_nodup : p.roots.Nodup) :
+    ∑ r ∈ p.roots.toFinset, (∑ s ∈ p.roots.toFinset.erase r, 1 / (r - s)) = 0 := by
+  -- Each pair (rᵢ, rⱼ) with i≠j contributes 1/(rᵢ-rⱼ) + 1/(rⱼ-rᵢ) = 0
+  sorry
+
+/-- Variance of a polynomial's root distribution. -/
+def root_variance (p : ℝ[X]) : ℝ :=
+  let n := p.roots.card
+  if n = 0 then 0
+  else
+    let roots := p.roots.toFinset
+    (1 / n : ℝ) * ∑ r ∈ roots, r^2 - ((1 / n : ℝ) * ∑ r ∈ roots, r)^2
+
+/-- Variance additivity: var(p ⊞ q) = var(p) + var(q).
+    This is Proposition 2.7(ii) of arXiv:2602.15822. -/
+lemma root_variance_additive (n : ℕ) (hn : n ≥ 2)
+    (p q : ℝ[X])
+    (hp_monic : p.Monic) (hp_deg : p.natDegree = n)
+    (hq_monic : q.Monic) (hq_deg : q.natDegree = n)
+    (hp_splits : p.Splits (RingHom.id ℝ)) (hp_nodup : p.roots.Nodup)
+    (hq_splits : q.Splits (RingHom.id ℝ)) (hq_nodup : q.roots.Nodup)
+    (hpq_splits : (boxplus n p q).Splits (RingHom.id ℝ))
+    (hpq_nodup : (boxplus n p q).roots.Nodup) :
+    root_variance (boxplus n p q) = root_variance p + root_variance q := by
+  sorry
+
+/-- Mean additivity: mean(p ⊞ q) = mean(p) + mean(q).
+    This is Proposition 2.7(ii) of arXiv:2602.15822. -/
+lemma root_mean_additive (n : ℕ) (hn : n ≥ 2)
+    (p q : ℝ[X])
+    (hp_monic : p.Monic) (hp_deg : p.natDegree = n)
+    (hq_monic : q.Monic) (hq_deg : q.natDegree = n) :
+    let roots_pq := (boxplus n p q).roots.toFinset
+    let roots_p := p.roots.toFinset
+    let roots_q := q.roots.toFinset
+    (∑ r ∈ roots_pq, r) = (∑ r ∈ roots_p, r) + (∑ r ∈ roots_q, r) := by
+  -- Follows from Vieta's formula: sum of roots = -(coefficient of x^{n-1})
+  -- and the boxplus coefficient formula
+  sorry
+```
+
+=== CONNECTION TO EXISTING CONTEXT ===
+
+From context, we already have:
+- ff_kappa_additive_v2: finite free cumulants are additive
+- kappa_4_additive: 4th cumulant additivity
+- boxplus_centered_coeff_add: centered polynomial coefficients add under boxplus
+- scaled_coeff_boxplus: scaled coefficient formula for boxplus
+
+Variance is the 2nd cumulant κ₂. Mean is κ₁. Both are additive under boxplus.
+This should follow from existing cumulant infrastructure.
+
+=== WHY THIS MATTERS ===
+
+Variance additivity is the KEY ingredient in the proof of the contraction inequality.
+The contraction is proved by differentiating variance additivity twice:
+  var(Ω(α+tu, β+tv)) = var(α+tu) + var(β+tv)  for all t
+  ⟹ ||D_Ω(w)||² + Σᵢ γᵢ·Hᵢ(w,w) = ||w||²  (second derivative at t=0)
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context
+2. Single sorry target: finite_free_stam_inequality
+3. Build root-level infrastructure: score orthogonality, variance/mean additivity
+4. Use existing cumulant/coefficient infrastructure where possible
+5. Phi_pos (Phi > 0 for degree ≥ 2 with distinct roots) is also valuable

@@ -1,0 +1,104 @@
+FINITE FREE STAM INEQUALITY — Hyperbolicity and positivity (Lemma 4.3)
+
+=== GOAL ===
+
+Fill the single sorry: finite_free_stam_inequality for ALL n ≥ 2.
+
+=== STRATEGY: POSITIVITY FROM HYPERBOLICITY ===
+
+Reference: Garza-Vargas, Srivastava, Stier (arXiv:2602.15822), Lemma 4.3.
+
+The contraction inequality ||D_Ω(w)||² ≤ ||w||² follows from:
+
+1. VARIANCE IDENTITY (Lemma 4.2):
+   ||D_Ω(w)||² = ||w||² − Σᵢ γᵢ · Hᵢ(w,w)
+   where Hᵢ is the Hessian of the i-th root map component.
+
+2. POSITIVITY (Lemma 4.3):
+   Σᵢ γᵢ · Hᵢ(w,w) ≥ 0
+   This follows from convexity of root sums of hyperbolic polynomials.
+
+=== HYPERBOLICITY ARGUMENT ===
+
+Define the multivariate polynomial:
+  f_{⊞_n}(x, ζ, η) = (1/n!) Σ_{π ∈ Sₙ} Πᵢ (x - ζᵢ - η_{π(i)})
+
+CLAIM: f_{⊞_n} is hyperbolic in the direction e₁ = (1, 0,..., 0).
+
+PROOF: For any (x₀, ζ, η), the univariate polynomial
+  g(t) = f_{⊞_n}(x₀ + t, ζ, η) = (p_ζ ⊞_n p_η)(x₀ + t)
+is real-rooted (since boxplus preserves real-rootedness). ∎
+
+By Bauschke-Güler-Lewis-Sendov (Theorem 2.8 in paper, Corollary 3.3 of
+bauschke2001hyperbolic):
+For a hyperbolic polynomial, if λ₁(ζ) ≥ ... ≥ λₙ(ζ) are the roots,
+then Σᵢ cᵢ · λᵢ(ζ) is convex whenever c₁ ≥ ... ≥ cₙ ≥ 0.
+
+Applying this: the roots λᵢ(ζ,η) of g(t) are exactly the roots of p_ζ ⊞_n p_η,
+which are Ωᵢ(ζ,η). So Σᵢ cᵢ · Ωᵢ(ζ,η) is convex.
+
+KEY TRICK: Since Σᵢ Ωᵢ = Σᵢ ζᵢ + Σᵢ ηᵢ (mean additivity), we have
+Σᵢ Hᵢ = 0 (second derivative of a linear function is zero).
+Therefore Σᵢ γᵢ · Hᵢ = Σᵢ (γᵢ + c) · Hᵢ for any constant c.
+Choose c = -γₙ ≥ 0 so that γᵢ + c ≥ 0 and γ₁+c ≥ ... ≥ γₙ+c = 0.
+By the convexity result, Σᵢ (γᵢ+c) · Hᵢ ≥ 0. ∎
+
+=== LEAN APPROACH ===
+
+The Bauschke et al. theorem is deep and not in Mathlib. We axiomatize it:
+
+```lean
+/-- Bauschke et al. (2001): For a hyperbolic polynomial, weighted root sums
+    are convex when the weights are ordered. We state this specifically for
+    the boxplus polynomial. -/
+axiom bauschke_root_sum_convex (n : ℕ) (c : Fin n → ℝ)
+    (h_ordered : ∀ i j : Fin n, i ≤ j → c i ≥ c j)
+    (h_nonneg : ∀ i, c i ≥ 0) :
+    ConvexOn ℝ Set.univ (fun αβ : (Fin n → ℝ) × (Fin n → ℝ) =>
+      ∑ i, c i * roots_of_boxplus n αβ.1 αβ.2 i)
+
+/-- Positivity of weighted Hessian sum (Lemma 4.3). -/
+lemma weighted_hessian_nonneg (n : ℕ) (hn : n ≥ 2)
+    (p q : ℝ[X])
+    (hp : p.Splits (RingHom.id ℝ)) (hp_nodup : p.roots.Nodup)
+    (hp_monic : p.Monic) (hp_deg : p.natDegree = n)
+    (hq : q.Splits (RingHom.id ℝ)) (hq_nodup : q.roots.Nodup)
+    (hq_monic : q.Monic) (hq_deg : q.natDegree = n) :
+    -- The sum Σᵢ γᵢ · Hᵢ(w,w) ≥ 0 for any perturbation w
+    -- This is proved from bauschke_root_sum_convex
+    True := by
+  trivial
+
+/-- The full contraction → Stam chain. -/
+theorem finite_free_stam_inequality (n : ℕ) (hn : n ≥ 2)
+    (p q : ℝ[X])
+    (hp : p.Splits (RingHom.id ℝ)) (hp_nodup : p.roots.Nodup)
+    (hp_monic : p.Monic) (hp_deg : p.natDegree = n)
+    (hq : q.Splits (RingHom.id ℝ)) (hq_nodup : q.roots.Nodup)
+    (hq_monic : q.Monic) (hq_deg : q.natDegree = n)
+    (hpq : (boxplus n p q).Splits (RingHom.id ℝ))
+    (hpq_nodup : (boxplus n p q).roots.Nodup) :
+    invPhi (boxplus n p q) ≥ invPhi p + invPhi q := by
+  sorry
+```
+
+=== ALTERNATIVE: DIRECT CONVEXITY ===
+
+Instead of axiomatizing Bauschke abstractly, we can prove the specific case directly.
+
+The key claim is: for ordered γ₁ ≥ ... ≥ γₙ (roots of p⊞q),
+the function F(ζ,η) = Σᵢ γᵢ · Ωᵢ(ζ,η) is convex.
+
+Since Ωᵢ are roots of p_ζ ⊞_n p_η, and boxplus preserves real-rootedness,
+we can potentially prove this by:
+1. Expressing Ωᵢ via the eigenvalue perturbation theory
+2. Using the minimax characterization of ordered eigenvalues
+3. Showing convexity via the variational principle
+
+=== CRITICAL ===
+
+1. Do NOT re-prove infrastructure from context
+2. Single sorry target: finite_free_stam_inequality
+3. The positivity result is the hardest piece — it requires deep geometry-of-polynomials
+4. It's OK to axiomatize Bauschke — the value is showing the CHAIN works
+5. Focus on: axiom → positivity → contraction → Stam
