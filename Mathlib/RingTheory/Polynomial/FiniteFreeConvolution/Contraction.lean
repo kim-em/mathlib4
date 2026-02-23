@@ -117,23 +117,74 @@ lemma exists_roots_fin {n : ℕ} {p : ℝ[X]} (hp : p.Splits (RingHom.id ℝ))
     -- Goal: ∏ i : Fin l.length, X - C l[↑i] = ∏ i : Fin n, X - C (l.get (Fin.cast ...  i))
     exact Fintype.prod_equiv (finCongr hl_len) _ _ (fun i => by simp [finCongr, Fin.cast])
 
+/-! ### Score vectors -/
+
+/-- Score vector component: `s(α)ᵢ = Σⱼ≠ᵢ 1/(αᵢ - αⱼ)`. -/
+def score {n : ℕ} (roots : Fin n → ℝ) (i : Fin n) : ℝ :=
+  ∑ j ∈ Finset.univ.erase i, 1 / (roots i - roots j)
+
+/-- `phiVec` equals the sum of squared score components. -/
+lemma phiVec_eq_sum_sq_score {n : ℕ} (roots : Fin n → ℝ) :
+    phiVec roots = ∑ i, score roots i ^ 2 := rfl
+
+/-- Score vectors sum to zero by antisymmetry: each pair (i,j) contributes
+    `1/(αᵢ-αⱼ) + 1/(αⱼ-αᵢ) = 0`. -/
+lemma score_sum_zero {n : ℕ} (roots : Fin n → ℝ)
+    (h_inj : Function.Injective roots) :
+    ∑ i, score roots i = 0 := by
+  unfold score
+  have h_swap : ∑ i : Fin n, ∑ j ∈ Finset.univ.erase i, 1 / (roots i - roots j) =
+      ∑ j : Fin n, ∑ i ∈ Finset.univ.erase j, 1 / (roots i - roots j) :=
+    Finset.sum_comm' (t' := Finset.univ) (s' := fun j => Finset.univ.erase j)
+      (fun i j => by simp [ne_comm])
+  have h_neg : ∑ j : Fin n, ∑ i ∈ Finset.univ.erase j, 1 / (roots i - roots j) =
+      -(∑ j : Fin n, ∑ i ∈ Finset.univ.erase j, 1 / (roots j - roots i)) := by
+    rw [← Finset.sum_neg_distrib]; congr 1; ext j
+    rw [← Finset.sum_neg_distrib]; congr 1; ext i
+    rw [← div_neg, neg_sub]
+  linarith
+
 /-! ### The contraction inequalities -/
 
-/-- The root-vector level Φ contraction inequality.
-    This is the core of Theorem 4.1 of arXiv:2602.15822.
-    The proof uses the score identity (Lemma 3.2) and the norm contraction
-    of the Jacobian of the root map on zero-sum vectors (Proposition 5.3),
-    which in turn relies on the Jacobian-Hessian identity (Lemma 5.1)
+/-- Combined score identity and Jacobian norm bound.
+    Lemma 3.2 + Proposition 5.3 of arXiv:2602.15822.
+    The Jacobian of the root map, restricted to zero-sum vectors, contracts norms.
+    The proof relies on the Jacobian-Hessian identity (Lemma 5.1)
     and positivity from Bauschke convexity of hyperbolic polynomials (Lemma 5.2). -/
-lemma phiVec_contraction {n : ℕ} (_hn : n ≥ 2) (a b : ℝ)
+lemma score_identity_and_bound {n : ℕ} (a b : ℝ)
     (alpha beta gamma : Fin n → ℝ)
-    (_h_alpha_inj : Function.Injective alpha)
-    (_h_beta_inj : Function.Injective beta)
-    (_h_gamma_inj : Function.Injective gamma)
     (_h_conv : ∏ i : Fin n, (X - C (gamma i)) =
       boxplus n (∏ i : Fin n, (X - C (alpha i))) (∏ i : Fin n, (X - C (beta i)))) :
-    (a + b) ^ 2 * phiVec gamma ≤ a ^ 2 * phiVec alpha + b ^ 2 * phiVec beta := by
+    ∃ J : (Fin n → ℝ) → (Fin n → ℝ) → (Fin n → ℝ),
+      (∀ i, (a + b) * score gamma i =
+        J (fun j => a * score alpha j) (fun j => b * score beta j) i) ∧
+      (∀ u v : Fin n → ℝ, ∑ i, u i = 0 → ∑ i, v i = 0 →
+        ∑ i, J u v i ^ 2 ≤ ∑ i, u i ^ 2 + ∑ i, v i ^ 2) := by
   sorry
+
+/-- The root-vector level Φ contraction inequality.
+    Derived from `score_identity_and_bound` and `score_sum_zero`. -/
+lemma phiVec_contraction {n : ℕ} (_hn : n ≥ 2) (a b : ℝ)
+    (alpha beta gamma : Fin n → ℝ)
+    (h_alpha_inj : Function.Injective alpha)
+    (h_beta_inj : Function.Injective beta)
+    (_h_gamma_inj : Function.Injective gamma)
+    (h_conv : ∏ i : Fin n, (X - C (gamma i)) =
+      boxplus n (∏ i : Fin n, (X - C (alpha i))) (∏ i : Fin n, (X - C (beta i)))) :
+    (a + b) ^ 2 * phiVec gamma ≤ a ^ 2 * phiVec alpha + b ^ 2 * phiVec beta := by
+  obtain ⟨J, h_eq, h_bound⟩ := score_identity_and_bound a b alpha beta gamma h_conv
+  have hα_zero : ∑ i, a * score alpha i = 0 := by
+    rw [← Finset.mul_sum]; simp [score_sum_zero alpha h_alpha_inj]
+  have hβ_zero : ∑ i, b * score beta i = 0 := by
+    rw [← Finset.mul_sum]; simp [score_sum_zero beta h_beta_inj]
+  simp_rw [phiVec_eq_sum_sq_score]
+  rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
+  simp_rw [← mul_pow]
+  have h_replace : ∀ i, ((a + b) * score gamma i) ^ 2 =
+      (J (fun j => a * score alpha j) (fun j => b * score beta j) i) ^ 2 := by
+    intro i; rw [h_eq]
+  simp_rw [h_replace]
+  linarith [h_bound _ _ hα_zero hβ_zero]
 
 /-- The Φ contraction inequality: for any real a, b and monic degree-n polynomials p, q
     with real roots, `(a + b)² · Φ(p ⊞_n q) ≤ a² · Φ(p) + b² · Φ(q)`.
