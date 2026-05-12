@@ -91,7 +91,10 @@ instance : Inhabited (C ⥤ C) :=
 
 variable {C}
 
-@[simp, grind =]
+-- With `[reducible_proj] Functor.obj`, `(𝟭 C).obj X` reduces definitionally to `X`,
+-- so `@[grind =]` would produce a degenerate `#0` ematch pattern. The lemma is kept
+-- as a `@[simp]` for the rare case where users have not enabled `[reducible_proj]`.
+@[simp]
 theorem id_obj (X : C) : (𝟭 C).obj X = X := rfl
 
 @[simp, grind =, to_dual self]
