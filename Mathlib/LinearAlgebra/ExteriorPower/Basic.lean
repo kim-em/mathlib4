@@ -46,7 +46,7 @@ variable (R : Type u) [CommRing R] (n : ℕ) {M N N' : Type*}
 
 namespace exteriorPower
 
-open Function
+open Function Set Set.powersetCard
 
 /-! The canonical alternating map from `Fin n → M` to `⋀[R]^n M`. -/
 
@@ -63,15 +63,15 @@ def ιMulti : M [⋀^Fin n]→ₗ[R] (⋀[R]^n M) :=
 family of `n`fold exterior products of elements of `v`, seen as members of the
 `n`th exterior power. -/
 noncomputable def ιMulti_family {I : Type*} [LinearOrder I] (v : I → M)
-    (s : {s : Finset I // Finset.card s = n}) : ⋀[R]^n M :=
-  ιMulti R n fun i ↦ v <| Finset.orderIsoOfFin s.val s.property i
+    (s : powersetCard I n) : ⋀[R]^n M :=
+  ιMulti R n (v ∘ (ofFinEmbEquiv.symm s))
 
 lemma ιMulti_family_eq_coe_comp {I : Type*} [LinearOrder I] (v : I → M) :
     ExteriorAlgebra.ιMulti_family R n v = (↑) ∘ ιMulti_family R n v :=
   rfl
 
 @[simp] lemma ιMulti_family_apply_coe {I : Type*} [LinearOrder I] (v : I → M)
-    (s : {s : Finset I // Finset.card s = n}) :
+    (s : powersetCard I n) :
     ιMulti_family R n v s = ExteriorAlgebra.ιMulti_family R n v s := rfl
 
 variable (M)
@@ -114,7 +114,7 @@ lemma ιMulti_span :
   exact ExteriorAlgebra.ιMulti_span_fixedDegree R n
 
 open Set Submodule in
-/-- A version of `ιMulti_span_fixedDegree_of_span` that works in the exterior power. -/
+/-- A version of `ιMulti_span_fixedDegree_of_span_eq_top` that works in the exterior power. -/
 lemma ιMulti_span_of_span {s : Set M} (hs : span R s = ⊤) :
     span R (ιMulti R n '' {a | range a ⊆ s}) = ⊤ := by
   apply LinearMap.map_injective (ker_subtype (⋀[R]^n M))
@@ -144,6 +144,7 @@ noncomputable def relations (ι : Type*) [DecidableEq ι] (M : Type*)
         r • Finsupp.single (update m i x) 1
     | .alt m _ _ _ _ => Finsupp.single m 1
 
+set_option backward.isDefEq.respectTransparency false in
 variable {R} in
 /-- The solutions in a module `N` to the linear equations
 given by `exteriorPower.relations R ι M` identify to alternating maps to `N`. -/
@@ -159,14 +160,14 @@ noncomputable def relationsSolutionEquiv {ι : Type*} [DecidableEq ι] {M : Type
         rw [map_sub, map_add, Finsupp.linearCombination_single, one_smul,
           Finsupp.linearCombination_single, one_smul,
           Finsupp.linearCombination_single, one_smul, sub_eq_zero] at this
-        convert this.symm -- `convert` is necessary due to the implementation of `MultilinearMap`
+        convert! this.symm -- `convert` is necessary due to the implementation of `MultilinearMap`
       map_update_smul' := fun m i r x ↦ by
         have := s.linearCombination_var_relation (.smul m i r x)
         dsimp at this ⊢
         rw [Finsupp.smul_single, smul_eq_mul, mul_one, map_sub,
           Finsupp.linearCombination_single, one_smul,
           Finsupp.linearCombination_single, sub_eq_zero] at this
-        convert this
+        convert! this
       map_eq_zero_of_eq' := fun v i j hm hij ↦
         by simpa using s.linearCombination_var_relation (.alt v i j hm hij) }
   invFun f :=
@@ -281,7 +282,7 @@ lemma map_comp_ιMulti_family {I : Type*} [LinearOrder I] (v : I → M) (f : M �
 
 @[simp]
 lemma map_apply_ιMulti_family {I : Type*} [LinearOrder I] (v : I → M) (f : M →ₗ[R] N)
-    (s : {s : Finset I // s.card = n}) :
+    (s : powersetCard I n) :
     (map n f) (ιMulti_family R n v s) = ιMulti_family R n (f ∘ v) s := by
   simp only [ιMulti_family, map, alternatingMapLinearEquiv_apply_ιMulti]
   rfl
