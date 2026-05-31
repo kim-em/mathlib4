@@ -176,6 +176,13 @@ structure LinarithConfig : Type where
   /-- Specify an oracle for identifying candidate contradictions.
   `.simplexAlgorithmSparse`, `.simplexAlgorithmSparse`, and `.fourierMotzkin` are available. -/
   oracle : CertificateOracle := .simplexAlgorithmSparse
+  /-- If true, try a specialised structured discharger (Rat-only prototype) before
+  falling back to `discharger`. Prototype only; defaults to `false`. -/
+  useFastDischarger : Bool := false
+  /-- Structured discharger called when `useFastDischarger` is true. Receives the
+  Farkas multipliers and canonical linear forms linarith has already computed.
+  Returns `none` to defer to `discharger`. -/
+  fastDischarger : FastDischargerFn := FastDischarger.ratFastDischargerRingFallback
 
 /--
 `cfg.updateReducibility reduce_default` will change the transparency setting of `cfg` to
@@ -267,7 +274,7 @@ def findLinarithContradiction (cfg : LinarithConfig) (g : MVarId)
     ls.firstM (fun ⟨α, L⟩ =>
       withTraceNode `linarith (fun _ => return m!" running on type {α}") do
         let (pf, idxs) ←
-          proveFalseByLinarith cfg.transparency cfg.oracle cfg.discharger g (L.map Prod.fst)
+          proveFalseByLinarith cfg.transparency cfg.oracle cfg.discharger (if cfg.useFastDischarger then cfg.fastDischarger else noFastDischarger) g (L.map Prod.fst)
         let idxs := idxs.map fun i => L[i]!.2
         return (pf, idxs))
   catch e => throwError "linarith failed to find a contradiction\n{g}\n{e.toMessageData}"
@@ -302,7 +309,7 @@ def runLinarith (cfg : LinarithConfig) (prefType : Option Expr) (g : MVarId)
           pure <|
             withTraceNode `linarith (fun _ => return m!" running on preferred type {t}") do
               let (pf, idxs) ←
-                proveFalseByLinarith cfg.transparency cfg.oracle cfg.discharger g (vs.map Prod.fst)
+                proveFalseByLinarith cfg.transparency cfg.oracle cfg.discharger (if cfg.useFastDischarger then cfg.fastDischarger else noFastDischarger) g (vs.map Prod.fst)
               let idxs := idxs.map fun j => vs[j]!.2
               return (pf, idxs)
         else

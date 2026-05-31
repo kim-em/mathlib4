@@ -244,10 +244,10 @@ the same length, such that `c[i]` represents the linear form of the type of `pfs
 It also returns the largest variable index that appears in comparisons in `c`.
 -/
 def linearFormsAndMaxVar (red : TransparencyMode) (pfs : List Expr) :
-    MetaM (List Comp × ℕ) := do
+    MetaM (List Comp × ℕ × ExprMap × Map Monom ℕ) := do
   let pftps ← (pfs.mapM inferType)
-  let (l, _, map) ← toCompFold red [] pftps TreeMap.empty
+  let (l, exprMap, map) ← toCompFold red [] pftps TreeMap.empty
   trace[linarith.detail] "monomial map: {map.toList.map fun ⟨k,v⟩ => (k.toList, v)}"
-  return (l, map.size - 1)
+  return (l, map.size - 1, exprMap, map)
 
 end Mathlib.Tactic.Linarith

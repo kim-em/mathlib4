@@ -8,6 +8,7 @@ module
 public meta import Mathlib.Util.Qq
 public meta import Mathlib.Tactic.Linarith.Datatypes
 public import Mathlib.Tactic.Linarith.Parsing
+public import Mathlib.Tactic.Linarith.FastDischarger
 
 /-!
 # Deriving a proof of false
@@ -195,7 +196,8 @@ tactic, which is typically `ring`. We prove (2) by folding over the set of hypot
 `transparency : TransparencyMode` controls the transparency level with which atoms are identified.
 -/
 def proveFalseByLinarith (transparency : TransparencyMode) (oracle : CertificateOracle)
-    (discharger : TacticM Unit) : MVarId → List Expr → MetaM (Expr × List Nat)
+    (discharger : TacticM Unit) (fastDischarger : FastDischargerFn) :
+    MVarId → List Expr → MetaM (Expr × List Nat)
   | _, [] => throwError "no args to linarith"
   | g, l@(h::_) => do
       Lean.Core.checkSystem decl_name%.toString
@@ -209,8 +211,14 @@ def proveFalseByLinarith (transparency : TransparencyMode) (oracle : Certificate
             (l'.reverse.map fun ⟨e, i⟩ => (e, some i))
       let inputs := inputsTagged.map Prod.fst
       trace[linarith.detail] "inputs:{indentD <| toMessageData (← inputs.mapM inferType)}"
-      let (comps, max_var) ← detailTrace "linearFormsAndMaxVar" <|
+      let (comps, max_var, exprMap, monomMap) ← detailTrace "linearFormsAndMaxVar" <|
         linearFormsAndMaxVar transparency inputs
+      -- Build the atom array indexed by linarith's atom number (1-based).
+      let atomsArr : Array Expr := Id.run do
+        let mut arr : Array Expr := Array.replicate (exprMap.length + 1) (mkConst ``Unit)
+        for (e, k) in exprMap do
+          if h : k < arr.size then arr := arr.set k e h
+        pure arr
       trace[linarith.detail] "comps:{indentD <| toMessageData comps}"
       -- perform the elimination and fail if no contradiction is found.
       let certificate : Std.HashMap Nat Nat ←
@@ -223,27 +231,43 @@ def proveFalseByLinarith (transparency : TransparencyMode) (oracle : Certificate
               throwError "linarith failed to find a contradiction"
           trace[linarith] "found a contradiction: {certificate.toList}"
           return certificate
-      let (sm, zip, idxs) ←
+      let (sm, zip, idxs, rowsForFast) ←
         withTraceNode `linarith (fun _ => return m!" Building final expression") do
           let enum_inputs := inputsTagged.zipIdx
           -- construct a list pairing nonzero coeffs with the proof of their corresponding
           -- comparison and track the original index
           let used := enum_inputs.filterMap fun ⟨⟨e, orig?⟩, n⟩ =>
-            (certificate[n]?).map fun c => (e, c, orig?)
-          let zip := used.map fun ⟨e, c, _⟩ => (e, c)
-          let mls ← used.mapM fun ⟨e, c, _⟩ => do mulExpr c (← leftOfIneqProof e)
+            (certificate[n]?).map fun c => (e, c, n, orig?)
+          let zip := used.map fun ⟨e, c, _, _⟩ => (e, c)
+          let mls ← used.mapM fun ⟨e, c, _, _⟩ => do mulExpr c (← leftOfIneqProof e)
           -- `sm` is the sum of input terms, scaled to cancel out all variables.
           let sm ← addExprs mls
-          -- let sm ← instantiateMVars sm
           trace[linarith] "{indentD sm}\nshould be both 0 and negative"
           let idxs :=
-            (used.foldl (fun acc (_, _, orig?) =>
+            (used.foldl (fun acc (_, _, _, orig?) =>
                 match orig? with
                 | some i => i :: acc
                 | none => acc) []).eraseDups
-          return (sm, zip, idxs)
-      -- we prove that `sm = 0`, typically with `ring`.
-      let sm_eq_zero ← detailTrace "proveEqZeroUsing" <| proveEqZeroUsing discharger sm
+          -- For the fast discharger: pair each used hypothesis's t (= LHS of its t R 0
+          -- form) with the corresponding Linexp coefficients and Nat multiplier.
+          let compsArr := comps.toArray
+          let rowsForFast : Array (Expr × Linexp × Nat) ← used.toArray.mapM
+            fun (e, c, idxInInputs, _) => do
+              let lhs ← leftOfIneqProof e
+              let coeffs := (compsArr[idxInInputs]?).map Comp.coeffs |>.getD []
+              return (lhs, coeffs, c)
+          return (sm, zip, idxs, rowsForFast)
+      -- Try the fast discharger first; on failure, fall back to `ring1`-style.
+      let smType ← inferType sm
+      let sm_eq_zero ← detailTrace "proveEqZeroUsing" do
+        try
+          match ← fastDischarger
+              { goalType := smType, sm, atoms := atomsArr,
+                monomMap, rows := rowsForFast } with
+          | some pf => return pf
+          | none => proveEqZeroUsing discharger sm
+        catch _ =>
+          proveEqZeroUsing discharger sm
       -- we also prove that `sm < 0`
       let sm_lt_zero ← detailTrace "mkLTZeroProof" <| mkLTZeroProof zip
       let pf ← detailTrace "Linarith.lt_irrefl" do
