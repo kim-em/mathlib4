@@ -216,7 +216,7 @@ def proveFalseByLinarith (transparency : TransparencyMode) (oracle : Certificate
       -- Build the atom array indexed by linarith's atom number (1-based).
       let atomsArr : Array Expr := Id.run do
         let mut arr : Array Expr := Array.replicate (exprMap.length + 1) (mkConst ``Unit)
-        for (e, k) in exprMap do
+        for (e, k) in exprMap.list do
           if h : k < arr.size then arr := arr.set k e h
         pure arr
       trace[linarith.detail] "comps:{indentD <| toMessageData comps}"

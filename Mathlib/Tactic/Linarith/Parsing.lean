@@ -131,11 +131,37 @@ open Lean Elab Tactic Meta
 
 /--
 `ExprMap` is used to record atomic expressions which have been seen while processing inequality
-expressions.
+expressions. We keep both a `List` (preserving insertion order for the defeq-scan fallback and
+for downstream atom-array reconstruction) and a `Std.HashMap` keyed on syntactic equality. For
+typical linarith inputs — `FVar`s, simple applications — most lookups hit a previously-seen
+atom syntactically, so the HashMap shortcuts the O(n) `isDefEq` scan to O(1).
 -/
--- The natural number is just the index in the list,
--- and we could reimplement to just use `List Expr` if desired.
-abbrev ExprMap := List (Expr × ℕ)
+structure ExprMap where
+  /-- Most-recent-first list of seen atoms paired with their indices. The list is the source
+  of truth for both `findDefeq` (defeq scan) and downstream atom-array reconstruction. -/
+  list : List (Expr × ℕ) := []
+  /-- Acceleration structure for `findDefeq`: a syntactic-equality map that is kept consistent
+  with `list` by going through `push`. The hash lookup can never produce a wrong answer because
+  `Std.HashMap.insert` overwrites on syntactic match and `list` is most-recent-first, so a cache
+  hit always matches what the defeq scan would return for the same input. -/
+  cache : Std.HashMap Expr ℕ := {}
+  deriving Inhabited
+
+namespace ExprMap
+
+@[inline] def length (m : ExprMap) : ℕ := m.list.length
+
+/-- Add `(e, n)` to both `list` (at the head) and `cache`. -/
+@[inline] def push (m : ExprMap) (e : Expr) (n : ℕ) : ExprMap :=
+  { list := (e, n) :: m.list, cache := m.cache.insert e n }
+
+/-- Find the index of a key defeq to `e` (up to transparency `red`). Tries the syntactic
+hash cache first; on miss falls back to the defeq list scan. Both paths agree by construction. -/
+@[inline] def findDefeq (m : ExprMap) (red : TransparencyMode) (e : Expr) : MetaM ℕ := do
+  if let some n := m.cache[e]? then return n
+  m.list.findDefeq red e
+
+end ExprMap
 
 /--
 `linearFormOfAtom red map e` is the atomic case for `linear_form_of_expr`.
@@ -148,7 +174,7 @@ def linearFormOfAtom (red : TransparencyMode) (m : ExprMap) (e : Expr) : MetaM (
     return (m, var k)
   catch _ =>
     let n := m.length + 1
-    return ((e, n)::m, var n)
+    return (m.push e n, var n)
 
 /--
 `linearFormOfExpr red map e` computes the linear form of `e`.
@@ -246,7 +272,7 @@ It also returns the largest variable index that appears in comparisons in `c`.
 def linearFormsAndMaxVar (red : TransparencyMode) (pfs : List Expr) :
     MetaM (List Comp × ℕ × ExprMap × Map Monom ℕ) := do
   let pftps ← (pfs.mapM inferType)
-  let (l, exprMap, map) ← toCompFold red [] pftps TreeMap.empty
+  let (l, exprMap, map) ← toCompFold red {} pftps TreeMap.empty
   trace[linarith.detail] "monomial map: {map.toList.map fun ⟨k,v⟩ => (k.toList, v)}"
   return (l, map.size - 1, exprMap, map)
 
