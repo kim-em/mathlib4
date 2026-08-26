@@ -31,7 +31,8 @@ def getLeanLibs : IO (Array String) := do
   let package := ws.root
   let libs := (package.leanLibs.map (·.name)).map (·.toString)
   return if package.baseName == `mathlib then
-    libs.erase "Cache" |>.erase "MathlibTest"
+    -- `NoExpose` lives under `scripts/`, so it has no top-level directory to scan.
+    libs.erase "Cache" |>.erase "MathlibTest" |>.erase "NoExpose"
       |>.push ("Mathlib".push pathSeparator ++ "Tactic")
   else
     libs
