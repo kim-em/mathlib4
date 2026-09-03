@@ -59,27 +59,27 @@ section
 
 variable {C : Type*} [Category* C] {V : Type u₁} [Quiver.{v₁} V]
 
-set_option backward.isDefEq.respectTransparency.types false in
 /-- A natural transformation between `F G : Paths V ⥤ C` is defined by its components and
 its unary naturality squares. -/
 @[simps]
-def liftNatTrans {F G : Paths V ⥤ C} (α_app : (v : V) → (F.obj v ⟶ G.obj v))
+def liftNatTrans {F G : Paths V ⥤ C} (α_app : (v : V) → (F.obj ⟨v⟩ ⟶ G.obj ⟨v⟩))
     (α_nat : {X Y : V} → (f : X ⟶ Y) →
       F.map (Quiver.Hom.toPath f) ≫ α_app Y = α_app X ≫ G.map (Quiver.Hom.toPath f)) : F ⟶ G where
-  app := α_app
+  app X := α_app X.as
   naturality := by
     apply MorphismProperty.of_eq_top
-      (P := MorphismProperty.naturalityProperty (F₁ := F) α_app)
+      (P := MorphismProperty.naturalityProperty (F₁ := F) (fun X ↦ α_app X.as))
     exact morphismProperty_eq_top_of_isMultiplicative _ _ α_nat
 
 /-- A natural isomorphism between `F G : Paths V ⥤ C` is defined by its components and
 its unary naturality squares. -/
 @[simps!]
-def liftNatIso {C} [Category* C] {F G : Paths V ⥤ C} (α_app : (v : V) → (F.obj v ≅ G.obj v))
+def liftNatIso {C} [Category* C] {F G : Paths V ⥤ C} (α_app : (v : V) → (F.obj ⟨v⟩ ≅ G.obj ⟨v⟩))
     (α_nat : {X Y : V} → (f : X ⟶ Y) →
       F.map (Quiver.Hom.toPath f) ≫ (α_app Y).hom = (α_app X).hom ≫ G.map (Quiver.Hom.toPath f)) :
     F ≅ G :=
-  NatIso.ofComponents α_app (fun f ↦ (liftNatTrans (fun v ↦ (α_app v).hom) α_nat).naturality f)
+  NatIso.ofComponents (fun X ↦ α_app X.as)
+    (fun f ↦ (liftNatTrans (fun v ↦ (α_app v).hom) α_nat).naturality f)
 
 end
 
@@ -94,7 +94,7 @@ open Quiver
 /-- For any morphism property `W` on `C`, `W.paths` is the morphism property on `Paths C`
 containing all paths of morphisms in `W`. -/
 def paths (W : MorphismProperty C) : MorphismProperty (Paths C) :=
-  fun _ _ p ↦ p.rec True fun _ f P ↦ P ∧ W f
+  fun _ _ p ↦ Path.rec (motive := fun _ _ ↦ Prop) True (fun _ f P ↦ P ∧ W f) p
 
 @[simp]
 lemma nil_mem_paths {W : MorphismProperty C} {X : C} : W.paths (.nil (a := X)) := trivial
@@ -147,7 +147,8 @@ instance (W : MorphismProperty C) : W.paths.IsMultiplicative where
 /-- If `W` and `W'` are morphism properties on `C` such that `W ≤ W'`, then `W.paths ≤ W'.paths`. -/
 @[gcongr]
 lemma monotone_paths : Monotone (paths (C := C)) :=
-  fun _ _ h _ _ p ↦ p.rec (fun _ ↦ trivial) (fun _ _ hp' hp ↦ ⟨hp' hp.1, h _ hp.2⟩)
+  fun W W' h _ _ p ↦ Path.rec (motive := fun _ p ↦ W.paths p → W'.paths p)
+    (fun _ ↦ trivial) (fun _ _ hp' hp ↦ ⟨hp' hp.1, h _ hp.2⟩) p
 
 lemma composePath_mem_of_id_mem (W : MorphismProperty C) [W.IsStableUnderComposition] {X Y : C}
     {p : Path X Y} (hp : W.paths p) (h : W (𝟙 X)) : W (composePath p) := by
@@ -170,13 +171,11 @@ lemma paths_le_inverseImage (W : MorphismProperty C) [W.IsMultiplicative] :
     W.paths ≤ W.inverseImage (pathComposition C) :=
   fun _ _ _ ↦ W.composePath_mem
 
-set_option backward.isDefEq.respectTransparency.types false in
 instance (W : MorphismProperty C) : IsMultiplicative (W.paths.strictMap (pathComposition C)) where
-  id_mem X := W.paths.map_mem_strictMap (pathComposition C) _ (W.paths.id_mem X)
+  id_mem X := W.paths.map_mem_strictMap (pathComposition C) _ (W.paths.id_mem ⟨X⟩)
   comp_mem := fun _ _ ⟨hp⟩ ⟨hq⟩ ↦ by
     simpa using! W.paths.map_mem_strictMap (pathComposition C) _ <| W.paths.comp_mem _ _ hp hq
 
-set_option backward.isDefEq.respectTransparency.types false in
 lemma multiplicativeClosure_eq_strictMap_paths (W : MorphismProperty C) :
     W.multiplicativeClosure = W.paths.strictMap (pathComposition C) := by
   refine le_antisymm ?_ fun _ _ _ ⟨h⟩ ↦ ?_

@@ -46,12 +46,12 @@ variable {V : Type u} [Quiver.{v} V]
 
 /-- Shorthand for the "forward" arrow corresponding to `f` in `paths <| symmetrify V` -/
 abbrev Hom.toPosPath {X Y : V} (f : X ⟶ Y) :
-    (CategoryTheory.Paths.categoryPaths <| Quiver.Symmetrify V).Hom X Y :=
+    (⟨X⟩ : Paths (Quiver.Symmetrify V)) ⟶ ⟨Y⟩ :=
   f.toPos.toPath
 
 /-- Shorthand for the "forward" arrow corresponding to `f` in `paths <| symmetrify V` -/
 abbrev Hom.toNegPath {X Y : V} (f : X ⟶ Y) :
-    (CategoryTheory.Paths.categoryPaths <| Quiver.Symmetrify V).Hom Y X :=
+    (⟨Y⟩ : Paths (Quiver.Symmetrify V)) ⟶ ⟨X⟩ :=
   f.toNeg.toPath
 
 /-- The "reduction" relation -/
@@ -68,9 +68,8 @@ namespace FreeGroupoid
 open Quiver
 
 instance {V} [Quiver V] [Nonempty V] : Nonempty (Quiver.FreeGroupoid V) := by
-  inhabit V; exact ⟨⟨@default V _⟩⟩
+  inhabit V; exact ⟨⟨⟨@default V _⟩⟩⟩
 
-set_option backward.isDefEq.respectTransparency false in
 theorem congr_reverse {X Y : Paths <| Quiver.Symmetrify V} (p q : X ⟶ Y) :
     HomRel.CompClosure redStep p q → HomRel.CompClosure redStep p.reverse q.reverse := by
   rintro ⟨_, _, XW, _, _, WY, _, _, f⟩
@@ -82,12 +81,13 @@ theorem congr_reverse {X Y : Paths <| Quiver.Symmetrify V} (p q : X ⟶ Y) :
     Quiver.Path.reverse_comp, Quiver.reverse_reverse, Quiver.Path.reverse_toPath,
     Quiver.Path.comp_assoc] using this
 
-set_option backward.isDefEq.respectTransparency.types false in
 open Relation in
 theorem congr_comp_reverse {X Y : Paths <| Quiver.Symmetrify V} (p : X ⟶ Y) :
     Quot.mk (@HomRel.CompClosure _ _ redStep _ _) (p ≫ p.reverse) =
       Quot.mk (@HomRel.CompClosure _ _ redStep _ _) (𝟙 X) := by
   apply Quot.eqvGen_sound
+  obtain ⟨Y⟩ := Y
+  change Quiver.Path X.as Y at p
   induction p with
   | nil => apply EqvGen.refl
   | cons q f ih =>
@@ -132,7 +132,7 @@ instance instGroupoid : Groupoid (Quiver.FreeGroupoid V) where
 
 /-- The inclusion of the quiver on `V` to the underlying quiver on `FreeGroupoid V` -/
 def of (V) [Quiver V] : V ⥤q Quiver.FreeGroupoid V where
-  obj X := ⟨X⟩
+  obj X := ⟨⟨X⟩⟩
   map f := Quot.mk _ f.toPosPath
 
 theorem of_eq :

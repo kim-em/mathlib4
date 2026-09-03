@@ -87,11 +87,11 @@ abbrev mk (X : C) : FreeGroupoid C := (of C).obj X
 /-- Construct a morphism in the free groupoid on `C` by providing a morphism in `C`. -/
 abbrev homMk {X Y : C} (f : X ⟶ Y) : mk X ⟶ mk Y := (of C).map f
 
-lemma eq_mk (X : FreeGroupoid C) : X = .mk (X.as.as) := rfl
+lemma eq_mk (X : FreeGroupoid C) : X = .mk (X.as.as.as) := rfl
 
 lemma of_obj_bijective : Function.Bijective (of C).obj where
   left _ _ h := by cases h; rfl
-  right X := ⟨X.as.as, rfl⟩
+  right X := ⟨X.as.as.as, rfl⟩
 
 /-- Induction principle for proving a property for all the morphisms
 in the free groupoid of a category `C`: it suffices to prove the property

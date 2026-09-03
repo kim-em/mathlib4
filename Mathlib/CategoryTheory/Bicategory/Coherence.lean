@@ -72,23 +72,27 @@ bicategory.
 def inclusionPath (a b : B) : Discrete (Path.{v} a b) ⥤ Hom a b :=
   Discrete.functor inclusionPathAux
 
-set_option backward.isDefEq.respectTransparency.types false in
+/-- The 1-morphism `⟨⟨a⟩⟩ ⟶ ⟨⟨b⟩⟩` in the locally discrete bicategory on the path category
+given by a path `p : Path a b`. -/
+abbrev pathToLoc {a b : B} (p : Path.{v} a b) : (⟨⟨a⟩⟩ : LocallyDiscrete (Paths B)) ⟶ ⟨⟨b⟩⟩ :=
+  ⟨p⟩
+
 /-- The inclusion from the locally discrete bicategory on the path category into the free bicategory
 as a prelax functor. This will be promoted to a pseudofunctor after proving the coherence theorem.
 See `inclusion`.
 -/
 def preinclusion (B : Type u) [Quiver.{v} B] :
     PrelaxFunctor (LocallyDiscrete (Paths B)) (FreeBicategory B) where
-  obj a := a.as
-  map {a b} f := (@inclusionPath B _ a.as b.as).obj f
+  obj a := a.as.as
+  map {a b} f := (@inclusionPath B _ a.as.as b.as.as).obj f
   map₂ η := (inclusionPath _ _).map η
 
 @[simp]
-theorem preinclusion_obj (a : B) : (preinclusion B).obj ⟨a⟩ = a :=
+theorem preinclusion_obj (a : B) : (preinclusion B).obj ⟨⟨a⟩⟩ = a :=
   rfl
 
 @[simp]
-theorem preinclusion_map₂ {a b : B} (f g : Discrete (Path.{v} a b)) (η : f ⟶ g) :
+theorem preinclusion_map₂ {a b : LocallyDiscrete (Paths B)} (f g : a ⟶ b) (η : f ⟶ g) :
     (preinclusion B).map₂ η = eqToHom (congr_arg _ (Discrete.ext (Discrete.eq_of_hom η))) :=
   rfl
 
@@ -129,7 +133,7 @@ fully-normalized 1-morphism.
 @[simp]
 def normalizeIso {a : B} :
     ∀ {b c : B} (p : Path a b) (f : Hom b c),
-      (preinclusion B).map ⟨p⟩ ≫ f ≅ (preinclusion B).map ⟨normalizeAux p f⟩
+      (preinclusion B).map (pathToLoc p) ≫ f ≅ (preinclusion B).map (pathToLoc (normalizeAux p f))
   | _, _, _, Hom.of _ => Iso.refl _
   | _, _, _, Hom.id b => ρ_ _
   | _, _, p, Hom.comp f g =>
@@ -176,7 +180,7 @@ set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 /-- The 2-isomorphism `normalizeIso p f` is natural in `f`. -/
 theorem normalize_naturality {a b c : B} (p : Path a b) {f g : Hom b c} (η : f ⟶ g) :
-    (preinclusion B).map ⟨p⟩ ◁ η ≫ (normalizeIso p g).hom =
+    (preinclusion B).map (pathToLoc p) ◁ η ≫ (normalizeIso p g).hom =
       (normalizeIso p f).hom ≫
         (preinclusion B).map₂ (eqToHom (Discrete.ext (normalizeAux_congr p η))) := by
   rcases η with ⟨η'⟩; clear η
@@ -210,7 +214,7 @@ theorem normalizeAux_nil_comp {a b c : B} (f : Hom a b) (g : Hom b c) :
 /-- The normalization pseudofunctor for the free bicategory on a quiver `B`. -/
 def normalize (B : Type u) [Quiver.{v} B] :
     FreeBicategory B ⥤ᵖ (LocallyDiscrete (Paths B)) where
-  obj a := ⟨a⟩
+  obj a := ⟨⟨a⟩⟩
   map f := ⟨normalizeAux nil f⟩
   map₂ η := eqToHom <| Discrete.ext <| normalizeAux_congr nil η
   mapId _ := eqToIso <| Discrete.ext rfl
@@ -248,8 +252,9 @@ instance locally_thin {a b : FreeBicategory B} : Quiver.IsThin (a ⟶ b) := fun 
 /-- Auxiliary definition for `inclusion`. -/
 def inclusionMapCompAux {a b : B} :
     ∀ {c : B} (f : Path a b) (g : Path b c),
-      (preinclusion _).map (⟨f⟩ ≫ ⟨g⟩) ≅ (preinclusion _).map ⟨f⟩ ≫ (preinclusion _).map ⟨g⟩
-  | _, f, nil => (ρ_ ((preinclusion _).map ⟨f⟩)).symm
+      (preinclusion _).map (pathToLoc f ≫ pathToLoc g) ≅
+        (preinclusion _).map (pathToLoc f) ≫ (preinclusion _).map (pathToLoc g)
+  | _, f, nil => (ρ_ ((preinclusion _).map (pathToLoc f))).symm
   | _, f, cons g₁ g₂ => whiskerRightIso (inclusionMapCompAux f g₁) (Hom.of g₂) ≪≫ α_ _ _ _
 
 /-- The inclusion pseudofunctor from the locally discrete bicategory on the path category into the

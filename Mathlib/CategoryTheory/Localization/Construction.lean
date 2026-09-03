@@ -68,7 +68,7 @@ instance : Quiver (LocQuiver W) where Hom A B := (A.obj ⟶ B.obj) ⊕ { f : B.o
 /-- The object in the path category of `LocQuiver W` attached to an object in
 the category `C` -/
 def ιPaths (X : C) : Paths (LocQuiver W) :=
-  ⟨X⟩
+  ⟨⟨X⟩⟩
 
 /-- The morphism in the path category associated to a morphism in the original category. -/
 @[simp]
@@ -110,7 +110,7 @@ deriving Category
 
 /-- The obvious functor `C ⥤ W.Localization` -/
 def Q : C ⥤ W.Localization where
-  obj X := (Quotient.functor _).obj ((Paths.of _).obj ⟨X⟩)
+  obj X := (Quotient.functor _).obj (ιPaths W X)
   map f := (Quotient.functor _).map (ψ₁ W f)
   map_id X := Quotient.sound _ (relations.id X)
   map_comp f g := Quotient.sound _ (relations.comp f g)
@@ -125,7 +125,7 @@ variable {W}
 /-- The isomorphism in `W.Localization` associated to a morphism `w` in W -/
 def wIso {X Y : C} (w : X ⟶ Y) (hw : W w) : Iso (W.Q.obj X) (W.Q.obj Y) where
   hom := W.Q.map w
-  inv := (Quotient.functor _).map (by dsimp; exact (Paths.of _).map (Sum.inr ⟨w, hw⟩))
+  inv := (Quotient.functor _).map (ψ₂ W w hw)
   hom_inv_id := Quotient.sound _ (relations.Winv₁ w hw)
   inv_hom_id := Quotient.sound _ (relations.Winv₂ w hw)
 
@@ -195,9 +195,9 @@ localization with respect to a `MorphismProperty` `W` -/
 @[simps]
 def objEquiv : C ≃ W.Localization where
   toFun := W.Q.obj
-  invFun X := X.as.obj
+  invFun X := X.as.as.obj
   right_inv := by
-    rintro ⟨⟨X⟩⟩
+    rintro ⟨⟨⟨X⟩⟩⟩
     rfl
 
 instance : W.Q.EssSurj where
@@ -225,10 +225,12 @@ theorem morphismProperty_eq_top (P : MorphismProperty W.Localization)
       rcases Y with ⟨⟨Y⟩⟩
       simpa only [Functor.map_preimage] using! this _ _ (G.preimage f)
     intro X₁ X₂ p
+    obtain ⟨X₂⟩ := X₂
+    change Quiver.Path X₁.as X₂ at p
     induction p with
-    | nil => simpa only [Functor.map_id] using! hP₁ (𝟙 X₁.obj)
+    | nil => simpa only [Functor.map_id] using! hP₁ (𝟙 X₁.as.obj)
     | @cons X₂ X₃ p g hp =>
-      let p' : X₁ ⟶ X₂ := p
+      let p' : X₁ ⟶ ⟨X₂⟩ := p
       rw [show p'.cons g = p' ≫ Quiver.Hom.toPath g by rfl, G.map_comp]
       refine P.comp_mem _ _ hp ?_
       rcases g with (g | ⟨g, hg⟩)

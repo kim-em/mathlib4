@@ -90,7 +90,7 @@ abbrev σ {n : ℕ} (i : Fin (n + 1)) : mk (n + 1) ⟶ mk n :=
   (Quotient.functor FreeSimplexQuiver.homRel).map <| (Paths.of FreeSimplexQuiver).map (.σ i)
 
 /-- The length of an object of `SimplexCategoryGenRel`. -/
-def len (x : SimplexCategoryGenRel) : ℕ := by rcases x with ⟨n⟩; exact n
+def len (x : SimplexCategoryGenRel) : ℕ := x.as.as
 
 @[simp]
 lemma mk_len (n : ℕ) : len (mk n) = n := rfl

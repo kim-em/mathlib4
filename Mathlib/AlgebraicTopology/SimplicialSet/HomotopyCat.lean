@@ -261,10 +261,10 @@ def mk (x : V _⦋0⦌₂) : V.HomotopyCategory :=
   (quotientFunctor V).obj (.mk x)
 
 lemma mk_surjective : Function.Surjective (mk (V := V)) := by
-  rintro ⟨⟨x⟩⟩
+  rintro ⟨⟨⟨x⟩⟩⟩
   exact ⟨x, rfl⟩
 
-lemma ext {x y : V.HomotopyCategory} (h : x.as.as = y.as.as) : x = y := by
+lemma ext {x y : V.HomotopyCategory} (h : x.as.as.as = y.as.as.as) : x = y := by
   obtain ⟨x, rfl⟩ := x.mk_surjective
   obtain ⟨y, rfl⟩ := y.mk_surjective
   obtain rfl : x = y := h
@@ -555,7 +555,7 @@ def mk (x : X _⦋0⦌) : X.HomotopyCategory := Truncated.HomotopyCategory.mk x
 /-- The bijection `X.HomotopyCategory ≃ X _⦋0⦌` when `X` is a simplicial set. -/
 @[implicit_reducible, simps symm_apply, simps -isSimp apply]
 def objEquiv {X : SSet.{u}} : X.HomotopyCategory ≃ X _⦋0⦌ where
-  toFun x := x.as.as
+  toFun x := x.as.as.as
   invFun x := mk x
 
 /-- Induction principle for objects of the homotopy category of a simplicial set. -/

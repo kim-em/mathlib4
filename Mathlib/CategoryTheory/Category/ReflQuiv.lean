@@ -139,7 +139,7 @@ variable (V : Type*) [ReflQuiver V]
 
 /-- The hom relation that identifies the specified reflexivity arrows with the nil paths -/
 inductive FreeReflRel : (X Y : Paths V) → (f g : X ⟶ Y) → Prop
-  | mk {X : V} : FreeReflRel X X (Quiver.Hom.toPath (𝟙rq X)) .nil
+  | mk {X : V} : FreeReflRel ⟨X⟩ ⟨X⟩ (Quiver.Hom.toPath (𝟙rq X)) .nil
 
 /-- A reflexive quiver generates a free category, defined as a quotient of the free category
 on its underlying quiver (called the "path category") by the hom relation that uses the specified
@@ -155,13 +155,13 @@ instance : Category (FreeRefl V) :=
   inferInstanceAs (Category (Quotient _))
 
 /-- Constructor for objects in the free category on a reflexive quiver. -/
-def mk (v : V) : FreeRefl V := (Quotient.functor _).obj v
+def mk (v : V) : FreeRefl V := (Quotient.functor _).obj ⟨v⟩
 
 /-- Induction principle for the objects of the free category on a reflexive quiver. -/
 @[elab_as_elim, cases_eliminator, induction_eliminator]
 def induction {motive : FreeRefl V → Sort*} (mk : ∀ v, motive (mk v)) (x : FreeRefl V) :
     motive x :=
-  mk _
+  mk x.as.as
 
 variable (V) in
 /-- The quotient functor associated to a quotient category defines a natural map from the free
@@ -186,7 +186,7 @@ lemma quotientFunctor_map_nil (x : Paths V) :
 
 @[simp]
 lemma quotientFunctor_map_cons {x y z : Paths V}
-    (p : x ⟶ y) (q : Quiver.Hom (V := V) y z) :
+    (p : x ⟶ y) (q : y.as ⟶ z.as) :
     (quotientFunctor V).map (p.cons q : x ⟶ z) =
       (quotientFunctor V).map p ≫ homMk q :=
   rfl
@@ -212,6 +212,7 @@ lemma hom_induction {motive : ∀ {x y : FreeRefl V} (_ : x ⟶ y), Prop}
     induction x using induction with | _ x
     induction y using induction with | _ y
     obtain ⟨f, rfl⟩ := (quotientFunctor _).map_surjective f
+    change Quiver.Path x y at f
     induction f with
     | nil => simpa using! id x
     | cons _ f h => simpa using! comp_homMk _ f h
@@ -290,7 +291,7 @@ lemma functor_ext {D : Type*} [Category* D]
     {F G : FreeRefl V ⥤ D} (h₁ : ∀ v, F.obj (mk v) = G.obj (mk v))
     (h₂ : ∀ {v w : V} (f : v ⟶ w), F.map (homMk f) =
       eqToHom (h₁ v) ≫ G.map (homMk f) ≫ eqToHom (h₁ w).symm) : F = G :=
-  lift_unique' _ _ (Paths.ext_functor (by ext; apply h₁) (fun _ _ _ ↦ h₂ _))
+  lift_unique' _ _ (Paths.ext_functor (funext fun ⟨v⟩ ↦ h₁ v) (fun _ _ f ↦ h₂ f))
 
 @[simp]
 lemma quotientFunctor_map_id (V) [ReflQuiver V] (X : V) :
