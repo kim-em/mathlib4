@@ -191,8 +191,8 @@ derives two `simp` lemmas:
 * If one of the fields itself is a structure, this command will recursively create
   `simp` lemmas for all fields in that structure.
   * Exception: by default it will not recursively create `simp` lemmas for fields in the structures
-    `Prod`, `PProd`, and `Opposite`. You can give explicit projection names or change the value of
-    `Simps.Config.notRecursive` to override this behavior.
+    `Prod`, `PProd`, `Opposite` and `CategoryTheory.Paths`. You can give explicit projection names
+    or change the value of `Simps.Config.notRecursive` to override this behavior.
 
   Example:
   ```lean
@@ -890,7 +890,7 @@ structure Config where
   /-- List of types in which we are not recursing to generate simplification lemmas.
   E.g. if we write `@[simps] def e : α × β ≃ β × α := ...` we will generate `e_apply` and not
   `e_apply_fst`. -/
-  notRecursive := [`Prod, `PProd, `Opposite, `PreOpposite]
+  notRecursive := [`Prod, `PProd, `Opposite, `PreOpposite, `CategoryTheory.Paths]
   /-- Output debug messages. Not used much, use `set_option simps.debug true` instead. -/
   debug := false
   /-- The stem to use for the projection names. If `none`, the default, use the suffix of the
