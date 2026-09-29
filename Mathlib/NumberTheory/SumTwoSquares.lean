@@ -222,9 +222,9 @@ theorem Nat.eq_sq_add_sq_iff {n : ℕ} :
       padicValNat.eq_zero_of_not_dvd, mod_four_ne_three_of_mem_primeFactors_of_isSquare_neg_one]
     ```
     -/
-    grind only [padicValNat.mul, padicValNat.pow,
-      padicValNat.eq_zero_of_not_dvd, mod_four_ne_three_of_mem_primeFactors_of_isSquare_neg_one,
-      = even_iff]
+    have : ¬q ∣ b := by grind only [mod_four_ne_three_of_mem_primeFactors_of_isSquare_neg_one]
+    rw [h₁, padicValNat.mul (by lia) (by lia)]
+    simp [padicValNat.eq_zero_of_not_dvd this]
   · obtain ⟨b, a, hb₀, ha₀, hab, hb⟩ := sq_mul_squarefree_of_pos hn₀
     refine ⟨a, b, hab.symm, ZMod.isSquare_neg_one_iff_forall_mem_primeFactors_mod_four_ne_three hb
       |>.mpr fun q hq hq4 ↦ ?_⟩
