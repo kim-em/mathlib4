@@ -1,6 +1,8 @@
 module
 import Mathlib.GroupTheory.GroupAction.Ring
 import Mathlib.Tactic.NoncommRing
+import Mathlib.Tactic.Abel
+import Mathlib.Algebra.Ring.Commute
 
 local infix:70 " ⚬ " => fun a b => a * b + b * a
 

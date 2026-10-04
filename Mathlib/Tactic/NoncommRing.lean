@@ -6,7 +6,13 @@ Authors: Jireh Loreaux, Kim Morrison, Oliver Nash
 module
 
 public import Mathlib.Algebra.Group.Action.Defs  -- shake: keep (metaprogram output dependency)
-public import Mathlib.Tactic.Abel
+public import Mathlib.Algebra.Ring.Basic
+public import Mathlib.Data.Nat.Cast.Basic
+public import Mathlib.Tactic.Hint
+public import Lean.Elab.Tactic.Try
+public meta import Lean.Elab.Tactic.Basic
+public meta import Lean.Meta.Sym.Arith.Module
+public meta import Lean.Meta.Tactic.Simp.Main
 
 /-! # The `noncomm_ring` tactic
 
@@ -16,8 +22,9 @@ This tactic is rudimentary, but useful for solving simple goals in noncommutativ
 glaring flaw is that numeric powers are unfolded entirely with `pow_succ` and can easily exceed the
 maximum recursion depth.
 
-`noncomm_ring` is just a `simp only [some lemmas]` followed by `abel`. It automatically uses `abel1`
-to close the goal, and if that doesn't succeed, defaults to `abel_nf`.
+`noncomm_ring` distributes products using `simp only` and collects additive terms using
+Lean's shared arithmetic certificates. It closes additive equalities when possible and otherwise
+normalizes additive expressions in the goal.
 -/
 
 public meta section
@@ -34,6 +41,25 @@ lemma mul_nat_lit_eq_nsmul [n.AtLeastTwo] : r * ofNat(n) = OfNat.ofNat n • r :
 
 end nat_lit_mul
 
+open Lean Meta Elab Tactic Sym
+
+elab "noncomm_ring_nf" : tactic => withMainContext do
+  let g ← getMainGoal
+  let target ← instantiateMVars (← g.getType)
+  if let some proof ← SymM.run (Arith.proveAddEq? target) then
+    g.assign proof
+    replaceMainGoal []
+    return
+  let ctx ← Meta.Simp.mkContext { zetaDelta := false, singlePass := true }
+    (simpTheorems := #[← simpOnlyBuiltins.foldlM (·.addConst ·) {}])
+    (congrTheorems := ← getSimpCongrTheorems)
+  let (r, _) ← Meta.Simp.main target ctx (methods := { post := fun e => do
+    match ← SymM.run (Arith.normalizeAdd? e) with
+    | .step e h .. => return .done { expr := e, proof? := some h }
+    | .rfl .. => Meta.Simp.postDefault #[] e })
+  let some proof := r.proof? | throwError "no additive expression changed"
+  replaceMainGoal [← g.replaceTargetEq r.expr proof]
+
 open Lean.Parser.Tactic
 /-- `noncomm_ring` simplifies expressions in not-necessarily-commutative rings in the main goal
 then tries closing it by "cheap" (reducible) `rfl`.
@@ -41,8 +67,8 @@ This tactic supports the operators `+`, `*`, `-`, `^` and `•` (for scalar mult
 natural numbers or integers).
 
 If the ring is commutative, prefer the `ring` tactic instead, which is more powerful and efficient.
-The tactic is implemented as a combination of `simp only [...]` and `abel`. The precise invocation
-of `simp only` can be customized using the options listed below.
+The tactic distributes products and collects additive terms. The simplification step can be
+customized using the options listed below.
 
 Limitation: numeric powers are unfolded entirely with `pow_succ` and can easily exceed the
 maximum recursion depth.
@@ -87,9 +113,9 @@ macro_rules
           -- user-specified simp lemmas
           $rules',*] |
         fail "`noncomm_ring` simp lemmas don't apply; try `abel` instead") <;>
-      first | abel1 | abel_nf)
+      noncomm_ring_nf)
     -- if a manual rewrite rule is provided, we repeat the tactic
-    -- (since abel might simplify and allow the rewrite to apply again)
+    -- (since collecting terms might allow the rewrite to apply again)
     if rules.isSome then `(tactic| repeat1 ($tac;)) else `(tactic| $tac)
 
 end Mathlib.Tactic.NoncommRing
