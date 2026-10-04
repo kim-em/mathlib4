@@ -43,22 +43,21 @@ end nat_lit_mul
 
 open Lean Meta Elab Tactic Sym
 
-elab "noncomm_ring_nf" : tactic => withMainContext do
-  let g ← getMainGoal
+elab "noncomm_ring_nf" : tactic => liftMetaTactic fun g => do
   let target ← instantiateMVars (← g.getType)
   if let some proof ← SymM.run (Arith.proveAddEq? target) then
     g.assign proof
-    replaceMainGoal []
-    return
+    return []
   let ctx ← Meta.Simp.mkContext { zetaDelta := false, singlePass := true }
     (simpTheorems := #[← simpOnlyBuiltins.foldlM (·.addConst ·) {}])
     (congrTheorems := ← getSimpCongrTheorems)
-  let (r, _) ← Meta.Simp.main target ctx (methods := { post := fun e => do
-    match ← SymM.run (Arith.normalizeAdd? e) with
-    | .step e h .. => return .done { expr := e, proof? := some h }
-    | .rfl .. => Meta.Simp.postDefault #[] e })
+  let (r, _) ← SymM.run <| controlAt MetaM fun runInMeta =>
+    Meta.Simp.main target ctx (methods := { post := fun e => do
+      match ← runInMeta (Arith.normalizeAdd? e) with
+      | .step e h .. => return .done { expr := e, proof? := some h }
+      | .rfl .. => Meta.Simp.postDefault #[] e })
   let some proof := r.proof? | throwError "no additive expression changed"
-  replaceMainGoal [← g.replaceTargetEq r.expr proof]
+  return [← g.replaceTargetEq r.expr proof]
 
 open Lean.Parser.Tactic
 /-- `noncomm_ring` simplifies expressions in not-necessarily-commutative rings in the main goal
@@ -106,7 +105,7 @@ macro_rules
           -- Replace multiplication by numerals with `zsmul`.
           one_mul, mul_one, zero_mul, mul_zero,
           nat_lit_mul_eq_nsmul, mul_nat_lit_eq_nsmul,
-          -- Pull `zsmul n` out the front so `abel` can see them.
+          -- Pull scalar multiplication out of products.
           mul_smul_comm, smul_mul_assoc,
           -- Pull out negations.
           neg_mul, mul_neg,
