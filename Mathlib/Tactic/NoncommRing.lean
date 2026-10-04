@@ -6,11 +6,9 @@ Authors: Jireh Loreaux, Kim Morrison, Oliver Nash
 module
 
 public import Mathlib.Algebra.Group.Action.Defs  -- shake: keep (metaprogram output dependency)
-public import Mathlib.Algebra.Ring.Basic
 public import Mathlib.Data.Nat.Cast.Basic
 public import Mathlib.Tactic.Hint
 public import Lean.Elab.Tactic.Try
-public meta import Lean.Elab.Tactic.Basic
 public meta import Lean.Meta.Sym.Arith.Module
 public meta import Lean.Meta.Tactic.Simp.Main
 
@@ -43,21 +41,19 @@ end nat_lit_mul
 
 open Lean Meta Elab Tactic Sym
 
-elab "noncomm_ring_nf" : tactic => liftMetaTactic fun g => do
+elab "noncomm_ring_nf" : tactic => liftMetaTactic1 fun g => SymM.run do
   let target ← instantiateMVars (← g.getType)
-  if let some proof ← SymM.run (Arith.proveAddEq? target) then
+  if let some proof ← Arith.proveAddEq? target then
     g.assign proof
-    return []
+    return none
   let ctx ← Meta.Simp.mkContext { zetaDelta := false, singlePass := true }
-    (simpTheorems := #[← simpOnlyBuiltins.foldlM (·.addConst ·) {}])
     (congrTheorems := ← getSimpCongrTheorems)
-  let (r, _) ← SymM.run <| controlAt MetaM fun runInMeta =>
+  let (r, _) ← controlAt MetaM fun runInMeta =>
     Meta.Simp.main target ctx (methods := { post := fun e => do
-      match ← runInMeta (Arith.normalizeAdd? e) with
-      | .step e h .. => return .done { expr := e, proof? := some h }
-      | .rfl .. => Meta.Simp.postDefault #[] e })
+      let .step e h .. ← runInMeta (Arith.normalizeAdd? e) | return .continue
+      return .done { expr := e, proof? := some h } })
   let some proof := r.proof? | throwError "no additive expression changed"
-  return [← g.replaceTargetEq r.expr proof]
+  return ← g.replaceTargetEq r.expr proof
 
 open Lean.Parser.Tactic
 /-- `noncomm_ring` simplifies expressions in not-necessarily-commutative rings in the main goal
@@ -112,7 +108,7 @@ macro_rules
           -- user-specified simp lemmas
           $rules',*] |
         fail "`noncomm_ring` simp lemmas don't apply; try `abel` instead") <;>
-      noncomm_ring_nf)
+      noncomm_ring_nf <;> try rfl)
     -- if a manual rewrite rule is provided, we repeat the tactic
     -- (since collecting terms might allow the rewrite to apply again)
     if rules.isSome then `(tactic| repeat1 ($tac;)) else `(tactic| $tac)
