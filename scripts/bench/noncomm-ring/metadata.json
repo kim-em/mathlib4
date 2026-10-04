@@ -1,0 +1,22 @@
+{
+  "cpu": 93,
+  "host": "chungus2",
+  "platform": "Linux-6.12.111-x86_64-with-glibc2.42",
+  "schedule": [
+    "AB",
+    "BA",
+    "AB",
+    "BA"
+  ],
+  "warmups_per_workload": 3,
+  "timing": "IO.monoNanosNow around evalTactic and restoration of the input goal; excludes Lake startup, input elaboration and kernel checking of the final declaration",
+  "toolchain": "leanprover/lean4-pr-releases:pr-release-15471-d81678a",
+  "lean_commit": "d81678af187fae05d0b481f990dbaf35f02e0fae",
+  "mathlib_base": "a3bcf0a3c2f9ef666d02bc127b2aee1f64f46078",
+  "source_sha256": {
+    "baseline.lean": "56993a0ec93af72ce3bbbfb2437c219b2700623f6ae5eb50dbac3df0731a09a1",
+    "replacement.lean": "9e29cf606674863740b374a133f852caa1f68c0685829a3ce5271fc179833392",
+    "NoncommBench.lean": "c660ecf40ddd0dbaa2e46b53a2baa99c9bb352dbf8d3ecf46cf855f1f376f705"
+  },
+  "workload_count": 8
+}
