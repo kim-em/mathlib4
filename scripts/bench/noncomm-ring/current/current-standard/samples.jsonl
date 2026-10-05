@@ -1,0 +1,8 @@
+{"pair": 1, "arm": "A", "iterations": 50, "duration_ns": 1793644505, "ns_per_call": 35872890.1}
+{"pair": 1, "arm": "B", "iterations": 50, "duration_ns": 1626925450, "ns_per_call": 32538509.0}
+{"pair": 2, "arm": "B", "iterations": 50, "duration_ns": 1657457904, "ns_per_call": 33149158.08}
+{"pair": 2, "arm": "A", "iterations": 50, "duration_ns": 2109972338, "ns_per_call": 42199446.76}
+{"pair": 3, "arm": "A", "iterations": 50, "duration_ns": 1921276121, "ns_per_call": 38425522.42}
+{"pair": 3, "arm": "B", "iterations": 50, "duration_ns": 1626364905, "ns_per_call": 32527298.1}
+{"pair": 4, "arm": "B", "iterations": 50, "duration_ns": 2140442828, "ns_per_call": 42808856.56}
+{"pair": 4, "arm": "A", "iterations": 50, "duration_ns": 3483231752, "ns_per_call": 69664635.04}

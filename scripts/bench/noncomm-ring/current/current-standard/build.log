@@ -1,0 +1,10 @@
+ℹ [1257/1259] Built JacobiBenchCurrent (19s)
+info: JacobiBenchCurrent.lean:9:2: JACOBI_BENCH 1 A 50 1793644505
+info: JacobiBenchCurrent.lean:9:2: JACOBI_BENCH 1 B 50 1626925450
+info: JacobiBenchCurrent.lean:9:2: JACOBI_BENCH 2 B 50 1657457904
+info: JacobiBenchCurrent.lean:9:2: JACOBI_BENCH 2 A 50 2109972338
+info: JacobiBenchCurrent.lean:9:2: JACOBI_BENCH 3 A 50 1921276121
+info: JacobiBenchCurrent.lean:9:2: JACOBI_BENCH 3 B 50 1626364905
+info: JacobiBenchCurrent.lean:9:2: JACOBI_BENCH 4 B 50 2140442828
+info: JacobiBenchCurrent.lean:9:2: JACOBI_BENCH 4 A 50 3483231752
+Build completed successfully (1259 jobs).

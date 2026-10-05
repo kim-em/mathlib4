@@ -1,0 +1,47 @@
+{
+  "cpu": 36,
+  "host": "chungus2",
+  "schedule": [
+    "AB",
+    "BA",
+    "AB",
+    "BA"
+  ],
+  "warmups": 3,
+  "reps": 50,
+  "toolchain": "sym-module-dev",
+  "lean_head": "d1a101d6b33151a537b8fe6416acefd00fbfb726",
+  "baseline_commit": "a3bcf0a3c2",
+  "mode": "Standard Mathlib loading; no explicit native plugins",
+  "timing": "evalTactic plus saved.restore; excludes final declaration kernel check, includes any kernel work performed inside tactic",
+  "host_context": "Shared host. Root holds other Lake builds using these caches; other host activity unrestricted.",
+  "load_before": [
+    37.74853515625,
+    61.51171875,
+    42.720703125
+  ],
+  "source_sha256": {
+    "JacobiOldAbel.lean": "744bbaf55cb994da37d4c6cbe9989b426f1038678876d18dac8c35135496b173",
+    "JacobiOldNoncommRing.lean": "c89fe398e8dd879eb349a3f1f5de93202308505570360a19d8d315c6b93ec028",
+    "JacobiCurrentNoncommRing.lean": "65013e4ff4163bbb38db681a3734a4b7e3a1cd26e02ef893b3ee1fc2fae0e090",
+    "JacobiHarness.lean": "3879977a60d5691030bde18aeb062209568c9a3683d66171e9dd853fb638a77e",
+    "JacobiBenchCurrent.lean": "6fcae1f77431d826fdf62a486e18a435eca981b244ce8f946e6b74b087d19f5f",
+    "lakefile-jacobi-normal.lean": "5707c690dc7419f7151c35c6cb82771c61d9c9be468935560751d3d5214cf0fa"
+  },
+  "binary_sha256": {
+    ".lake/build/lib/lean/mathlib_JacobiCurrentNoncommRing.so": "dff3e6f678f6677b2c652eccb81cafd85b287041a905a7f1b5a56c6ea104ff4d",
+    ".lake/build/lib/lean/mathlib_JacobiOldAbel.so": "028076f151b8142dc9522b1ff765bf8c422e3754f0cd51e8bd48c527147714de",
+    ".lake/build/lib/lean/mathlib_JacobiOldNoncommRing.so": "b8c118190b0a5f2d52f9a4056e833ee72a2c3b254eb6f9dc50fdf07c46e15e33",
+    ".lake/build/lib/lean/mathlib_JacobiHarness.so": "ddb39834e995a6582c6cb0e93fa37d30608e3b350f937e8f8801fa8c8e55c9ba",
+    ".lake/build/lib/libJacobiMathlibDeps.so": "745c05134cb8c34e6bd1eacb26a72212487dbb0d0ca1d3016eff8520ea413377",
+    "/home/kim/worktrees/lean4/lean4-sym-module/build/release/stage1/lib/lean/libleanshared.so": "fffdcee17e8992c5beddad476d34ca4300d37c5ecc0e06b738173adacb8fc6e7"
+  },
+  "exit_code": 0,
+  "sample_count": 8,
+  "load_after": [
+    51.6953125,
+    63.05712890625,
+    43.625
+  ],
+  "elapsed_s": 20.71233986900006
+}
