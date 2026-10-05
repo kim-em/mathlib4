@@ -1,0 +1,107 @@
+✔ [1249/1253] Built AbelBenchCurrent (1.8s)
+ℹ [1251/1253] Built AbelBench (43s)
+info: AbelBench.lean:32:2: ABEL_BENCH monoid-small-1-A 100 547486197 8821315
+info: AbelBench.lean:36:2: ABEL_BENCH monoid-small-1-B 100 301105595 2065845
+info: AbelBench.lean:40:2: ABEL_BENCH group-subtraction-1-A 100 615836673 12388050
+info: AbelBench.lean:44:2: ABEL_BENCH group-subtraction-1-B 100 339044368 1935342
+info: AbelBench.lean:48:2: ABEL_BENCH telescoping-8-1-A 50 481863666 9336897
+info: AbelBench.lean:52:2: ABEL_BENCH telescoping-8-1-B 50 260346776 3208720
+info: AbelBench.lean:56:2: ABEL_BENCH telescoping-32-1-A 20 542014896 9897504
+info: AbelBench.lean:60:2: ABEL_BENCH telescoping-32-1-B 20 312970814 4415466
+info: AbelBench.lean:64:2: ABEL_BENCH telescoping-64-1-A 20 1030033013 21844858
+info: AbelBench.lean:68:2: ABEL_BENCH telescoping-64-1-B 20 760567220 14193166
+info: AbelBench.lean:72:2: ABEL_BENCH integer-coefficients-16-1-A 20 570615519 8911453
+info: AbelBench.lean:76:2: ABEL_BENCH integer-coefficients-16-1-B 20 356086501 1543863
+info: AbelBench.lean:80:2: ABEL_BENCH closed-coefficient-1-A 100 376683352 7169683
+info: AbelBench.lean:84:2: ABEL_BENCH closed-coefficient-1-B 100 281964299 2497997
+info: AbelBench.lean:88:2: ABEL_BENCH integer-constants-1-A 100 279095145 3608803
+info: AbelBench.lean:92:2: ABEL_BENCH integer-constants-1-B 100 232572335 1538308
+info: AbelBench.lean:96:2: ABEL_BENCH symbolic-scalar-atoms-1-A 100 599857076 12100582
+info: AbelBench.lean:100:2: ABEL_BENCH symbolic-scalar-atoms-1-B 100 233447644 2190030
+info: AbelBench.lean:104:2: ABEL_BENCH recursive-atoms-1-A 30 461796270 11416816
+info: AbelBench.lean:104:41: Try this:
+  [apply] jacobi_old_abel_nf
+info: AbelBench.lean:108:2: ABEL_BENCH recursive-atoms-1-B 30 257037773 4227966
+info: AbelBench.lean:112:2: ABEL_BENCH open-predicate-1-A 50 293865461 8254699
+info: AbelBench.lean:117:2: ABEL_BENCH open-predicate-1-B 50 40854748 1157276
+info: AbelBench.lean:122:2: ABEL_BENCH multiple-locations-1-A 30 292098402 7034944
+info: AbelBench.lean:127:2: ABEL_BENCH multiple-locations-1-B 30 70569437 1956747
+info: AbelBench.lean:132:2: ABEL_BENCH monoid-small-2-B 100 251493996 2063339
+info: AbelBench.lean:136:2: ABEL_BENCH monoid-small-2-A 100 396882134 8825512
+info: AbelBench.lean:140:2: ABEL_BENCH group-subtraction-2-B 100 279844966 1935597
+info: AbelBench.lean:144:2: ABEL_BENCH group-subtraction-2-A 100 575853469 12397930
+info: AbelBench.lean:148:2: ABEL_BENCH telescoping-8-2-B 50 268513755 3220689
+info: AbelBench.lean:152:2: ABEL_BENCH telescoping-8-2-A 50 474376545 9343636
+info: AbelBench.lean:156:2: ABEL_BENCH telescoping-32-2-B 20 307325637 4414730
+info: AbelBench.lean:160:2: ABEL_BENCH telescoping-32-2-A 20 487023421 9892749
+info: AbelBench.lean:164:2: ABEL_BENCH telescoping-64-2-B 20 699880236 14192830
+info: AbelBench.lean:168:2: ABEL_BENCH telescoping-64-2-A 20 1033082054 21844957
+info: AbelBench.lean:172:2: ABEL_BENCH integer-coefficients-16-2-B 20 354294519 1543935
+info: AbelBench.lean:176:2: ABEL_BENCH integer-coefficients-16-2-A 20 511983264 8910906
+info: AbelBench.lean:180:2: ABEL_BENCH closed-coefficient-2-B 100 284276378 2497486
+info: AbelBench.lean:184:2: ABEL_BENCH closed-coefficient-2-A 100 402408718 7165060
+info: AbelBench.lean:188:2: ABEL_BENCH integer-constants-2-B 100 237173516 1538539
+info: AbelBench.lean:192:2: ABEL_BENCH integer-constants-2-A 100 272139934 3608190
+info: AbelBench.lean:196:2: ABEL_BENCH symbolic-scalar-atoms-2-B 100 222600626 2190161
+info: AbelBench.lean:200:2: ABEL_BENCH symbolic-scalar-atoms-2-A 100 590429064 12082264
+info: AbelBench.lean:204:2: ABEL_BENCH recursive-atoms-2-B 30 258054250 4231205
+info: AbelBench.lean:208:2: ABEL_BENCH recursive-atoms-2-A 30 443795596 11399750
+info: AbelBench.lean:208:41: Try this:
+  [apply] jacobi_old_abel_nf
+info: AbelBench.lean:212:2: ABEL_BENCH open-predicate-2-B 50 48121847 1157252
+info: AbelBench.lean:217:2: ABEL_BENCH open-predicate-2-A 50 288754405 8256839
+info: AbelBench.lean:222:2: ABEL_BENCH multiple-locations-2-B 30 65405335 1956731
+info: AbelBench.lean:227:2: ABEL_BENCH multiple-locations-2-A 30 269152761 7035904
+info: AbelBench.lean:232:2: ABEL_BENCH monoid-small-3-A 100 376918200 8821395
+info: AbelBench.lean:236:2: ABEL_BENCH monoid-small-3-B 100 234846079 2062681
+info: AbelBench.lean:240:2: ABEL_BENCH group-subtraction-3-A 100 567240612 12396578
+info: AbelBench.lean:244:2: ABEL_BENCH group-subtraction-3-B 100 268918726 1935296
+info: AbelBench.lean:248:2: ABEL_BENCH telescoping-8-3-A 50 461665062 9351606
+info: AbelBench.lean:252:2: ABEL_BENCH telescoping-8-3-B 50 271328812 3221280
+info: AbelBench.lean:256:2: ABEL_BENCH telescoping-32-3-A 20 532985002 9903182
+info: AbelBench.lean:260:2: ABEL_BENCH telescoping-32-3-B 20 339928558 4413903
+info: AbelBench.lean:264:2: ABEL_BENCH telescoping-64-3-A 20 1101089033 21844186
+info: AbelBench.lean:268:2: ABEL_BENCH telescoping-64-3-B 20 715349756 14193295
+info: AbelBench.lean:272:2: ABEL_BENCH integer-coefficients-16-3-A 20 536934913 8909464
+info: AbelBench.lean:276:2: ABEL_BENCH integer-coefficients-16-3-B 20 370059116 1543767
+info: AbelBench.lean:280:2: ABEL_BENCH closed-coefficient-3-A 100 369043051 7164914
+info: AbelBench.lean:284:2: ABEL_BENCH closed-coefficient-3-B 100 274755743 2497652
+info: AbelBench.lean:288:2: ABEL_BENCH integer-constants-3-A 100 263555546 3607693
+info: AbelBench.lean:292:2: ABEL_BENCH integer-constants-3-B 100 228539181 1538561
+info: AbelBench.lean:296:2: ABEL_BENCH symbolic-scalar-atoms-3-A 100 525273158 12081935
+info: AbelBench.lean:300:2: ABEL_BENCH symbolic-scalar-atoms-3-B 100 215064160 2192191
+info: AbelBench.lean:304:2: ABEL_BENCH recursive-atoms-3-A 30 450346111 11413284
+info: AbelBench.lean:304:41: Try this:
+  [apply] jacobi_old_abel_nf
+info: AbelBench.lean:308:2: ABEL_BENCH recursive-atoms-3-B 30 237218614 4234256
+info: AbelBench.lean:312:2: ABEL_BENCH open-predicate-3-A 50 294037532 8257177
+info: AbelBench.lean:317:2: ABEL_BENCH open-predicate-3-B 50 40206393 1157135
+info: AbelBench.lean:322:2: ABEL_BENCH multiple-locations-3-A 30 278102102 7046886
+info: AbelBench.lean:327:2: ABEL_BENCH multiple-locations-3-B 30 66892996 1956596
+info: AbelBench.lean:332:2: ABEL_BENCH monoid-small-4-B 100 253668400 2061789
+info: AbelBench.lean:336:2: ABEL_BENCH monoid-small-4-A 100 403703130 8823790
+info: AbelBench.lean:340:2: ABEL_BENCH group-subtraction-4-B 100 276572926 1935692
+info: AbelBench.lean:344:2: ABEL_BENCH group-subtraction-4-A 100 577249408 12385217
+info: AbelBench.lean:348:2: ABEL_BENCH telescoping-8-4-B 50 262372880 3213666
+info: AbelBench.lean:352:2: ABEL_BENCH telescoping-8-4-A 50 479950785 9368544
+info: AbelBench.lean:356:2: ABEL_BENCH telescoping-32-4-B 20 298707713 4416176
+info: AbelBench.lean:360:2: ABEL_BENCH telescoping-32-4-A 20 485060526 9894086
+info: AbelBench.lean:364:2: ABEL_BENCH telescoping-64-4-B 20 709468693 14192682
+info: AbelBench.lean:368:2: ABEL_BENCH telescoping-64-4-A 20 967059522 21844847
+info: AbelBench.lean:372:2: ABEL_BENCH integer-coefficients-16-4-B 20 381856707 1543981
+info: AbelBench.lean:376:2: ABEL_BENCH integer-coefficients-16-4-A 20 550373664 8910238
+info: AbelBench.lean:380:2: ABEL_BENCH closed-coefficient-4-B 100 294751887 2496750
+info: AbelBench.lean:384:2: ABEL_BENCH closed-coefficient-4-A 100 391974757 7166879
+info: AbelBench.lean:388:2: ABEL_BENCH integer-constants-4-B 100 233149073 1538428
+info: AbelBench.lean:392:2: ABEL_BENCH integer-constants-4-A 100 267525311 3611212
+info: AbelBench.lean:396:2: ABEL_BENCH symbolic-scalar-atoms-4-B 100 230785639 2190781
+info: AbelBench.lean:400:2: ABEL_BENCH symbolic-scalar-atoms-4-A 100 568607732 12068776
+info: AbelBench.lean:404:2: ABEL_BENCH recursive-atoms-4-B 30 228337410 4224908
+info: AbelBench.lean:408:2: ABEL_BENCH recursive-atoms-4-A 30 436790834 11409267
+info: AbelBench.lean:408:41: Try this:
+  [apply] jacobi_old_abel_nf
+info: AbelBench.lean:412:2: ABEL_BENCH open-predicate-4-B 50 39626596 1157200
+info: AbelBench.lean:417:2: ABEL_BENCH open-predicate-4-A 50 279465172 8253390
+info: AbelBench.lean:422:2: ABEL_BENCH multiple-locations-4-B 30 66938659 1956591
+info: AbelBench.lean:427:2: ABEL_BENCH multiple-locations-4-A 30 267649692 7046146
+Build completed successfully (1253 jobs).

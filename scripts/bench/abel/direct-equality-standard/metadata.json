@@ -1,0 +1,35 @@
+{
+  "cpu": 14,
+  "host": "chungus2",
+  "schedule": [
+    "AB",
+    "BA",
+    "AB",
+    "BA"
+  ],
+  "warmups": 3,
+  "mode": "Standard loading; no explicit native plugins",
+  "toolchain": "sym-module-dev",
+  "lean_head": "d1a101d6b33151a537b8fe6416acefd00fbfb726",
+  "mathlib_base": "a3bcf0a3c2",
+  "timing": "saved.restore and evalTactic; includes auxiliary theorem kernel checking inside both Abel implementations; excludes final declaration check",
+  "load_before": [
+    72.06396484375,
+    112.9931640625,
+    91.6865234375
+  ],
+  "source_sha256": {
+    "JacobiOldAbel.lean": "744bbaf55cb994da37d4c6cbe9989b426f1038678876d18dac8c35135496b173",
+    "AbelBenchCurrent.lean": "98565db506aecde65527fdbafa167f0f993b76536d17f5fd5b6f610fe8af3508",
+    "AbelBench.lean": "6c636db2049befa0369b58c9a094b3a16ef7e6f486b8025af514e6ff011da1e5",
+    "lakefile-abel-normal.lean": "d29e1c31b71d88985457c430b98e06b4981cb16727d2c89880d5c1ac402cd79e"
+  },
+  "exit_code": 0,
+  "sample_count": 96,
+  "load_after": [
+    46.0107421875,
+    99.62109375,
+    88.255859375
+  ],
+  "elapsed_s": 46.461162091000006
+}
