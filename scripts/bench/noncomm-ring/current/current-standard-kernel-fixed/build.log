@@ -1,0 +1,11 @@
+✔ [1257/1261] Built JacobiKernelHarness (848ms)
+ℹ [1259/1261] Built JacobiBenchKernel (11s)
+info: JacobiBenchKernel.lean:9:2: JACOBI_KERNEL 1 A 50 1286530663 27807813
+info: JacobiBenchKernel.lean:9:2: JACOBI_KERNEL 1 B 50 1225001968 172582450
+info: JacobiBenchKernel.lean:9:2: JACOBI_KERNEL 2 B 50 1207328508 162059194
+info: JacobiBenchKernel.lean:9:2: JACOBI_KERNEL 2 A 50 1307163582 23166925
+info: JacobiBenchKernel.lean:9:2: JACOBI_KERNEL 3 A 50 1313843913 12751752
+info: JacobiBenchKernel.lean:9:2: JACOBI_KERNEL 3 B 50 1214612619 171118150
+info: JacobiBenchKernel.lean:9:2: JACOBI_KERNEL 4 B 50 1215765009 163022702
+info: JacobiBenchKernel.lean:9:2: JACOBI_KERNEL 4 A 50 1300431410 24207559
+Build completed successfully (1261 jobs).

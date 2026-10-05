@@ -1,0 +1,182 @@
+ℹ [1265/1267] Built JacobiBenchProfile (42s)
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 A goal restoration 50 230271
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 A frontend 50 2038723370
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 A backend 50 616943782
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 A total without restoration 50 2665582672
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B goal restoration 50 508186
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B frontend 50 1848454234
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B input sharing 50 8975317
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B module context 50 13985830
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B atom callback traversal 100 686351
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B callback output sharing 100 72211
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B operation matching 1050 168533096
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B atom lookup 600 214364281
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B reification 50 385500599
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B polynomial normalization 50 181701
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B certificate construction 50 2381683
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B proof assignment 50 141437
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B backend 50 422873299
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 1 B total without restoration 50 2291516741
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A goal restoration 50 625703
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A frontend 50 1817153396
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A input sharing 50 10066547
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A context canonicalization 50 245035091
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A module context 50 258122326
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A operation matching 1000 186846461
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A atom lookup 600 219431402
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A reification 50 415011380
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A polynomial normalization 50 195370
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A certificate construction 50 623992
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A proof assignment 50 151239
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A backend 50 700110059
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 A total without restoration 50 2548038329
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B goal restoration 50 501436
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B frontend 50 1972803712
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B input sharing 50 10855100
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B module context 50 16844540
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B atom callback traversal 100 689999
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B callback output sharing 100 72813
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B operation matching 1050 138637931
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B atom lookup 600 238385986
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B reification 50 379580609
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B polynomial normalization 50 184241
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B certificate construction 50 767618
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B proof assignment 50 135022
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B backend 50 420250154
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 1 B total without restoration 50 2413384230
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B goal restoration 50 510142
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B frontend 50 1986113464
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B input sharing 50 9317559
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B module context 50 18118761
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B atom callback traversal 100 706950
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B callback output sharing 100 72333
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B operation matching 1050 211559280
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B atom lookup 600 242779990
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B reification 50 456997704
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B polynomial normalization 50 183821
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B certificate construction 50 801041
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B proof assignment 50 144627
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B backend 50 495998836
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 B total without restoration 50 2502797617
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 A goal restoration 50 267213
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 A frontend 50 1660075150
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 A backend 50 534740842
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 2 A total without restoration 50 2232344959
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B goal restoration 50 508679
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B frontend 50 1774824159
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B input sharing 50 8810820
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B module context 50 17660665
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B atom callback traversal 100 661367
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B callback output sharing 100 278154
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B operation matching 1050 114578542
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B atom lookup 600 224376625
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B reification 50 341392036
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B polynomial normalization 50 179789
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B certificate construction 50 728898
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B proof assignment 50 122044
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B backend 50 378455564
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 B total without restoration 50 2179942826
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A goal restoration 50 608315
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A frontend 50 1691348949
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A input sharing 50 8911504
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A context canonicalization 50 238091221
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A module context 50 254410195
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A operation matching 1000 173832588
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A atom lookup 600 206489150
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A reification 50 387989161
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A polynomial normalization 50 186990
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A certificate construction 50 628682
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A proof assignment 50 179803
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A backend 50 662788760
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 2 A total without restoration 50 2384820017
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 A goal restoration 50 295205
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 A frontend 50 1670481353
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 A backend 50 520459361
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 A total without restoration 50 2203098978
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B goal restoration 50 440576
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B frontend 50 1750462749
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B input sharing 50 8292955
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B module context 50 11773306
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B atom callback traversal 100 1730938
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B callback output sharing 100 66432
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B operation matching 1050 107926486
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B atom lookup 600 205697561
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B reification 50 316111142
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B polynomial normalization 50 175621
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B certificate construction 50 718737
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B proof assignment 50 128679
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B backend 50 347272492
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 3 B total without restoration 50 2121023367
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A goal restoration 50 524439
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A frontend 50 1814801205
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A input sharing 50 8072603
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A context canonicalization 50 233520651
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A module context 50 246174178
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A operation matching 1000 182171185
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A atom lookup 600 239705136
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A reification 50 429422198
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A polynomial normalization 50 180879
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A certificate construction 50 588477
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A proof assignment 50 153637
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A backend 50 696470115
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 A total without restoration 50 2551231154
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B goal restoration 50 509359
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B frontend 50 1718684554
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B input sharing 50 10691832
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B module context 50 12799892
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B atom callback traversal 100 1101843
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B callback output sharing 100 74942
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B operation matching 1050 113836737
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B atom lookup 600 221645852
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B reification 50 337991571
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B polynomial normalization 50 195245
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B certificate construction 50 724925
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B proof assignment 50 162175
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B backend 50 373350442
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 3 B total without restoration 50 2111955120
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B goal restoration 50 398993
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B frontend 50 1634370767
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B input sharing 50 8301847
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B module context 50 12472524
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B atom callback traversal 100 682687
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B callback output sharing 100 56864
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B operation matching 1050 106736144
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B atom lookup 600 198386454
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B reification 50 307274798
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B polynomial normalization 50 173443
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B certificate construction 50 686225
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B proof assignment 50 122550
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B backend 50 337606087
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 B total without restoration 50 1990748855
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 A goal restoration 50 217580
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 A frontend 50 1640483308
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 A backend 50 513394862
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE abel 4 A total without restoration 50 2162702459
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B goal restoration 50 461642
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B frontend 50 1559652447
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B input sharing 50 8116096
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B module context 50 12466614
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B atom callback traversal 100 632992
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B callback output sharing 100 71790
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B operation matching 1050 105574474
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B atom lookup 600 197914386
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B reification 50 305889676
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B polynomial normalization 50 169587
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B certificate construction 50 668212
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B proof assignment 50 117357
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B backend 50 336050724
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 B total without restoration 50 1913363640
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A goal restoration 50 626843
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A frontend 50 1766703949
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A input sharing 50 20171639
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A context canonicalization 50 261493228
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A module context 50 276548138
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A operation matching 1000 188301289
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A atom lookup 600 233983400
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A reification 50 431355991
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A polynomial normalization 50 185905
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A certificate construction 50 645875
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A proof assignment 50 165558
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A backend 50 740507748
+info: JacobiBenchProfile.lean:9:2: JACOBI_PROFILE legacy 4 A total without restoration 50 2541074134
+Build completed successfully (1267 jobs).

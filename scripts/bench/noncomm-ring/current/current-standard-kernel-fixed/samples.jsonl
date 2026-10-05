@@ -1,0 +1,8 @@
+{"pair": 1, "arm": "A", "iterations": 50, "duration_ns": 1286530663, "ns_per_call": 25730613.26, "explicit_kernel_ns": 27807813, "kernel_ms_per_call": 0.55615626}
+{"pair": 1, "arm": "B", "iterations": 50, "duration_ns": 1225001968, "ns_per_call": 24500039.36, "explicit_kernel_ns": 172582450, "kernel_ms_per_call": 3.451649}
+{"pair": 2, "arm": "B", "iterations": 50, "duration_ns": 1207328508, "ns_per_call": 24146570.16, "explicit_kernel_ns": 162059194, "kernel_ms_per_call": 3.24118388}
+{"pair": 2, "arm": "A", "iterations": 50, "duration_ns": 1307163582, "ns_per_call": 26143271.64, "explicit_kernel_ns": 23166925, "kernel_ms_per_call": 0.4633385}
+{"pair": 3, "arm": "A", "iterations": 50, "duration_ns": 1313843913, "ns_per_call": 26276878.26, "explicit_kernel_ns": 12751752, "kernel_ms_per_call": 0.25503504}
+{"pair": 3, "arm": "B", "iterations": 50, "duration_ns": 1214612619, "ns_per_call": 24292252.38, "explicit_kernel_ns": 171118150, "kernel_ms_per_call": 3.422363}
+{"pair": 4, "arm": "B", "iterations": 50, "duration_ns": 1215765009, "ns_per_call": 24315300.18, "explicit_kernel_ns": 163022702, "kernel_ms_per_call": 3.26045404}
+{"pair": 4, "arm": "A", "iterations": 50, "duration_ns": 1300431410, "ns_per_call": 26008628.2, "explicit_kernel_ns": 24207559, "kernel_ms_per_call": 0.48415118}

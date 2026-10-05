@@ -1,0 +1,55 @@
+{
+  "cpu": 41,
+  "host": "chungus2",
+  "schedule": [
+    "AB",
+    "BA",
+    "AB",
+    "BA"
+  ],
+  "warmups": 3,
+  "reps": 50,
+  "toolchain": "sym-module-dev",
+  "lean_head": "d1a101d6b33151a537b8fe6416acefd00fbfb726",
+  "baseline_commit": "a3bcf0a3c2",
+  "mode": "Explicit native .so loading for original Abel and old/current NoncommRing copies, harness, and shared import closure",
+  "timing": "Diagnostic clones with nested inclusive timers; totals exclude goal restoration. Old d816 Module source compiled on current binary, not historical binary.",
+  "host_context": "Shared host. Root holds other Lake builds using these caches; other host activity unrestricted.",
+  "load_before": [
+    178.75048828125,
+    89.353515625,
+    56.68896484375
+  ],
+  "source_sha256": {
+    "JacobiProfileUtil.lean": "cdd9e091f9f49e50d16c7c6ad310a0b4efaa158562a373d768959d68a736a2b0",
+    "JacobiModuleLegacyProfile.lean": "d10ccfa837cc11d78a04a7575c391a2a4c83feac7ac3ea6d17e62c1a05628aaf",
+    "JacobiModuleCurrentProfile.lean": "af62fb78de941142a35adb3d31a6940768963528bba01b4d3e19ecfdb490cc53",
+    "JacobiProfileHarness.lean": "5696a0dea48203618a7db09590721c22e7edb28ee307d8e707c05ccb28141d1d",
+    "JacobiOldAbel.lean": "744bbaf55cb994da37d4c6cbe9989b426f1038678876d18dac8c35135496b173",
+    "JacobiOldNoncommRing.lean": "c89fe398e8dd879eb349a3f1f5de93202308505570360a19d8d315c6b93ec028",
+    "JacobiCurrentNoncommRing.lean": "65013e4ff4163bbb38db681a3734a4b7e3a1cd26e02ef893b3ee1fc2fae0e090",
+    "JacobiHarness.lean": "3879977a60d5691030bde18aeb062209568c9a3683d66171e9dd853fb638a77e",
+    "JacobiBenchProfile.lean": "1b66eff855fc5cd36cb53d80fb18aba7ad1a6383db234d4391346f59f5bae970",
+    "lakefile-jacobi.lean": "108f47807c9adda7891204864661eaccb1ba0b2d0ddc5e42b7394f5df84b319e"
+  },
+  "binary_sha256": {
+    ".lake/build/lib/lean/mathlib_JacobiCurrentNoncommRing.so": "dff3e6f678f6677b2c652eccb81cafd85b287041a905a7f1b5a56c6ea104ff4d",
+    ".lake/build/lib/lean/mathlib_JacobiOldAbel.so": "028076f151b8142dc9522b1ff765bf8c422e3754f0cd51e8bd48c527147714de",
+    ".lake/build/lib/lean/mathlib_JacobiOldNoncommRing.so": "b8c118190b0a5f2d52f9a4056e833ee72a2c3b254eb6f9dc50fdf07c46e15e33",
+    ".lake/build/lib/lean/mathlib_JacobiHarness.so": "ddb39834e995a6582c6cb0e93fa37d30608e3b350f937e8f8801fa8c8e55c9ba",
+    ".lake/build/lib/lean/mathlib_JacobiProfileHarness.so": "10dcb6812ad7408f96ccbd9561c5c55ae536c2bab3a62c15802a26553417ce9a",
+    ".lake/build/lib/lean/mathlib_JacobiProfileUtil.so": "67df3043b94699e8eff541325d128a97e6bf2267ec669b8730c452effc805b8a",
+    ".lake/build/lib/lean/mathlib_JacobiModuleLegacyProfile.so": "3b7c11e53a21359a6c33458058ebc4f96209e5b4397d446141551d6679b85d52",
+    ".lake/build/lib/lean/mathlib_JacobiModuleCurrentProfile.so": "01e5cb00dd65b9328d7c185fb89044581affc884dda675a3430f4d8cfb3bbdfc",
+    ".lake/build/lib/libJacobiMathlibDeps.so": "745c05134cb8c34e6bd1eacb26a72212487dbb0d0ca1d3016eff8520ea413377",
+    "/home/kim/worktrees/lean4/lean4-sym-module/build/release/stage1/lib/lean/libleanshared.so": "fffdcee17e8992c5beddad476d34ca4300d37c5ecc0e06b738173adacb8fc6e7"
+  },
+  "exit_code": 0,
+  "sample_count": 16,
+  "load_after": [
+    219.7666015625,
+    112.982421875,
+    66.24560546875
+  ],
+  "elapsed_s": 43.984165648999806
+}

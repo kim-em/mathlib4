@@ -1,0 +1,180 @@
+{"comparison": "abel", "pair": 1, "arm": "A", "stage": "goal restoration", "count": 50, "duration_ns": 230271, "ms_per_tactic": 0.00460542}
+{"comparison": "abel", "pair": 1, "arm": "A", "stage": "frontend", "count": 50, "duration_ns": 2038723370, "ms_per_tactic": 40.7744674}
+{"comparison": "abel", "pair": 1, "arm": "A", "stage": "backend", "count": 50, "duration_ns": 616943782, "ms_per_tactic": 12.338875640000001}
+{"comparison": "abel", "pair": 1, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2665582672, "ms_per_tactic": 53.31165344}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "goal restoration", "count": 50, "duration_ns": 508186, "ms_per_tactic": 0.01016372}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "frontend", "count": 50, "duration_ns": 1848454234, "ms_per_tactic": 36.96908468}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "input sharing", "count": 50, "duration_ns": 8975317, "ms_per_tactic": 0.17950634}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "module context", "count": 50, "duration_ns": 13985830, "ms_per_tactic": 0.2797166}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "atom callback traversal", "count": 100, "duration_ns": 686351, "ms_per_tactic": 0.013727020000000001}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "callback output sharing", "count": 100, "duration_ns": 72211, "ms_per_tactic": 0.00144422}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "operation matching", "count": 1050, "duration_ns": 168533096, "ms_per_tactic": 3.37066192}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "atom lookup", "count": 600, "duration_ns": 214364281, "ms_per_tactic": 4.2872856200000005}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "reification", "count": 50, "duration_ns": 385500599, "ms_per_tactic": 7.710011980000001}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "polynomial normalization", "count": 50, "duration_ns": 181701, "ms_per_tactic": 0.00363402}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "certificate construction", "count": 50, "duration_ns": 2381683, "ms_per_tactic": 0.04763366}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "proof assignment", "count": 50, "duration_ns": 141437, "ms_per_tactic": 0.0028287399999999997}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "backend", "count": 50, "duration_ns": 422873299, "ms_per_tactic": 8.45746598}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2291516741, "ms_per_tactic": 45.83033482}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "goal restoration", "count": 50, "duration_ns": 625703, "ms_per_tactic": 0.012514059999999999}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "frontend", "count": 50, "duration_ns": 1817153396, "ms_per_tactic": 36.34306792}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "input sharing", "count": 50, "duration_ns": 10066547, "ms_per_tactic": 0.20133094}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "context canonicalization", "count": 50, "duration_ns": 245035091, "ms_per_tactic": 4.90070182}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "module context", "count": 50, "duration_ns": 258122326, "ms_per_tactic": 5.16244652}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "operation matching", "count": 1000, "duration_ns": 186846461, "ms_per_tactic": 3.7369292200000004}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "atom lookup", "count": 600, "duration_ns": 219431402, "ms_per_tactic": 4.38862804}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "reification", "count": 50, "duration_ns": 415011380, "ms_per_tactic": 8.3002276}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "polynomial normalization", "count": 50, "duration_ns": 195370, "ms_per_tactic": 0.0039074}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "certificate construction", "count": 50, "duration_ns": 623992, "ms_per_tactic": 0.01247984}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "proof assignment", "count": 50, "duration_ns": 151239, "ms_per_tactic": 0.0030247800000000004}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "backend", "count": 50, "duration_ns": 700110059, "ms_per_tactic": 14.00220118}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2548038329, "ms_per_tactic": 50.96076658}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "goal restoration", "count": 50, "duration_ns": 501436, "ms_per_tactic": 0.01002872}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "frontend", "count": 50, "duration_ns": 1972803712, "ms_per_tactic": 39.45607424}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "input sharing", "count": 50, "duration_ns": 10855100, "ms_per_tactic": 0.217102}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "module context", "count": 50, "duration_ns": 16844540, "ms_per_tactic": 0.3368908}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "atom callback traversal", "count": 100, "duration_ns": 689999, "ms_per_tactic": 0.01379998}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "callback output sharing", "count": 100, "duration_ns": 72813, "ms_per_tactic": 0.00145626}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "operation matching", "count": 1050, "duration_ns": 138637931, "ms_per_tactic": 2.7727586200000003}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "atom lookup", "count": 600, "duration_ns": 238385986, "ms_per_tactic": 4.76771972}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "reification", "count": 50, "duration_ns": 379580609, "ms_per_tactic": 7.591612179999999}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "polynomial normalization", "count": 50, "duration_ns": 184241, "ms_per_tactic": 0.00368482}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "certificate construction", "count": 50, "duration_ns": 767618, "ms_per_tactic": 0.01535236}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "proof assignment", "count": 50, "duration_ns": 135022, "ms_per_tactic": 0.00270044}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "backend", "count": 50, "duration_ns": 420250154, "ms_per_tactic": 8.40500308}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2413384230, "ms_per_tactic": 48.2676846}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "goal restoration", "count": 50, "duration_ns": 510142, "ms_per_tactic": 0.01020284}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "frontend", "count": 50, "duration_ns": 1986113464, "ms_per_tactic": 39.72226928}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "input sharing", "count": 50, "duration_ns": 9317559, "ms_per_tactic": 0.18635118}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "module context", "count": 50, "duration_ns": 18118761, "ms_per_tactic": 0.36237522}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "atom callback traversal", "count": 100, "duration_ns": 706950, "ms_per_tactic": 0.014139}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "callback output sharing", "count": 100, "duration_ns": 72333, "ms_per_tactic": 0.00144666}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "operation matching", "count": 1050, "duration_ns": 211559280, "ms_per_tactic": 4.2311856}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "atom lookup", "count": 600, "duration_ns": 242779990, "ms_per_tactic": 4.8555998}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "reification", "count": 50, "duration_ns": 456997704, "ms_per_tactic": 9.13995408}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "polynomial normalization", "count": 50, "duration_ns": 183821, "ms_per_tactic": 0.00367642}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "certificate construction", "count": 50, "duration_ns": 801041, "ms_per_tactic": 0.016020819999999998}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "proof assignment", "count": 50, "duration_ns": 144627, "ms_per_tactic": 0.00289254}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "backend", "count": 50, "duration_ns": 495998836, "ms_per_tactic": 9.919976720000001}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2502797617, "ms_per_tactic": 50.055952340000005}
+{"comparison": "abel", "pair": 2, "arm": "A", "stage": "goal restoration", "count": 50, "duration_ns": 267213, "ms_per_tactic": 0.00534426}
+{"comparison": "abel", "pair": 2, "arm": "A", "stage": "frontend", "count": 50, "duration_ns": 1660075150, "ms_per_tactic": 33.201503}
+{"comparison": "abel", "pair": 2, "arm": "A", "stage": "backend", "count": 50, "duration_ns": 534740842, "ms_per_tactic": 10.69481684}
+{"comparison": "abel", "pair": 2, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2232344959, "ms_per_tactic": 44.64689918}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "goal restoration", "count": 50, "duration_ns": 508679, "ms_per_tactic": 0.01017358}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "frontend", "count": 50, "duration_ns": 1774824159, "ms_per_tactic": 35.49648318}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "input sharing", "count": 50, "duration_ns": 8810820, "ms_per_tactic": 0.1762164}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "module context", "count": 50, "duration_ns": 17660665, "ms_per_tactic": 0.3532133}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "atom callback traversal", "count": 100, "duration_ns": 661367, "ms_per_tactic": 0.01322734}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "callback output sharing", "count": 100, "duration_ns": 278154, "ms_per_tactic": 0.00556308}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "operation matching", "count": 1050, "duration_ns": 114578542, "ms_per_tactic": 2.29157084}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "atom lookup", "count": 600, "duration_ns": 224376625, "ms_per_tactic": 4.4875325}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "reification", "count": 50, "duration_ns": 341392036, "ms_per_tactic": 6.827840719999999}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "polynomial normalization", "count": 50, "duration_ns": 179789, "ms_per_tactic": 0.0035957800000000002}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "certificate construction", "count": 50, "duration_ns": 728898, "ms_per_tactic": 0.01457796}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "proof assignment", "count": 50, "duration_ns": 122044, "ms_per_tactic": 0.0024408800000000003}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "backend", "count": 50, "duration_ns": 378455564, "ms_per_tactic": 7.56911128}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2179942826, "ms_per_tactic": 43.598856520000005}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "goal restoration", "count": 50, "duration_ns": 608315, "ms_per_tactic": 0.0121663}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "frontend", "count": 50, "duration_ns": 1691348949, "ms_per_tactic": 33.82697898}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "input sharing", "count": 50, "duration_ns": 8911504, "ms_per_tactic": 0.17823007999999999}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "context canonicalization", "count": 50, "duration_ns": 238091221, "ms_per_tactic": 4.76182442}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "module context", "count": 50, "duration_ns": 254410195, "ms_per_tactic": 5.088203900000001}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "operation matching", "count": 1000, "duration_ns": 173832588, "ms_per_tactic": 3.4766517599999998}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "atom lookup", "count": 600, "duration_ns": 206489150, "ms_per_tactic": 4.129783}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "reification", "count": 50, "duration_ns": 387989161, "ms_per_tactic": 7.75978322}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "polynomial normalization", "count": 50, "duration_ns": 186990, "ms_per_tactic": 0.0037398}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "certificate construction", "count": 50, "duration_ns": 628682, "ms_per_tactic": 0.012573639999999999}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "proof assignment", "count": 50, "duration_ns": 179803, "ms_per_tactic": 0.00359606}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "backend", "count": 50, "duration_ns": 662788760, "ms_per_tactic": 13.255775199999999}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2384820017, "ms_per_tactic": 47.696400340000004}
+{"comparison": "abel", "pair": 3, "arm": "A", "stage": "goal restoration", "count": 50, "duration_ns": 295205, "ms_per_tactic": 0.005904100000000001}
+{"comparison": "abel", "pair": 3, "arm": "A", "stage": "frontend", "count": 50, "duration_ns": 1670481353, "ms_per_tactic": 33.40962706}
+{"comparison": "abel", "pair": 3, "arm": "A", "stage": "backend", "count": 50, "duration_ns": 520459361, "ms_per_tactic": 10.409187220000002}
+{"comparison": "abel", "pair": 3, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2203098978, "ms_per_tactic": 44.061979560000005}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "goal restoration", "count": 50, "duration_ns": 440576, "ms_per_tactic": 0.00881152}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "frontend", "count": 50, "duration_ns": 1750462749, "ms_per_tactic": 35.009254979999994}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "input sharing", "count": 50, "duration_ns": 8292955, "ms_per_tactic": 0.1658591}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "module context", "count": 50, "duration_ns": 11773306, "ms_per_tactic": 0.23546612}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "atom callback traversal", "count": 100, "duration_ns": 1730938, "ms_per_tactic": 0.034618760000000005}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "callback output sharing", "count": 100, "duration_ns": 66432, "ms_per_tactic": 0.00132864}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "operation matching", "count": 1050, "duration_ns": 107926486, "ms_per_tactic": 2.15852972}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "atom lookup", "count": 600, "duration_ns": 205697561, "ms_per_tactic": 4.113951220000001}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "reification", "count": 50, "duration_ns": 316111142, "ms_per_tactic": 6.32222284}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "polynomial normalization", "count": 50, "duration_ns": 175621, "ms_per_tactic": 0.00351242}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "certificate construction", "count": 50, "duration_ns": 718737, "ms_per_tactic": 0.01437474}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "proof assignment", "count": 50, "duration_ns": 128679, "ms_per_tactic": 0.00257358}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "backend", "count": 50, "duration_ns": 347272492, "ms_per_tactic": 6.94544984}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2121023367, "ms_per_tactic": 42.42046734}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "goal restoration", "count": 50, "duration_ns": 524439, "ms_per_tactic": 0.010488780000000001}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "frontend", "count": 50, "duration_ns": 1814801205, "ms_per_tactic": 36.296024100000004}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "input sharing", "count": 50, "duration_ns": 8072603, "ms_per_tactic": 0.16145206}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "context canonicalization", "count": 50, "duration_ns": 233520651, "ms_per_tactic": 4.67041302}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "module context", "count": 50, "duration_ns": 246174178, "ms_per_tactic": 4.923483559999999}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "operation matching", "count": 1000, "duration_ns": 182171185, "ms_per_tactic": 3.6434237}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "atom lookup", "count": 600, "duration_ns": 239705136, "ms_per_tactic": 4.79410272}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "reification", "count": 50, "duration_ns": 429422198, "ms_per_tactic": 8.588443960000001}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "polynomial normalization", "count": 50, "duration_ns": 180879, "ms_per_tactic": 0.00361758}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "certificate construction", "count": 50, "duration_ns": 588477, "ms_per_tactic": 0.01176954}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "proof assignment", "count": 50, "duration_ns": 153637, "ms_per_tactic": 0.0030727399999999996}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "backend", "count": 50, "duration_ns": 696470115, "ms_per_tactic": 13.929402300000001}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2551231154, "ms_per_tactic": 51.02462308}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "goal restoration", "count": 50, "duration_ns": 509359, "ms_per_tactic": 0.01018718}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "frontend", "count": 50, "duration_ns": 1718684554, "ms_per_tactic": 34.37369108}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "input sharing", "count": 50, "duration_ns": 10691832, "ms_per_tactic": 0.21383664000000002}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "module context", "count": 50, "duration_ns": 12799892, "ms_per_tactic": 0.25599784}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "atom callback traversal", "count": 100, "duration_ns": 1101843, "ms_per_tactic": 0.022036860000000002}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "callback output sharing", "count": 100, "duration_ns": 74942, "ms_per_tactic": 0.00149884}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "operation matching", "count": 1050, "duration_ns": 113836737, "ms_per_tactic": 2.27673474}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "atom lookup", "count": 600, "duration_ns": 221645852, "ms_per_tactic": 4.43291704}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "reification", "count": 50, "duration_ns": 337991571, "ms_per_tactic": 6.75983142}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "polynomial normalization", "count": 50, "duration_ns": 195245, "ms_per_tactic": 0.0039049}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "certificate construction", "count": 50, "duration_ns": 724925, "ms_per_tactic": 0.0144985}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "proof assignment", "count": 50, "duration_ns": 162175, "ms_per_tactic": 0.0032435}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "backend", "count": 50, "duration_ns": 373350442, "ms_per_tactic": 7.46700884}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2111955120, "ms_per_tactic": 42.2391024}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "goal restoration", "count": 50, "duration_ns": 398993, "ms_per_tactic": 0.00797986}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "frontend", "count": 50, "duration_ns": 1634370767, "ms_per_tactic": 32.68741534}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "input sharing", "count": 50, "duration_ns": 8301847, "ms_per_tactic": 0.16603694}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "module context", "count": 50, "duration_ns": 12472524, "ms_per_tactic": 0.24945048}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "atom callback traversal", "count": 100, "duration_ns": 682687, "ms_per_tactic": 0.01365374}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "callback output sharing", "count": 100, "duration_ns": 56864, "ms_per_tactic": 0.00113728}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "operation matching", "count": 1050, "duration_ns": 106736144, "ms_per_tactic": 2.13472288}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "atom lookup", "count": 600, "duration_ns": 198386454, "ms_per_tactic": 3.9677290800000002}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "reification", "count": 50, "duration_ns": 307274798, "ms_per_tactic": 6.14549596}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "polynomial normalization", "count": 50, "duration_ns": 173443, "ms_per_tactic": 0.0034688600000000003}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "certificate construction", "count": 50, "duration_ns": 686225, "ms_per_tactic": 0.0137245}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "proof assignment", "count": 50, "duration_ns": 122550, "ms_per_tactic": 0.002451}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "backend", "count": 50, "duration_ns": 337606087, "ms_per_tactic": 6.752121740000001}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 1990748855, "ms_per_tactic": 39.8149771}
+{"comparison": "abel", "pair": 4, "arm": "A", "stage": "goal restoration", "count": 50, "duration_ns": 217580, "ms_per_tactic": 0.004351600000000001}
+{"comparison": "abel", "pair": 4, "arm": "A", "stage": "frontend", "count": 50, "duration_ns": 1640483308, "ms_per_tactic": 32.80966616}
+{"comparison": "abel", "pair": 4, "arm": "A", "stage": "backend", "count": 50, "duration_ns": 513394862, "ms_per_tactic": 10.26789724}
+{"comparison": "abel", "pair": 4, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2162702459, "ms_per_tactic": 43.25404918}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "goal restoration", "count": 50, "duration_ns": 461642, "ms_per_tactic": 0.00923284}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "frontend", "count": 50, "duration_ns": 1559652447, "ms_per_tactic": 31.19304894}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "input sharing", "count": 50, "duration_ns": 8116096, "ms_per_tactic": 0.16232192}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "module context", "count": 50, "duration_ns": 12466614, "ms_per_tactic": 0.24933228}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "atom callback traversal", "count": 100, "duration_ns": 632992, "ms_per_tactic": 0.01265984}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "callback output sharing", "count": 100, "duration_ns": 71790, "ms_per_tactic": 0.0014357999999999999}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "operation matching", "count": 1050, "duration_ns": 105574474, "ms_per_tactic": 2.11148948}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "atom lookup", "count": 600, "duration_ns": 197914386, "ms_per_tactic": 3.9582877200000004}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "reification", "count": 50, "duration_ns": 305889676, "ms_per_tactic": 6.117793519999999}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "polynomial normalization", "count": 50, "duration_ns": 169587, "ms_per_tactic": 0.00339174}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "certificate construction", "count": 50, "duration_ns": 668212, "ms_per_tactic": 0.01336424}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "proof assignment", "count": 50, "duration_ns": 117357, "ms_per_tactic": 0.0023471399999999997}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "backend", "count": 50, "duration_ns": 336050724, "ms_per_tactic": 6.72101448}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 1913363640, "ms_per_tactic": 38.26727279999999}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "goal restoration", "count": 50, "duration_ns": 626843, "ms_per_tactic": 0.01253686}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "frontend", "count": 50, "duration_ns": 1766703949, "ms_per_tactic": 35.334078979999994}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "input sharing", "count": 50, "duration_ns": 20171639, "ms_per_tactic": 0.40343278000000005}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "context canonicalization", "count": 50, "duration_ns": 261493228, "ms_per_tactic": 5.229864559999999}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "module context", "count": 50, "duration_ns": 276548138, "ms_per_tactic": 5.5309627599999995}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "operation matching", "count": 1000, "duration_ns": 188301289, "ms_per_tactic": 3.7660257799999997}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "atom lookup", "count": 600, "duration_ns": 233983400, "ms_per_tactic": 4.679668}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "reification", "count": 50, "duration_ns": 431355991, "ms_per_tactic": 8.62711982}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "polynomial normalization", "count": 50, "duration_ns": 185905, "ms_per_tactic": 0.0037181}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "certificate construction", "count": 50, "duration_ns": 645875, "ms_per_tactic": 0.0129175}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "proof assignment", "count": 50, "duration_ns": 165558, "ms_per_tactic": 0.00331116}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "backend", "count": 50, "duration_ns": 740507748, "ms_per_tactic": 14.81015496}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2541074134, "ms_per_tactic": 50.82148268}

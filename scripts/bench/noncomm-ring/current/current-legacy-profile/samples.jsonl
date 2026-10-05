@@ -1,0 +1,16 @@
+{"comparison": "abel", "pair": 1, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2665582672, "ms_per_tactic": 53.31165344}
+{"comparison": "abel", "pair": 1, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2291516741, "ms_per_tactic": 45.83033482}
+{"comparison": "legacy", "pair": 1, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2548038329, "ms_per_tactic": 50.96076658}
+{"comparison": "legacy", "pair": 1, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2413384230, "ms_per_tactic": 48.2676846}
+{"comparison": "abel", "pair": 2, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2502797617, "ms_per_tactic": 50.055952340000005}
+{"comparison": "abel", "pair": 2, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2232344959, "ms_per_tactic": 44.64689918}
+{"comparison": "legacy", "pair": 2, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2179942826, "ms_per_tactic": 43.598856520000005}
+{"comparison": "legacy", "pair": 2, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2384820017, "ms_per_tactic": 47.696400340000004}
+{"comparison": "abel", "pair": 3, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2203098978, "ms_per_tactic": 44.061979560000005}
+{"comparison": "abel", "pair": 3, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2121023367, "ms_per_tactic": 42.42046734}
+{"comparison": "legacy", "pair": 3, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2551231154, "ms_per_tactic": 51.02462308}
+{"comparison": "legacy", "pair": 3, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 2111955120, "ms_per_tactic": 42.2391024}
+{"comparison": "abel", "pair": 4, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 1990748855, "ms_per_tactic": 39.8149771}
+{"comparison": "abel", "pair": 4, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2162702459, "ms_per_tactic": 43.25404918}
+{"comparison": "legacy", "pair": 4, "arm": "B", "stage": "total without restoration", "count": 50, "duration_ns": 1913363640, "ms_per_tactic": 38.26727279999999}
+{"comparison": "legacy", "pair": 4, "arm": "A", "stage": "total without restoration", "count": 50, "duration_ns": 2541074134, "ms_per_tactic": 50.82148268}

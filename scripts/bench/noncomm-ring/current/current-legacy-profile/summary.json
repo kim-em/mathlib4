@@ -1,0 +1,176 @@
+[
+  {
+    "comparison": "abel",
+    "stage": "goal restoration",
+    "A": 0.0049748399999999995,
+    "B": 0.009487619999999999
+  },
+  {
+    "comparison": "abel",
+    "stage": "frontend",
+    "A": 33.30556503,
+    "B": 35.989169829999994
+  },
+  {
+    "comparison": "abel",
+    "stage": "backend",
+    "A": 10.55200203,
+    "B": 7.70145791
+  },
+  {
+    "comparison": "abel",
+    "stage": "total without restoration",
+    "A": 44.35443937,
+    "B": 44.12540108
+  },
+  {
+    "comparison": "abel",
+    "stage": "input sharing",
+    "A": 0,
+    "B": 0.17277164
+  },
+  {
+    "comparison": "abel",
+    "stage": "module context",
+    "A": 0,
+    "B": 0.26458354
+  },
+  {
+    "comparison": "abel",
+    "stage": "atom callback traversal",
+    "A": 0,
+    "B": 0.013933010000000001
+  },
+  {
+    "comparison": "abel",
+    "stage": "callback output sharing",
+    "A": 0,
+    "B": 0.0013864300000000001
+  },
+  {
+    "comparison": "abel",
+    "stage": "operation matching",
+    "A": 0,
+    "B": 2.7645958200000003
+  },
+  {
+    "comparison": "abel",
+    "stage": "atom lookup",
+    "A": 0,
+    "B": 4.2006184200000005
+  },
+  {
+    "comparison": "abel",
+    "stage": "reification",
+    "A": 0,
+    "B": 7.0161174100000006
+  },
+  {
+    "comparison": "abel",
+    "stage": "polynomial normalization",
+    "A": 0,
+    "B": 0.00357322
+  },
+  {
+    "comparison": "abel",
+    "stage": "certificate construction",
+    "A": 0,
+    "B": 0.01519778
+  },
+  {
+    "comparison": "abel",
+    "stage": "proof assignment",
+    "A": 0,
+    "B": 0.0027011599999999998
+  },
+  {
+    "comparison": "legacy",
+    "stage": "goal restoration",
+    "A": 0.01234018,
+    "B": 0.01010115
+  },
+  {
+    "comparison": "legacy",
+    "stage": "frontend",
+    "A": 35.81505154,
+    "B": 34.93508713
+  },
+  {
+    "comparison": "legacy",
+    "stage": "input sharing",
+    "A": 0.18978051,
+    "B": 0.19502652
+  },
+  {
+    "comparison": "legacy",
+    "stage": "context canonicalization",
+    "A": 4.83126312,
+    "B": 0
+  },
+  {
+    "comparison": "legacy",
+    "stage": "module context",
+    "A": 5.12532521,
+    "B": 0.29644432
+  },
+  {
+    "comparison": "legacy",
+    "stage": "operation matching",
+    "A": 3.69017646,
+    "B": 2.2841527900000003
+  },
+  {
+    "comparison": "legacy",
+    "stage": "atom lookup",
+    "A": 4.53414802,
+    "B": 4.46022477
+  },
+  {
+    "comparison": "legacy",
+    "stage": "reification",
+    "A": 8.44433578,
+    "B": 6.793836069999999
+  },
+  {
+    "comparison": "legacy",
+    "stage": "polynomial normalization",
+    "A": 0.00372895,
+    "B": 0.0036403
+  },
+  {
+    "comparison": "legacy",
+    "stage": "certificate construction",
+    "A": 0.01252674,
+    "B": 0.01453823
+  },
+  {
+    "comparison": "legacy",
+    "stage": "proof assignment",
+    "A": 0.00319195,
+    "B": 0.0025706600000000002
+  },
+  {
+    "comparison": "legacy",
+    "stage": "backend",
+    "A": 13.96580174,
+    "B": 7.51806006
+  },
+  {
+    "comparison": "legacy",
+    "stage": "total without restoration",
+    "A": 50.89112463,
+    "B": 42.91897946
+  },
+  {
+    "comparison": "legacy",
+    "stage": "atom callback traversal",
+    "A": 0,
+    "B": 0.01351366
+  },
+  {
+    "comparison": "legacy",
+    "stage": "callback output sharing",
+    "A": 0,
+    "B": 0.00147755
+  }
+]
