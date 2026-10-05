@@ -31,10 +31,11 @@ not a whole-Mathlib speedup estimate. The two runs occurred under different shar
 conditions, so compare each implementation against its adjacent baseline rather than comparing
 absolute times between runs.
 
-The harness times saved-goal restoration and tactic evaluation, including proof construction
-and the auxiliary theorem kernel check performed by both Abel implementations. It excludes
-input elaboration and the final declaration's kernel check. Both sides return an already-checked
-auxiliary theorem; the benchmark declarations also pass final kernel checking.
+The harness times saved-goal restoration and tactic evaluation, including proof construction.
+For equality-tactic workloads this includes the auxiliary theorem kernel check performed by
+both implementations; both return an already-checked auxiliary theorem. The `abel_nf` workloads
+time target and hypothesis transformations. Input elaboration and final declaration kernel
+checking are excluded from the timers. All benchmark declarations pass final kernel checking.
 
 Each run directory contains exact measured sources (renamed to coexist in the benchmark only),
 raw samples, build logs and metadata with source hashes, CPU, host load and toolchain. `run.py`
