@@ -56,6 +56,8 @@ variable {a b c d m n : ℕ∞}
 `ℕ → ℕ∞` is `Nat.cast`. -/
 @[simp] theorem some_eq_natCast : (WithTop.some : ℕ → ℕ∞) = Nat.cast := rfl
 
+@[simp] protected theorem bot_eq_zero : (⊥ : ℕ∞) = 0 := rfl
+
 @[deprecated (since := "2026-07-17")] alias some_eq_coe := some_eq_natCast
 
 @[basify_simp]

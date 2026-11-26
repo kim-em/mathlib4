@@ -487,7 +487,7 @@ noncomputable def ofNNRealHom : ℝ≥0 →+* ℝ≥0∞ where
 
 section Order
 
-theorem bot_eq_zero : (⊥ : ℝ≥0∞) = 0 := rfl
+@[simp] theorem bot_eq_zero : (⊥ : ℝ≥0∞) = 0 := rfl
 
 -- `coe_lt_top` moved up
 
