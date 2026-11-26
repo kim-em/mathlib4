@@ -50,7 +50,8 @@ A typical use case is the action of a Galois group $Gal(L/K)$ on the field `L`.
 class MulSemiringAction (M : Type u) (R : Type v) [Monoid M] [Semiring R] extends
   DistribMulAction M R, MulDistribMulAction M R where
 
-attribute [instance 100] MulSemiringAction.toMulDistribMulAction
+attribute [instance 100] MulSemiringAction.toDistribMulAction
+  MulSemiringAction.toMulDistribMulAction
 
 section Semiring
 

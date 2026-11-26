@@ -150,7 +150,8 @@ theorem ofNat_lt :
 
 end Nat
 
-instance [AddMonoidWithOne α] [CharZero α] : Nontrivial α where exists_pair_ne :=
+-- See note [lower instance priority]
+instance (priority := 100) [AddMonoidWithOne α] [CharZero α] : Nontrivial α where exists_pair_ne :=
   ⟨1, 0, (Nat.cast_one (R := α) ▸ Nat.cast_ne_zero.2 (by decide))⟩
 
 section RingHomClass
