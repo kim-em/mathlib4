@@ -205,7 +205,6 @@ theorem ne_zero (hπ : IsUniformizer v π) : π ≠ 0 := by
   rw [h0, IsUniformizer, map_zero] at hπ
   exact (Units.ne_zero _).symm hπ
 
-@[simp]
 lemma val (hπ : v.IsUniformizer π) : v π = hv.generator := hπ
 
 lemma val_lt_one (hπ : v.IsUniformizer π) : v π < 1 := hπ ▸ hv.generator_lt_one

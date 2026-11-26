@@ -326,7 +326,7 @@ theorem tprod_one_add_ordered [T2Space α] [ContinuousAdd α]
     (hprod : Multipliable (1 + f ·)) :
     ∏' i, (1 + f i) = 1 + ∑' i, f i * ∏ j ∈ Iio i, (1 + f j) := by
   rcases isEmpty_or_nonempty ι with _ | _
-  · simp
+  · simp [tprod_empty, tsum_empty]
   obtain ⟨x, hx⟩ := hprod
   obtain ⟨a, ha⟩ := hsum
   convert hx.tprod_eq
