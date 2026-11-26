@@ -422,7 +422,7 @@ lemma infinitePi_pi_of_countable {s : Set ι} (hs : Countable s) {t : (i : ι) �
     (mt : ∀ i ∈ s, MeasurableSet (t i)) :
     infinitePi μ (Set.pi s t) = ∏' i : s, μ i (t i) := by
   wlog s_ne : Nonempty s
-  · simp [Set.not_nonempty_iff_eq_empty'.mp s_ne]
+  · simp [Set.not_nonempty_iff_eq_empty'.mp s_ne, tprod_empty]
   apply tendsto_nhds_unique (f := fun s' : Finset s ↦ ∏ i ∈ s', μ i (t i)) (l := atTop)
   classical
   · conv in ∏ _ ∈ _, _ =>
