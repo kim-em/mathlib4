@@ -501,7 +501,7 @@ noncomputable instance : ConditionallyCompleteLinearOrderBot ℝ≥0 :=
 @[norm_cast]
 theorem coe_sSup (s : Set ℝ≥0) : (↑(sSup s) : ℝ) = sSup (((↑) : ℝ≥0 → ℝ) '' s) := by
   rcases Set.eq_empty_or_nonempty s with rfl | hs
-  · simp
+  · simp [bot_eq_zero']
   by_cases H : BddAbove s
   · exact @Set.OrdConnected.coe_sSup ℝ (Set.Ici 0) _ (_) _ s hs H
   · simp only [csSup_of_not_bddAbove H, csSup_empty, bot_eq_zero', NNReal.coe_zero]
@@ -895,7 +895,7 @@ theorem iInf_empty [IsEmpty ι] (f : ι → ℝ≥0) : ⨅ i, f i = 0 := by
 @[simp] lemma iSup_eq_zero (hf : BddAbove (range f)) : ⨆ i, f i = 0 ↔ ∀ i, f i = 0 := by
   cases isEmpty_or_nonempty ι
   · simp
-  · simp [← bot_eq_zero', ← le_bot_iff, ciSup_le_iff hf]
+  · simp [← NNReal.bot_eq_zero, ← le_bot_iff, ciSup_le_iff hf]
 
 @[simp]
 theorem iInf_const_zero {α : Sort*} : ⨅ _ : α, (0 : ℝ≥0) = 0 := by

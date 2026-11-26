@@ -317,10 +317,10 @@ protected theorem one_le_iff_ne_zero {c : Cardinal} : 1 ≤ c ↔ c ≠ 0 := by
 
 @[simp]
 protected theorem lt_one_iff {c : Cardinal} : c < 1 ↔ c = 0 := by
-  simpa using lt_succ_bot_iff (a := c)
+  simpa [bot_eq_zero'] using lt_succ_bot_iff (a := c)
 
 protected theorem le_one_iff {c : Cardinal} : c ≤ 1 ↔ c = 0 ∨ c = 1 := by
-  simpa using le_succ_bot_iff (a := c)
+  simpa [bot_eq_zero'] using le_succ_bot_iff (a := c)
 
 /-! ### Properties about `aleph0` -/
 
