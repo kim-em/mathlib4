@@ -105,7 +105,7 @@ lemma avgRisk_of_isEmpty' [IsEmpty 𝓨] : avgRisk ℓ P κ π = 0 := by
 
 @[simp]
 lemma avgRisk_of_isEmpty'' [IsEmpty Θ] : avgRisk ℓ P κ π = 0 := by
-  simp [avgRisk]
+  simp [avgRisk, lintegral_of_isEmpty]
 
 @[simp]
 lemma bayesRisk_of_isEmpty [IsEmpty 𝓧] : bayesRisk ℓ P π = 0 := by
