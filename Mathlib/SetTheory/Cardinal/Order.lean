@@ -275,6 +275,8 @@ instance orderBot : OrderBot Cardinal.{u} where
   bot := 0
   bot_le := by rintro ⟨α⟩; exact ⟨Embedding.ofIsEmpty⟩
 
+@[simp] protected theorem bot_eq_zero : (⊥ : Cardinal) = 0 := rfl
+
 private theorem add_le_add' : ∀ {a b c d : Cardinal}, a ≤ b → c ≤ d → a + c ≤ b + d := by
   rintro ⟨α⟩ ⟨β⟩ ⟨γ⟩ ⟨δ⟩ ⟨e₁⟩ ⟨e₂⟩; exact ⟨e₁.sumMap e₂⟩
 
