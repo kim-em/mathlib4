@@ -230,9 +230,13 @@ theorem min_mul_distrib (a b c : α) : min a (b * c) = min a (min a b * min a c)
 theorem min_mul_distrib' (a b c : α) : min (a * b) c = min (min a c * min b c) c := by
   simpa [min_comm _ c] using min_mul_distrib c a b
 
-/-- In a linearly ordered monoid, we are happy for `bot_eq_one` to be a `@[simp]` lemma. -/
-@[to_additive (attr := simp)
-/-- In a linearly ordered monoid, we are happy for `bot_eq_zero` to be a `@[simp]` lemma -/]
+/-- A version of `bot_eq_one` for linearly ordered monoids. It is not a `@[simp]` lemma:
+its left-hand side `⊥` matches the bottom element of every lattice, and checking the
+`LinearOrder` hypothesis fails slowly on lattices such as ideals and submodules. -/
+@[to_additive
+/-- A version of `bot_eq_zero` for linearly ordered monoids. It is not a `@[simp]` lemma:
+its left-hand side `⊥` matches the bottom element of every lattice, and checking the
+`LinearOrder` hypothesis fails slowly on lattices such as ideals and submodules. -/]
 theorem bot_eq_one' [OrderBot α] : (⊥ : α) = 1 :=
   bot_eq_one
 
