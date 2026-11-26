@@ -72,6 +72,9 @@ class AddMonoidWithOne (R : Type*) extends NatCast R, AddMonoid R, One R where
 /-- An `AddCommMonoidWithOne` is an `AddMonoidWithOne` satisfying `a + b = b + a`. -/
 class AddCommMonoidWithOne (R : Type*) extends AddMonoidWithOne R, AddCommMonoid R
 
+-- See note [lower instance priority]
+attribute [instance 100] AddCommMonoidWithOne.toAddCommMonoid
+
 namespace Nat
 
 variable [AddMonoidWithOne R]

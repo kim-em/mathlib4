@@ -118,6 +118,10 @@ TODO: clean this once https://github.com/leanprover/lean4/issues/2115 is fixed
   or a Lie algebra. -/
 class NonUnitalNonAssocSemiring (α : Type u) extends AddCommMonoid α, Distrib α, MulZeroClass α
 
+-- An `AddCommMonoid` goal should not start by searching the whole ring hierarchy;
+-- `Semiring.toAddCommMonoid` below remains a default-priority shortcut.
+attribute [instance 100] NonUnitalNonAssocSemiring.toAddCommMonoid
+
 /-- An associative but not-necessarily unital semiring. -/
 class NonUnitalSemiring (α : Type u) extends NonUnitalNonAssocSemiring α, SemigroupWithZero α
 
