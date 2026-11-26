@@ -115,7 +115,7 @@ theorem eLpNorm'_zero' (hq0_ne : q ≠ 0) (hμ : μ ≠ 0) : eLpNorm' (0 : α �
 
 @[simp]
 theorem eLpNormEssSup_zero : eLpNormEssSup (0 : α → ε) μ = 0 := by
-  simp [eLpNormEssSup, ← bot_eq_zero', essSup_const_bot]
+  simp [eLpNormEssSup, ← ENNReal.bot_eq_zero, essSup_const_bot]
 
 @[to_fun (attr := simp) eLpNorm_fun_zero]
 theorem eLpNorm_zero : eLpNorm (0 : α → ε) p μ = 0 := by
